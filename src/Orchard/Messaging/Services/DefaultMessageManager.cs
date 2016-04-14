@@ -4,8 +4,11 @@ using System.Linq;
 using Orchard.Logging;
 using Orchard.Messaging.Events;
 using Orchard.Messaging.Models;
+using Orchard.ContentManagement.Records;
+using Orchard.Exceptions;
 
 namespace Orchard.Messaging.Services {
+    [Obsolete]
     public class DefaultMessageManager : IMessageManager {
         private readonly IMessageEventHandler _messageEventHandler;
         private readonly IEnumerable<IMessagingChannel> _channels;
@@ -20,12 +23,11 @@ namespace Orchard.Messaging.Services {
             Logger = NullLogger.Instance;
         }
 
-        public void Send(object recipient, string type, string service, Dictionary<string, string> properties = null) {
+        public void Send(ContentItemRecord recipient, string type, string service, Dictionary<string, string> properties = null) {
             Send(new [] { recipient }, type, service, properties);    
         }
 
-        public void Send(IEnumerable<object> recipients, string type, string service, Dictionary<string, string> properties = null)
-        {
+        public void Send(IEnumerable<ContentItemRecord> recipients, string type, string service, Dictionary<string, string> properties = null) {
             if ( !HasChannels() )
                 return;
 
@@ -39,8 +41,11 @@ namespace Orchard.Messaging.Services {
 
                 PrepareAndSend(type, properties, context);
             }
-            catch ( Exception e ) {
-                Logger.Error(e, "An error occured while sending the message {0}", type);
+            catch (Exception ex) {
+                if (ex.IsFatal()) {
+                    throw;
+                } 
+                Logger.Error(ex, "An error occured while sending the message {0}", type);
             }
         }
 
@@ -59,8 +64,11 @@ namespace Orchard.Messaging.Services {
 
                 PrepareAndSend(type, properties, context);
             }
-            catch (Exception e) {
-                Logger.Error(e, "An error occured while sending the message {0}", type);
+            catch (Exception ex) {
+                if (ex.IsFatal()) {
+                    throw;
+                } 
+                Logger.Error(ex, "An error occured while sending the message {0}", type);
             }
         }
 

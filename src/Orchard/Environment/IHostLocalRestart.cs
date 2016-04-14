@@ -5,6 +5,7 @@ using Orchard.Environment.Descriptor;
 using Orchard.Environment.Descriptor.Models;
 using Orchard.FileSystems.AppData;
 using Orchard.Logging;
+using Orchard.Exceptions;
 
 namespace Orchard.Environment {
     public interface IHostLocalRestart {
@@ -34,19 +35,22 @@ namespace Orchard.Environment {
         }
 
         void IShellSettingsManagerEventHandler.Saved(ShellSettings settings) {
-            TouchFile();
+            //TouchFile();
         }
 
         void IShellDescriptorManagerEventHandler.Changed(ShellDescriptor descriptor, string tenant) {
-            TouchFile();
+            //TouchFile();
         }
 
         private void TouchFile() {
             try {
                 _appDataFolder.CreateFile(fileName, "Host Restart");
             }
-            catch(Exception e) {
-                Logger.Warning(e, "Error updating file '{0}'", fileName);
+            catch(Exception ex) {
+                if (ex.IsFatal()) {
+                    throw;
+                } 
+                Logger.Warning(ex, "Error updating file '{0}'", fileName);
             }
         }
     }

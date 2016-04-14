@@ -13,25 +13,25 @@ namespace Orchard.Localization.Commands {
             _orchardServices = orchardServices;
         }
 
-        [CommandHelp("cultures -l \r\n\t" + "List site cultures")]
-        [CommandName("cultures -l")]
+        [CommandHelp("cultures list \r\n\t" + "List site cultures")]
+        [CommandName("cultures list")]
         public void ListCultures() {
             Context.Output.WriteLine(T("Listing Cultures:"));
 
-            string cultures = _cultureManager.ListCultures().Aggregate<string, string>(null, (current, culture) => current + culture + " ");
+            var cultures = string.Join(" ", _cultureManager.ListCultures());
 
             Context.Output.WriteLine(cultures);
         }
 
 
         [CommandHelp("cultures get site culture \r\n\t" + "Get culture for the site")]
-        [CommandName("cultures -gc")]
+        [CommandName("cultures get site culture")]
         public void GetSiteCulture() {
             Context.Output.WriteLine(T("Site Culture is {0}", _orchardServices.WorkContext.CurrentSite.SiteCulture));
         }
 
         [CommandHelp("cultures set site culture <culture-name> \r\n\t" + "Set culture for the site")]
-        [CommandName("cultures -sc")]
+        [CommandName("cultures set site culture")]
         public void SetSiteCulture(string cultureName) {
             Context.Output.WriteLine(T("Setting site culture to {0}", cultureName));
 
@@ -46,8 +46,8 @@ namespace Orchard.Localization.Commands {
             Context.Output.WriteLine(T("Site culture set to {0} successfully", cultureName));
         }
 
-        [CommandHelp("cultures -a <culture-name-1> ... <culture-name-n>\r\n\t" + "Add one or more cultures to the site")]
-        [CommandName("cultures -a")]
+        [CommandHelp("cultures add <culture-name-1> ... <culture-name-n>\r\n\t" + "Add one or more cultures to the site")]
+        [CommandName("cultures add")]
         public void AddCultures(params string[] cultureNames) {
             IEnumerable<string> siteCultures = _cultureManager.ListCultures();
 

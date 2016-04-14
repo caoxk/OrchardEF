@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 
 namespace Orchard.Events {
     public class EventsInterceptor : IInterceptor {
@@ -38,16 +38,8 @@ namespace Orchard.Events {
             // acquire method:
             // static IEnumerable<T> IEnumerable.OfType<T>(this IEnumerable source)
             // where T is from returnType's IEnumerable<T>
-            try
-            {
-                var enumerableOfTypeT = _enumerableOfTypeTDictionary.GetOrAdd(returnType, type => typeof(Enumerable).GetGenericMethod("OfType", type.GetGenericArguments(), new[] { typeof(IEnumerable) }, typeof(IEnumerable<>)));
-                return enumerableOfTypeT.Invoke(null, new[] { results });
-            }
-            catch (Exception)
-            {
-                return results;
-            }
-           
+            var enumerableOfTypeT = _enumerableOfTypeTDictionary.GetOrAdd( returnType, type => typeof(Enumerable).GetGenericMethod("OfType", type.GetGenericArguments(), new[] { typeof(IEnumerable) }, typeof(IEnumerable<>)));
+            return enumerableOfTypeT.Invoke(null, new[] { results });
         }
     }
 

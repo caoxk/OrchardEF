@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Orchard.ContentManagement.Records;
 
 namespace Orchard.Messaging.Services {
+    [Obsolete]
     public interface IMessageManager : IDependency {
         /// <summary>
         /// Sends a message to a channel using a content item as the recipient
@@ -10,7 +12,7 @@ namespace Orchard.Messaging.Services {
         /// <param name="type">A custom string specifying what type of message is sent. Used in even handlers to define the message.</param>
         /// <param name="service">The name of the channel to use, e.g. "email"</param>
         /// <param name="properties">A set of specific properties for the channel.</param>
-        void Send(object recipient, string type, string service, Dictionary<string, string> properties = null);
+        void Send(ContentItemRecord recipient, string type, string service, Dictionary<string, string> properties = null);
 
         /// <summary>
         /// Sends a message to a channel using a set of content items as the recipients
@@ -19,7 +21,7 @@ namespace Orchard.Messaging.Services {
         /// <param name="type">A custom string specifying what type of message is sent. Used in even handlers to define the message.</param>
         /// <param name="service">The name of the channel to use, e.g. "email"</param>
         /// <param name="properties">A set of specific properties for the channel.</param>
-        void Send(IEnumerable<object> recipients, string type, string service, Dictionary<string, string> properties = null);
+        void Send(IEnumerable<ContentItemRecord> recipients, string type, string service, Dictionary<string, string> properties = null);
 
 
         /// <summary>

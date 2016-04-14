@@ -1,7 +1,7 @@
 ﻿@using Orchard.Utility.Extensions;
 @{
     Script.Require("jQuery");
-    Script.Include("admin.js");
+    Script.Include("admin.js").AtFoot();
     IEnumerable<dynamic> firstLevelMenuItems = Model;
 
     if (Model.ImageSets != null) {
@@ -11,6 +11,7 @@
     }
 
     Model.Attributes.Add("role", "navigation");
+    Model.Attributes.Add("data-filter-watermark", T("Filter").Text);
     var tag = Tag(Model, "ul");
 }
 ﻿@tag.StartElement

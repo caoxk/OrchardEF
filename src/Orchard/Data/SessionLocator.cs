@@ -6,23 +6,18 @@ using System.Linq;
 using NHibernate;
 using NHibernate.SqlCommand;
 using NHibernate.Type;
+using Orchard.ContentManagement;
 using Orchard.Exceptions;
 using Orchard.Logging;
 using Orchard.Security;
 
 namespace Orchard.Data {
-    public class SessionLocator : ISessionLocator, ITransactionManager, IDisposable {
-        private readonly ISessionFactoryHolder _sessionFactoryHolder;
-        private readonly IEnumerable<ISessionInterceptor> _interceptors;
-        private ISession _session;
-        private ITransaction _transaction;
-        private bool _cancelled;
 
-        public SessionLocator(
-            ISessionFactoryHolder sessionFactoryHolder, 
-            IEnumerable<ISessionInterceptor> interceptors) {
-            _sessionFactoryHolder = sessionFactoryHolder;
-            _interceptors = interceptors;
+    public class SessionLocator : ISessionLocator {
+        private readonly ITransactionManager _transactionManager;
+
+        public SessionLocator(ITransactionManager transactionManager) {
+            _transactionManager = transactionManager;
             Logger = NullLogger.Instance;
         }
 
@@ -30,87 +25,107 @@ namespace Orchard.Data {
 
         public ISession For(Type entityType) {
             Logger.Debug("Acquiring session for {0}", entityType);
+            return _transactionManager.GetSession();
+        }
+    }
 
-            ((ITransactionManager)this).Demand();
+    public class TransactionManager : ITransactionManager, IDisposable {
+        private readonly ISessionFactoryHolder _sessionFactoryHolder;
+        private readonly IEnumerable<ISessionInterceptor> _interceptors;
+        private Func<IContentManagerSession> _contentManagerSessionFactory;
 
-            return _session;
+        private ISession _session;
+        private IContentManagerSession _contentManagerSession;
+
+        public TransactionManager(
+            ISessionFactoryHolder sessionFactoryHolder,
+            Func<IContentManagerSession> contentManagerSessionFactory,
+            IEnumerable<ISessionInterceptor> interceptors) {
+            _sessionFactoryHolder = sessionFactoryHolder;
+            _interceptors = interceptors;
+            _contentManagerSessionFactory = contentManagerSessionFactory;
+
+            Logger = NullLogger.Instance;
+            IsolationLevel = IsolationLevel.ReadCommitted;
         }
 
-        public void Demand() {
-            EnsureSession();
+        public ILogger Logger { get; set; }
+        public IsolationLevel IsolationLevel { get; set; }
 
-            if (_transaction == null) {
-                Logger.Debug("Creating transaction on Demand");
-                _transaction = _session.BeginTransaction(IsolationLevel.ReadCommitted);
-            }
+        public ISession GetSession() {
+            Demand();
+            return _session;
+        }
+        public void Demand() {
+            EnsureSession(IsolationLevel);
         }
 
         public void RequireNew() {
-            RequireNew(IsolationLevel.ReadCommitted);
+            RequireNew(IsolationLevel);
         }
 
         public void RequireNew(IsolationLevel level) {
-            EnsureSession();
-
-            if (_cancelled) {
-                _transaction.Rollback();
-                _transaction.Dispose();
-                _transaction = null;
-            }
-            else {
-                if (_transaction != null) {
-                    _transaction.Commit();
-                }
-            }
-
-            Logger.Debug("Creating new transaction with isolation level {0}", level);
-            _transaction = _session.BeginTransaction(level);
+            DisposeSession();
+            EnsureSession(level);
         }
 
         public void Cancel() {
-            Logger.Debug("Transaction cancelled flag set");
-            _cancelled = true;
+            if (_session != null) {
+
+                // IsActive is true if the transaction hasn't been committed or rolled back
+                if (_session.Transaction != null && _session.Transaction.IsActive) {
+                    Logger.Debug("Rolling back transaction");
+                    _session.Transaction.Rollback();
+                }
+
+                DisposeSession();
+            }
         }
 
         public void Dispose() {
-            if (_transaction != null) {
-                try {
-                    if (!_cancelled) {
-                        Logger.Debug("Marking transaction as complete");
-                        _transaction.Commit();
-                    }
-                    else {
-                        Logger.Debug("Reverting operations from transaction");
-                        _transaction.Rollback();
-                    }
+            DisposeSession();
+        }
 
-                    _transaction.Dispose();
-                    Logger.Debug("Transaction disposed");
-                }
-                catch (Exception e) {
-                    Logger.Error(e, "Error while disposing the transaction.");
+        private void DisposeSession() {
+            if (_session != null) {
+
+                try {
+                    // IsActive is true if the transaction hasn't been committed or rolled back
+                    if (_session.Transaction != null && _session.Transaction.IsActive) {
+                        Logger.Debug("Committing transaction");
+                        _session.Transaction.Commit();
+                    }
                 }
                 finally {
-                    _transaction = null;
-                    _cancelled = false;
+                    if (_contentManagerSession != null) {
+                        _contentManagerSession.Clear();
+                    }
+
+                    Logger.Debug("Disposing session");
+                    _session.Close();
+                    _session.Dispose();
+                    _session = null;
                 }
             }
         }
 
-        private void EnsureSession() {
+        private void EnsureSession(IsolationLevel level) {
             if (_session != null) {
                 return;
             }
 
             var sessionFactory = _sessionFactoryHolder.GetSessionFactory();
-            Logger.Information("Opening database session");
+            Logger.Debug("Opening NHibernate session");
             _session = sessionFactory.OpenSession(new OrchardSessionInterceptor(_interceptors.ToArray(), Logger));
+            // When BeginTransaction fails, the exception will be propagated so that
+            // global exception handling code will dispose this session.
+            _session.BeginTransaction(level);
+            _contentManagerSession = _contentManagerSessionFactory();
         }
 
         class OrchardSessionInterceptor : IInterceptor {
             private readonly ISessionInterceptor[] _interceptors;
             private readonly ILogger _logger;
-            private ISession _session;
 
             public OrchardSessionInterceptor(ISessionInterceptor[] interceptors, ILogger logger) {
                 _interceptors = interceptors;
@@ -232,8 +247,6 @@ namespace Orchard.Data {
             }
 
             void IInterceptor.SetSession(ISession session) {
-                _session = session;
-
                 if (_interceptors.Length == 0) return;
                 _interceptors.Invoke(i => i.SetSession(session), _logger);
             }

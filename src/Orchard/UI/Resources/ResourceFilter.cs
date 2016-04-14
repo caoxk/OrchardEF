@@ -23,7 +23,7 @@ namespace Orchard.UI.Resources {
             var ctx = _workContextAccessor.GetContext();
             var head = ctx.Layout.Head;
             var tail = ctx.Layout.Tail;
-         //   head.Add(_shapeFactory.Metas());
+            head.Add(_shapeFactory.Metas());
             head.Add(_shapeFactory.HeadLinks());
             head.Add(_shapeFactory.StylesheetLinks());
             head.Add(_shapeFactory.HeadScripts());

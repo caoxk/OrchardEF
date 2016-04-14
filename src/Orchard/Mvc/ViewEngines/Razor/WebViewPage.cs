@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using System.Web.WebPages;
 using Orchard.DisplayManagement;
 using Orchard.DisplayManagement.Shapes;
+using Orchard.Environment.Configuration;
 using Orchard.Localization;
 using Orchard.Mvc.Html;
 using Orchard.Mvc.Spooling;
@@ -20,7 +21,6 @@ namespace Orchard.Mvc.ViewEngines.Razor {
         private Localizer _localizer = NullLocalizer.Instance;
         private object _display;
         private object _layout;
-        private WorkContext _workContext;
 
         public Localizer T { 
             get {
@@ -59,28 +59,28 @@ namespace Orchard.Mvc.ViewEngines.Razor {
         public dynamic Display { get { return _display; } }
         // review: (heskew) is it going to be a problem?
         public new dynamic Layout { get { return _layout; } }
-        public WorkContext WorkContext { get { return _workContext; } }
+        public WorkContext WorkContext { get; set; }
 
         public dynamic New { get { return ShapeFactory; } }
 
         private IDisplayHelperFactory _displayHelperFactory;
         public IDisplayHelperFactory DisplayHelperFactory {
             get {
-                return _displayHelperFactory ?? (_displayHelperFactory = _workContext.Resolve<IDisplayHelperFactory>());
+                return _displayHelperFactory ?? (_displayHelperFactory = WorkContext.Resolve<IDisplayHelperFactory>());
             }
         }
 
         private IShapeFactory _shapeFactory;
         public IShapeFactory ShapeFactory {
             get {
-                return _shapeFactory ?? (_shapeFactory = _workContext.Resolve<IShapeFactory>());
+                return _shapeFactory ?? (_shapeFactory = WorkContext.Resolve<IShapeFactory>());
             }
         }
 
         private IAuthorizer _authorizer;
         public IAuthorizer Authorizer { 
             get {
-                return _authorizer ?? (_authorizer = _workContext.Resolve<IAuthorizer>());
+                return _authorizer ?? (_authorizer = WorkContext.Resolve<IAuthorizer>());
             }
         }
 
@@ -98,7 +98,7 @@ namespace Orchard.Mvc.ViewEngines.Razor {
 
         private IResourceManager _resourceManager;
         public IResourceManager ResourceManager {
-            get { return _resourceManager ?? (_resourceManager = _workContext.Resolve<IResourceManager>()); }
+            get { return _resourceManager ?? (_resourceManager = WorkContext.Resolve<IResourceManager>()); }
         }
 
         public ResourceRegister Style {
@@ -107,6 +107,9 @@ namespace Orchard.Mvc.ViewEngines.Razor {
                     (_stylesheetRegister = new ResourceRegister(Html.ViewDataContainer, ResourceManager, "stylesheet"));
             }
         }
+
+        private string[] _commonLocations;
+        public string[] CommonLocations { get { return _commonLocations ?? (_commonLocations = WorkContext.Resolve<ExtensionLocations>().CommonLocations); } } 
 
         public void RegisterImageSet(string imageSet, string style = "", int size = 16) {
             // hack to fake the style "alternate" for now so we don't have to change stylesheet names when this is hooked up
@@ -122,24 +125,7 @@ namespace Orchard.Mvc.ViewEngines.Razor {
         }
 
         public void SetMeta(string name = null, string content = null, string httpEquiv = null, string charset = null) {
-            var metaEntry = new MetaEntry();
-            
-            if (!String.IsNullOrEmpty(name)) {
-                metaEntry.Name = name;
-            }
-
-            if (!String.IsNullOrEmpty(content)) {
-                metaEntry.Content = content;
-            }
-
-            if (!String.IsNullOrEmpty(httpEquiv)) {
-                metaEntry.HttpEquiv = httpEquiv;
-            }
-
-            if (!String.IsNullOrEmpty(charset)) {
-                metaEntry.Charset = charset;
-            }
-
+            var metaEntry = new MetaEntry(name, content, httpEquiv, charset);
             SetMeta(metaEntry);
         }
 
@@ -158,14 +144,18 @@ namespace Orchard.Mvc.ViewEngines.Razor {
         public override void InitHelpers() {
             base.InitHelpers();
 
-            _workContext = ViewContext.GetWorkContext();
+            WorkContext = ViewContext.GetWorkContext();
             
             _display = DisplayHelperFactory.CreateHelper(ViewContext, this);
-            _layout = _workContext.Layout;
+            _layout = WorkContext.Layout;
         }
 
         public bool AuthorizedFor(Permission permission) {
             return Authorizer.Authorize(permission);
+        }
+
+        public bool AuthorizedFor(Permission permission, IContent content) {
+            return Authorizer.Authorize(permission, content);
         }
 
         public bool HasText(object thing) {
@@ -182,6 +172,27 @@ namespace Orchard.Mvc.ViewEngines.Razor {
                 writer.Write(Display(item));
             }
             return writer;
+        }
+
+        private string _tenantPrefix;
+        public override string Href(string path, params object[] pathParts) {
+            if (path.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                || path.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) {
+                return path;
+            }
+
+            if (_tenantPrefix == null) {
+                _tenantPrefix = WorkContext.Resolve<ShellSettings>().RequestUrlPrefix ?? "";
+            }
+
+            if (!String.IsNullOrEmpty(_tenantPrefix)
+                && path.StartsWith("~/")  
+                && !CommonLocations.Any(gpp=>path.StartsWith(gpp, StringComparison.OrdinalIgnoreCase))
+            ) { 
+                    return base.Href("~/" + _tenantPrefix + path.Substring(2), pathParts);
+            }
+
+            return base.Href(path, pathParts);
         }
 
         public IDisposable Capture(Action<IHtmlString> callback) {

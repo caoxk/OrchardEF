@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using FluentNHibernate;
 using FluentNHibernate.Automapping;
@@ -10,6 +9,7 @@ using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions.Helpers;
 using FluentNHibernate.Diagnostics;
 using NHibernate;
+using NHibernate.Cfg;
 using NHibernate.Engine;
 using NHibernate.Event;
 using NHibernate.Event.Default;
@@ -37,18 +37,50 @@ namespace Orchard.Data.Providers {
 
             var config = Fluently.Configure();
 
+            foreach (var c in parameters.Configurers.OfType<ISessionConfigurationEventsWithParameters>()) {
+                c.Parameters = parameters;
+            }
+
             parameters.Configurers.Invoke(c => c.Created(config, persistenceModel), Logger);
 
             config = config.Database(database)
                            .Mappings(m => m.AutoMappings.Add(persistenceModel))
                            .ExposeConfiguration(cfg => {
-                               cfg.EventListeners.LoadEventListeners = new ILoadEventListener[] {new OrchardLoadEventListener()};
+                               cfg
+                                    .SetProperty(NHibernate.Cfg.Environment.FormatSql, Boolean.FalseString)
+                                    .SetProperty(NHibernate.Cfg.Environment.GenerateStatistics, Boolean.FalseString)
+                                    .SetProperty(NHibernate.Cfg.Environment.Hbm2ddlKeyWords, Hbm2DDLKeyWords.None.ToString())
+                                    .SetProperty(NHibernate.Cfg.Environment.PropertyBytecodeProvider, "lcg")
+                                    .SetProperty(NHibernate.Cfg.Environment.PropertyUseReflectionOptimizer, Boolean.TrueString)
+                                    .SetProperty(NHibernate.Cfg.Environment.QueryStartupChecking, Boolean.FalseString)
+                                    .SetProperty(NHibernate.Cfg.Environment.ShowSql, Boolean.FalseString)
+                                    .SetProperty(NHibernate.Cfg.Environment.StatementFetchSize, "100")
+                                    .SetProperty(NHibernate.Cfg.Environment.UseProxyValidator, Boolean.FalseString)
+                                    .SetProperty(NHibernate.Cfg.Environment.UseSqlComments, Boolean.FalseString)
+                                    .SetProperty(NHibernate.Cfg.Environment.WrapResultSets, Boolean.TrueString)
+                                    .SetProperty(NHibernate.Cfg.Environment.BatchSize, "256")
+                                    ;
+
+                               cfg.EventListeners.LoadEventListeners = new ILoadEventListener[] { new OrchardLoadEventListener() };
+                               cfg.EventListeners.PostLoadEventListeners = new IPostLoadEventListener[0];
+                               cfg.EventListeners.PreLoadEventListeners = new IPreLoadEventListener[0];
+
+                               // don't enable PrepareSql by default as it breaks on SqlCe
+                               // this can be done per driver by overriding AlterConfiguration
+                               AlterConfiguration(cfg);
+
                                parameters.Configurers.Invoke(c => c.Building(cfg), Logger);
-                           });
+
+                           })
+                           ;
 
             parameters.Configurers.Invoke(c => c.Prepared(config), Logger);
 
             return config.BuildConfiguration();
+        }
+
+        protected virtual void AlterConfiguration(Configuration config) {
+
         }
 
         public static AutoPersistenceModel CreatePersistenceModel(ICollection<RecordBlueprint> recordDescriptors) {
@@ -62,6 +94,7 @@ namespace Orchard.Data.Providers {
                 .Conventions.Setup(x => x.Add(AutoImport.Never()))
                 .Conventions.Add(new RecordTableNameConvention(recordDescriptors))
                 .Conventions.Add(new CacheConventions(recordDescriptors))
+                .Conventions.Add(new UtcDateTimeConvention())
                 .Alterations(alt => {
                     foreach (var recordAssembly in recordDescriptors.Select(x => x.Type.Assembly).Distinct()) {
                         alt.Add(new AutoMappingOverrideAlteration(recordAssembly));
@@ -98,8 +131,7 @@ namespace Orchard.Data.Providers {
                 if (@event.InstanceToLoad != null) {
                     entityPersister = source.GetEntityPersister(null, @event.InstanceToLoad);
                     @event.EntityClassName = @event.InstanceToLoad.GetType().FullName;
-                }
-                else
+                } else
                     entityPersister = source.Factory.GetEntityPersister(@event.EntityClassName);
                 if (entityPersister == null)
                     throw new HibernateException("Unable to locate persister: " + @event.EntityClassName);
@@ -124,11 +156,9 @@ namespace Orchard.Data.Providers {
 
                 if (loadType.IsNakedEntityReturned) {
                     @event.Result = Load(@event, entityPersister, keyToLoad, loadType);
-                }
-                else if (@event.LockMode == LockMode.None) {
+                } else if (@event.LockMode == LockMode.None) {
                     @event.Result = ProxyOrLoad(@event, entityPersister, keyToLoad, loadType);
-                }
-                else {
+                } else {
                     @event.Result = LockAndLoad(@event, entityPersister, keyToLoad, loadType, source);
                 }
             }

@@ -7,10 +7,12 @@ using Orchard.Security.Permissions;
 namespace Orchard.UI.Navigation {
     public class MenuItem {
         private IList<string> _classes = new List<string>();
+        private IEnumerable<MenuItem> _items;
 
         public MenuItem() {
             Permissions = Enumerable.Empty<Permission>();
             LinkToFirstChild = true;
+            Level = 1;
         }
 
         public LocalizedString Text { get; set; }
@@ -22,8 +24,19 @@ namespace Orchard.UI.Navigation {
         public bool LocalNav { get; set; }
         public string Culture { get; set; }
         public bool Selected { get; set; }
+        public int Level { get; set; }
         public RouteValueDictionary RouteValues { get; set; }
-        public IEnumerable<MenuItem> Items { get; set; }
+
+        public IEnumerable<MenuItem> Items {
+            get { return _items; }
+            set {
+                _items = value;
+                foreach (var item in _items) {
+                    item.Level = Level + 1;
+                }
+            }
+        }
+
         public IEnumerable<Permission> Permissions { get; set; }
         public object Content { get; set; }
         public IList<string> Classes {
