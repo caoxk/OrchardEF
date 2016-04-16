@@ -76,7 +76,6 @@ namespace Orchard.Data.Migration.Generator {
             foreach(var table in tables.Where(t => parameters.RecordDescriptors.Any(rd => rd.Feature.Descriptor.Id == feature && rd.TableName == t.Name))) {
                 string tableName = table.Name;
                 var recordType = parameters.RecordDescriptors.First(rd => rd.Feature.Descriptor.Id == feature && rd.TableName == tableName).Type;
-                var isContentPart = typeof(ContentPartRecord).IsAssignableFrom(recordType);
 
                 if ( tableName.StartsWith(prefix) ) {
                     tableName = tableName.Substring(prefix.Length);
@@ -99,9 +98,7 @@ namespace Orchard.Data.Migration.Generator {
                             if (tableCopy.PrimaryKey.Columns.Any(c => c.Name == columnCopy.Name)) {
                                 action.PrimaryKey();
 
-                                if ( !isContentPart ) {
-                                    action.Identity();
-                                }
+                                action.Identity();
                             }
 
                             

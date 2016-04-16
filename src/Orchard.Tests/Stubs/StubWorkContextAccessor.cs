@@ -13,7 +13,7 @@ namespace Orchard.Tests.Stubs {
 
         public StubWorkContextAccessor(ILifetimeScope lifetimeScope) {
             _lifetimeScope = lifetimeScope;
-            _workContext = new WorkContextImpl(_lifetimeScope);
+            _workContext = new WorkContextImpl(lifetimeScope);
         }
 
         public class WorkContextImpl : WorkContext {
@@ -66,12 +66,32 @@ namespace Orchard.Tests.Stubs {
                     set { throw new NotImplementedException(); }
                 }
 
+				public string SiteCalendar {
+                    get { throw new NotImplementedException(); }
+                    set { throw new NotImplementedException(); }
+                }
+
                 public ResourceDebugMode ResourceDebugMode {
                     get { throw new NotImplementedException(); }
                     set { throw new NotImplementedException(); }
                 }
 
-                public int PageSize{
+                 public bool UseCdn {
+                     get { throw new NotImplementedException(); }
+                     set { throw new NotImplementedException(); }
+                 }
+
+                public int PageSize {
+                    get { throw new NotImplementedException(); }
+                    set { throw new NotImplementedException(); }
+                }
+
+                public int MaxPageSize {
+                    get { throw new NotImplementedException(); }
+                    set { throw new NotImplementedException(); }
+                }
+                
+                public int MaxPagedCount {
                     get { throw new NotImplementedException(); }
                     set { throw new NotImplementedException(); }
                 }
@@ -103,8 +123,16 @@ namespace Orchard.Tests.Stubs {
                 return _lifetimeScope.Resolve<T>();
             }
 
+            public override object Resolve(Type serviceType) {
+                return _lifetimeScope.Resolve(serviceType);
+            }
+
             public override bool TryResolve<T>(out T service) {
                 return _lifetimeScope.TryResolve<T>(out service);
+            }
+
+            public override bool TryResolve(Type serviceType, out object service) {
+                return _lifetimeScope.TryResolve(serviceType, out service);
             }
 
             public override T GetState<T>(string name) {
@@ -129,7 +157,9 @@ namespace Orchard.Tests.Stubs {
         }
 
         public IWorkContextScope CreateWorkContextScope() {
-            throw new NotSupportedException();
+            var workLifetime = _lifetimeScope.BeginLifetimeScope("work");
+            var workContext = new WorkContextImpl(workLifetime);
+            return new StubWorkContextScope(workContext, workLifetime);
         }
     }
 }

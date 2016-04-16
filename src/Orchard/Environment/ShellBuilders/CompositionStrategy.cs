@@ -4,8 +4,6 @@ using System.Linq;
 using System.Web.Http.Controllers;
 using System.Web.Mvc;
 using Autofac.Core;
-using Orchard.ContentManagement;
-using Orchard.ContentManagement.Records;
 using Orchard.Environment.Configuration;
 using Orchard.Environment.Descriptor.Models;
 using Orchard.Environment.Extensions;
@@ -201,8 +199,7 @@ namespace Orchard.Environment.ShellBuilders {
                    type.GetProperty("Id") != null &&
                    (type.GetProperty("Id").GetAccessors()).All(x => x.IsVirtual) &&
                    !type.IsSealed &&
-                   !type.IsAbstract &&
-                   (!typeof(IContent).IsAssignableFrom(type) || typeof(ContentPartRecord).IsAssignableFrom(type));
+                   !type.IsAbstract;
         }
 
         private static RecordBlueprint BuildRecord(Type type, Feature feature, ShellSettings settings) {

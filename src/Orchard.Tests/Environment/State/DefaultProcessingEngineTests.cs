@@ -11,6 +11,7 @@ using Orchard.Environment.State;
 using Orchard.Environment.Descriptor.Models;
 using Orchard.Events;
 using Orchard.Mvc;
+using Orchard.Tests.Stubs;
 using Orchard.Tests.Utility;
 
 namespace Orchard.Tests.Environment.State {
@@ -25,7 +26,7 @@ namespace Orchard.Tests.Environment.State {
             builder.RegisterType<DefaultProcessingEngine>().As<IProcessingEngine>();
             builder.RegisterModule(new WorkContextModule());
             builder.RegisterType<WorkContextAccessor>().As<IWorkContextAccessor>();
-            builder.RegisterAutoMocking();
+            builder.RegisterAutoMocking(MockBehavior.Loose);
             _container = builder.Build();
 
             _shellContext = new ShellContext {
@@ -34,13 +35,27 @@ namespace Orchard.Tests.Environment.State {
                 LifetimeScope = _container.BeginLifetimeScope(),
             };
 
+            var httpContext = new StubHttpContext();
+
             _container.Mock<IShellContextFactory>()
                 .Setup(x => x.CreateDescribedContext(_shellContext.Settings, _shellContext.Descriptor))
                 .Returns(_shellContext);
             _container.Mock<IHttpContextAccessor>()
                 .Setup(x=>x.Current())
-                .Returns(default(HttpContextBase));
+                .Returns(httpContext);
+        }
 
+        [TearDown]
+        public void CleanTasks() {
+            // clear the previous values
+            try {
+                var engine = _container.Resolve<IProcessingEngine>();
+                if (engine != null)
+                    while (engine.AreTasksPending()) engine.ExecuteNextTask();
+            }
+            catch {
+                
+            }
         }
 
         [Test]

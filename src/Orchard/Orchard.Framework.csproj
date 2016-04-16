@@ -176,8 +176,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContentManagement\Extensions\DriverResultExtensions.cs" />
-    <Compile Include="ContentManagement\Handlers\CloneContentContext.cs" />
     <Compile Include="Environment\Configuration\ExtensionLocations.cs" />
     <Compile Include="DisplayManagement\IPositioned.cs" />
     <Compile Include="DisplayManagement\PositionWrapper.cs" />
@@ -185,6 +183,8 @@
     <Compile Include="Data\Migration\Schema\DropUniqueConstraintCommand.cs" />
     <Compile Include="Environment\Extensions\Models\LifecycleStatus.cs" />
     <Compile Include="Environment\ShellBuilders\ICompositionStrategy.cs" />
+    <Compile Include="Environment\XmlHelper.cs" />
+    <Compile Include="Mvc\IUpdateModel.cs" />
     <Compile Include="Mvc\Updater.cs" />
     <Compile Include="Recipes\Models\ConfigurationContext.cs" />
     <Compile Include="Recipes\Models\RecipeBuilderStepConfigurationContext.cs" />
@@ -325,7 +325,6 @@
     <Compile Include="FileSystems\Media\FileSystemStorageProvider.cs" />
     <Compile Include="FileSystems\Media\IMimeTypeProvider.cs" />
     <Compile Include="FileSystems\Media\StorageProviderExtensions.cs" />
-    <Compile Include="Indexing\ISearchBits.cs" />
     <Compile Include="Localization\LocalizationExtensions.cs" />
     <Compile Include="Localization\Models\DateLocalizationOptions.cs" />
     <Compile Include="Localization\Models\DateParts.cs" />
@@ -340,8 +339,6 @@
     <Compile Include="Localization\Services\DefaultLocalizedStringManager.cs" />
     <Compile Include="Localization\Services\ICalendarSelector.cs" />
     <Compile Include="Localization\Services\ICalendarManager.cs" />
-    <Compile Include="Localization\Services\DefaultCultureFilter.cs" />
-    <Compile Include="Localization\Services\ICultureFilter.cs" />
     <Compile Include="Localization\Services\IDateLocalizationServices.cs" />
     <Compile Include="Localization\Services\IDateFormatter.cs" />
     <Compile Include="Localization\Services\IDateTimeFormatProvider.cs" />
@@ -351,7 +348,6 @@
     <Compile Include="Logging\OrchardFileAppender.cs" />
     <Compile Include="Logging\OrchardLog4netFactory.cs" />
     <Compile Include="Logging\OrchardLog4netLogger.cs" />
-    <Compile Include="Messaging\Services\DefaultMessageManager.cs" />
     <Compile Include="Messaging\Services\DefaultMessageService.cs" />
     <Compile Include="Messaging\Services\IMessageChannel.cs" />
     <Compile Include="Messaging\Services\IMessageChannelProvider.cs" />
@@ -405,12 +401,12 @@
     <Compile Include="Services\YamlParser.cs" />
     <Compile Include="Settings\CurrentSiteWorkContext.cs" />
     <Compile Include="Settings\ResourceDebugMode.cs" />
-    <Compile Include="Tasks\Locking\Services\DistributedLockSchemaBuilder.cs" />
-    <Compile Include="Tasks\Locking\Services\IDistributedLock.cs" />
-    <Compile Include="Tasks\Locking\Services\DistributedLock.cs" />
-    <Compile Include="Tasks\Locking\Services\IDistributedLockService.cs" />
-    <Compile Include="Tasks\Locking\Services\DistributedLockService.cs" />
     <Compile Include="Tasks\Locking\Records\DistributedLockRecord.cs" />
+    <Compile Include="Tasks\Locking\Services\DistributedLock.cs" />
+    <Compile Include="Tasks\Locking\Services\DistributedLockSchemaBuilder.cs" />
+    <Compile Include="Tasks\Locking\Services\DistributedLockService.cs" />
+    <Compile Include="Tasks\Locking\Services\IDistributedLock.cs" />
+    <Compile Include="Tasks\Locking\Services\IDistributedLockService.cs" />
     <Compile Include="Themes\CurrentThemeWorkContext.cs" />
     <Compile Include="Themes\ThemeManager.cs" />
     <Compile Include="Time\CurrentTimeZoneWorkContext.cs" />
@@ -440,218 +436,6 @@
     <Compile Include="Commands\CommandHostEnvironment.cs" />
     <Compile Include="Commands\CommandHostVirtualPathMonitor.cs" />
     <Compile Include="Commands\OrchardCommandHostRetryException.cs" />
-    <Compile Include="ContentManagement\Aspects\ICommonPart.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Aspects\IPublishingControlAspect.cs" />
-    <Compile Include="ContentManagement\Aspects\IRoutableAspect.cs" />
-    <Compile Include="ContentManagement\ContentExtensions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\ContentField.cs" />
-    <Compile Include="ContentManagement\ContentItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\ContentItemMetadata.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\ContentModule.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\ContentPart.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\DefaultContentManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\DefaultContentManagerSession.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\DefaultContentQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Drivers\CombinedResult.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Drivers\ContentFieldDriver.cs" />
-    <Compile Include="ContentManagement\Drivers\Coordinators\ContentFieldDriverCoordinator.cs" />
-    <Compile Include="ContentManagement\Drivers\ContentItemTemplateResult.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Drivers\ContentPartDriver.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Drivers\Coordinators\ContentPartDriverCoordinator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Drivers\ContentTemplateResult.cs" />
-    <Compile Include="ContentManagement\Drivers\DriverResult.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Drivers\ContentLocation.cs" />
-    <Compile Include="ContentManagement\FieldStorage\FieldStorageProviderSelector.cs" />
-    <Compile Include="ContentManagement\Drivers\IContentFieldDriver.cs" />
-    <Compile Include="ContentManagement\Drivers\IContentPartDriver.cs" />
-    <Compile Include="ContentManagement\FieldStorage\IFieldStorage.cs" />
-    <Compile Include="ContentManagement\FieldStorage\IFieldStorageProvider.cs" />
-    <Compile Include="ContentManagement\FieldStorage\IFieldStorageProviderSelector.cs" />
-    <Compile Include="ContentManagement\FieldStorage\InfosetStorage\InfosetStorageProvider.cs" />
-    <Compile Include="ContentManagement\FieldStorage\InfosetStorage\InfosetHandler.cs" />
-    <Compile Include="ContentManagement\FieldStorage\InfosetStorage\InfosetPart.cs" />
-    <Compile Include="ContentManagement\FieldStorage\SimpleFieldStorage.cs" />
-    <Compile Include="ContentManagement\Handlers\ActivatedContentContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\ActivatingContentContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\ActivatingFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\BuildDisplayContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\BuildEditorContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\ContentContextBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\ContentHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\ContentHandlerBase.cs" />
-    <Compile Include="ContentManagement\Handlers\ContentItemBuilder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\ContentItemTemplates.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\IndexContentContext.cs" />
-    <Compile Include="ContentManagement\Handlers\CreateContentContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\GetContentItemMetadataContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\IContentActivatingFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\IContentFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\IContentHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\IContentStorageFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\IContentTemplateFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\InitializingContentContext.cs" />
-    <Compile Include="ContentManagement\Handlers\LoadContentContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\PublishContentContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\RemoveContentContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\StorageFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\StorageFilterBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\StorageVersionFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\TemplateFilterBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\TemplateFilterForRecord.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\UpdateEditorContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Handlers\VersionContentContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\IContent.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\IContentManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\IContentManagerSession.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\IContentQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\IUpdateModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\MetaData\Builders\ContentPartDefinitionBuilder.cs" />
-    <Compile Include="ContentManagement\MetaData\Builders\ContentPartFieldDefinitionBuilder.cs" />
-    <Compile Include="ContentManagement\MetaData\Builders\ContentTypeDefinitionBuilder.cs" />
-    <Compile Include="ContentManagement\MetaData\Builders\ContentTypePartDefinitionBuilder.cs" />
-    <Compile Include="ContentManagement\MetaData\ContentFieldInfo.cs" />
-    <Compile Include="ContentManagement\MetaData\ContentPartInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\MetaData\IContentDefinitionEditorEvents.cs" />
-    <Compile Include="ContentManagement\MetaData\Models\ContentPartFieldDefinition.cs" />
-    <Compile Include="ContentManagement\MetaData\Models\ContentTypePartDefinition.cs" />
-    <Compile Include="ContentManagement\MetaData\Models\SettingsDictionary.cs" />
-    <Compile Include="ContentManagement\MetaData\Services\ContentDefinitionWriter.cs" />
-    <Compile Include="ContentManagement\MetaData\IContentDefinitionManager.cs" />
-    <Compile Include="ContentManagement\MetaData\IContentDefinitionReader.cs" />
-    <Compile Include="ContentManagement\MetaData\IContentDefinitionWriter.cs" />
-    <Compile Include="ContentManagement\MetaData\Models\ContentFieldDefinition.cs" />
-    <Compile Include="ContentManagement\MetaData\Models\ContentPartDefinition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\MetaData\Models\ContentTypeDefinition.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\MetaData\Services\ContentDefinitionReader.cs" />
-    <Compile Include="ContentManagement\MetaData\Services\SettingsFormatter.cs" />
-    <Compile Include="ContentManagement\Records\ContentItemAlteration.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Records\ContentItemRecord.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Records\ContentItemVersionRecord.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Records\ContentPartAlteration.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Records\ContentPartRecord.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Records\ContentPartVersionRecord.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Records\ContentTypeRecord.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\FieldStorage\InfosetStorage\Infoset.cs" />
-    <Compile Include="ContentManagement\Records\Utility.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\Utilities\LazyField.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\ViewModels\TemplateViewModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ContentManagement\DataMigrations\FrameworkDataMigration.cs" />
     <Compile Include="DisplayManagement\Descriptors\ShapeAttributeStrategy\ShapeAttributeBindingModule.cs" />
     <Compile Include="DisplayManagement\Descriptors\ShapeAttributeStrategy\ShapeAttributeOccurrence.cs" />
     <Compile Include="DisplayManagement\Descriptors\ShapeTemplateStrategy\IShapeTemplateHarvester.cs" />
@@ -676,10 +460,6 @@
     <Compile Include="Environment\IShellContainerRegistrations.cs" />
     <Compile Include="FileSystems\Dependencies\DynamicModuleVirtualPathProvider.cs" />
     <Compile Include="Mvc\IHttpContextAccessor.cs" />
-    <Compile Include="Messaging\Events\IMessageEventHandler.cs" />
-    <Compile Include="Messaging\Models\MessageContext.cs" />
-    <Compile Include="Messaging\Services\IMessageManager.cs" />
-    <Compile Include="Messaging\Services\IMessagingChannel.cs" />
     <Compile Include="IWorkContextAccessor.cs" />
     <Compile Include="Utility\Extensions\VirtualPathProviderExtensions.cs" />
     <Compile Include="Utility\NamedReaderWriterLock.cs" />
@@ -764,7 +544,6 @@
     <Compile Include="Environment\Extensions\Compilers\CSharpExtensionBuildProviderShim.cs" />
     <Compile Include="Environment\Extensions\Compilers\ProjectFileDescriptor.cs" />
     <Compile Include="Environment\Extensions\Compilers\IProjectFileParser.cs" />
-    <Compile Include="Indexing\MetaDataExtensions.cs" />
     <Compile Include="Localization\Commands\CultureCommands.cs" />
     <Compile Include="UI\Admin\Notification\NotificationFilter.cs" />
     <Compile Include="Data\Migration\DataMigrationNotificationProvider.cs" />
@@ -804,11 +583,7 @@
     <Compile Include="Environment\State\IShellStateManager.cs" />
     <Compile Include="Environment\State\ShellStateCoordinator.cs" />
     <Compile Include="IDependency.cs" />
-    <Compile Include="Indexing\NullSearchBuilder.cs" />
-    <Compile Include="Indexing\IIndexNotifierHandler.cs" />
     <Compile Include="Localization\Services\DefaultCultureManager.cs" />
-    <Compile Include="Indexing\DefaultIndexManager.cs" />
-    <Compile Include="Indexing\IIndexManager.cs" />
     <Compile Include="Localization\Services\ICultureManager.cs" />
     <Compile Include="Localization\Services\ICultureSelector.cs" />
     <Compile Include="Localization\Records\CultureRecord.cs" />
@@ -828,12 +603,6 @@
     <Compile Include="Environment\IOrchardHost.cs" />
     <Compile Include="OrchardCoreException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Indexing\IIndexDocument.cs" />
-    <Compile Include="Indexing\IIndexProvider.cs" />
-    <Compile Include="Indexing\ISearchBuilder.cs" />
-    <Compile Include="Indexing\ISearchHit.cs" />
-    <Compile Include="Tasks\Indexing\IIndexingTask.cs" />
-    <Compile Include="Tasks\Indexing\IIndexingTaskManager.cs" />
     <Compile Include="Validation\Argument.cs" />
     <Compile Include="WorkContext.cs" />
   </ItemGroup>
@@ -912,7 +681,9 @@
     <Compile Include="Mvc\Routes\UrlPrefix.cs" />
     <Compile Include="Mvc\Routes\UrlPrefixAdjustedHttpContext.cs" />
     <Compile Include="Mvc\Routes\ShellRoute.cs" />
-    <Compile Include="Mvc\ViewUserControl.cs" />
+    <Compile Include="Mvc\ViewUserControl.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Mvc\Wrappers\HttpContextBaseWrapper.cs" />
     <Compile Include="Mvc\Wrappers\HttpRequestBaseWrapper.cs" />
     <Compile Include="Mvc\Wrappers\HttpResponseBaseWrapper.cs" />
@@ -921,7 +692,6 @@
     <Compile Include="Security\MembershipSettings.cs" />
     <Compile Include="Security\StandardPermissions.cs" />
     <Compile Include="Security\OrchardSecurityException.cs" />
-    <Compile Include="Tasks\Scheduling\IPublishingTaskManager.cs" />
     <Compile Include="Tasks\Scheduling\IScheduledTask.cs" />
     <Compile Include="Localization\Text.cs" />
     <Compile Include="Data\Conventions\AttributeCollectionConvention.cs" />
@@ -992,7 +762,9 @@
     <Compile Include="UI\Resources\LinkEntry.cs" />
     <Compile Include="UI\Resources\ResourceFilter.cs" />
     <Compile Include="UI\Resources\ResourceManager.cs" />
-    <Compile Include="Mvc\ViewPage.cs" />
+    <Compile Include="Mvc\ViewPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Security\IAuthenticationService.cs" />
     <Compile Include="Security\Authorizer.cs" />
     <Compile Include="Security\Providers\FormsAuthenticationService.cs" />

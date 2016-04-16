@@ -154,7 +154,7 @@ namespace Orchard.Mvc.ViewEngines.Razor {
             return Authorizer.Authorize(permission);
         }
 
-        public bool AuthorizedFor(Permission permission, IContent content) {
+        public bool AuthorizedFor(Permission permission, object content) {
             return Authorizer.Authorize(permission, content);
         }
 

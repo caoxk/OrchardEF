@@ -1,5 +1,5 @@
-﻿using Orchard.ContentManagement;
-using Orchard.Localization;
+﻿using Orchard.Localization;
+using Orchard.Mvc;
 using Orchard.Recipes.Models;
 
 namespace Orchard.Recipes.Services {

@@ -141,7 +141,7 @@ namespace Orchard.Data {
             hash.AddString(_appDataFolder.MapPath(pathName).ToLowerInvariant());
 
             // Orchard version, to rebuild the mappings for each new version
-            var orchardVersion = new System.Reflection.AssemblyName(typeof(Orchard.ContentManagement.ContentItem).Assembly.FullName).Version.ToString();
+            var orchardVersion = new System.Reflection.AssemblyName(typeof(Orchard.WorkContext).Assembly.FullName).Version.ToString();
             hash.AddString(orchardVersion);
 
             // Shell settings data

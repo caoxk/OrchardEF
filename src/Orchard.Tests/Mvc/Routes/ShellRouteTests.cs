@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -43,6 +46,16 @@ namespace Orchard.Tests.Mvc.Routes {
             rootBuilder.RegisterType<StubAsyncTokenProvider>().As<IAsyncTokenProvider>();
             rootBuilder.RegisterType<StubParallelCacheContext>().As<IParallelCacheContext>();
 
+            rootBuilder.Register<Func<RouteBase, ShellRoute>>(c => {
+                var context = c.Resolve<IComponentContext>();
+                return new Func<RouteBase, ShellRoute>(routeBase => 
+                    new ShellRoute(
+                        routeBase, 
+                        _settingsA,
+                        context.Resolve<IWorkContextAccessor>(),
+                        context.Resolve<IRunningShellTable>(), objects => { return null; }));
+            });
+
             _rootContainer = rootBuilder.Build();
 
             _containerA = _rootContainer.BeginLifetimeScope(
@@ -59,33 +72,37 @@ namespace Orchard.Tests.Mvc.Routes {
                     builder.RegisterType<RoutePublisher>().As<IRoutePublisher>().InstancePerMatchingLifetimeScope("shell");
                 });
         }
-
+        
         [Test]
         public void FactoryMethodWillCreateShellRoutes() {
-            var settings = new ShellSettings { Name = "Alpha" };
             var builder = new ContainerBuilder();
             builder.RegisterType<ShellRoute>().InstancePerDependency();
             builder.RegisterAutoMocking();
-            builder.Register(ctx => settings);
 
             var container = builder.Build();
-            var buildShellRoute = container.Resolve<Func<RouteBase, ShellRoute>>();
+            var buildShellRoute = new Func<RouteBase, ShellRoute>(routeBase => 
+                    new ShellRoute(
+                        routeBase, 
+                        _settingsA,
+                        container.Resolve<IWorkContextAccessor>(),
+                        container.Resolve<IRunningShellTable>(), 
+                        objects => { return null; }));
 
             var routeA = new Route("foo", new MvcRouteHandler());
             var route1 = buildShellRoute(routeA);
 
             var routeB = new Route("bar", new MvcRouteHandler()) {
-                DataTokens = new RouteValueDictionary { { "area", "Beta" } }
+                DataTokens = new RouteValueDictionary { { "area", _settingsB.Name } }
             };
             var route2 = buildShellRoute(routeB);
 
             Assert.That(route1, Is.Not.SameAs(route2));
 
-            Assert.That(route1.ShellSettingsName, Is.EqualTo("Alpha"));
+            Assert.That(route1.ShellSettingsName, Is.EqualTo(_settingsA.Name));
             Assert.That(route1.Area, Is.Null);
 
-            Assert.That(route2.ShellSettingsName, Is.EqualTo("Alpha"));
-            Assert.That(route2.Area, Is.EqualTo("Beta"));
+            Assert.That(route2.ShellSettingsName, Is.EqualTo(_settingsA.Name));
+            Assert.That(route2.Area, Is.EqualTo(_settingsB.Name));
         }
 
 
@@ -102,12 +119,13 @@ namespace Orchard.Tests.Mvc.Routes {
             _containerB.Resolve<IRoutePublisher>().Publish(
                 new[] { new RouteDescriptor { Priority = 0, Route = routeB } });
 
-            Assert.That(_routes.Count(), Is.EqualTo(2));
+            // routes are grouped by name/priority/area
+            Assert.That(_routes.Count(), Is.EqualTo(1));
 
             _containerA.Resolve<IRoutePublisher>().Publish(
                 new[] { new RouteDescriptor { Priority = 0, Route = routeC } });
 
-            Assert.That(_routes.Count(), Is.EqualTo(2));
+            Assert.That(_routes.Count(), Is.EqualTo(1));
 
             _containerB.Resolve<IRoutePublisher>().Publish(
                 new[] {
@@ -115,7 +133,28 @@ namespace Orchard.Tests.Mvc.Routes {
                           new RouteDescriptor {Priority = 0, Route = routeB},
                       });
 
-            Assert.That(_routes.Count(), Is.EqualTo(3));
+            Assert.That(_routes.Count(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void RoutePublisherGroupsShellRoutesByName() {
+
+            var routeA = new Route("foo", new MvcRouteHandler());
+            var routeB = new Route("bar", new MvcRouteHandler());
+            var routeC = new Route("quux", new MvcRouteHandler());
+
+            _containerA.Resolve<IRoutePublisher>().Publish(
+                new[] { new RouteDescriptor { Name = "1", Priority = 0, Route = routeA } });
+            
+            _containerA.Resolve<IRoutePublisher>().Publish(
+                new[] { new RouteDescriptor { Name = "2", Priority = 0, Route = routeB } });
+
+            Assert.That(_routes.Count(), Is.EqualTo(2));
+
+            _containerB.Resolve<IRoutePublisher>().Publish(
+                new[] { new RouteDescriptor { Name = "2", Priority = 0, Route = routeC } });
+
+            Assert.That(_routes.Count(), Is.EqualTo(2));
         }
 
         [Test]
@@ -174,7 +213,13 @@ namespace Orchard.Tests.Mvc.Routes {
                 .Returns(settings);
 
 
-            var shellRouteFactory = container.Resolve<Func<RouteBase, ShellRoute>>();
+            var shellRouteFactory = new Func<RouteBase, ShellRoute>(routeBase =>
+                    new ShellRoute(
+                        routeBase,
+                        settings,
+                        container.Resolve<IWorkContextAccessor>(),
+                        container.Resolve<IRunningShellTable>(), 
+                        objects => { return null; }));
 
             var helloRoute = shellRouteFactory(new Route(
                 "hello",

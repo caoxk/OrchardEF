@@ -8,6 +8,7 @@ using Orchard.Data.Migration.Schema;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Logging;
+using Orchard.Exceptions;
 
 namespace Orchard.Data.Migration {
     /// <summary>
