@@ -20,8 +20,8 @@ namespace Orchard.Core.Settings.Services {
         public ILogger Logger { get; set; }
 
         public ISite GetSiteSettings() {
-            var item = new SiteSettingsPart();
-            item.Id = new Guid("01A61747-FEE0-4EAA-96BE-4A4C4B68D60C");
+            var item = new SiteSettingsPartRecord();
+            item.Id = 1;
             item.SiteSalt = "ca66c4cf061441efaf838cb99fe3126d";
             item.SiteName = "Test Site";
             item.SuperUser = "admin";

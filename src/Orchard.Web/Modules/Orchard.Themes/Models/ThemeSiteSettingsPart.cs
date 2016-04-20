@@ -1,12 +1,5 @@
-﻿
-
-namespace Orchard.Themes.Models {
-    public class ThemeSiteSettingsPart {
-        public virtual int Id { get; set; }
-        public virtual string CurrentThemeName
-        {
-            get;
-            set;
-        }
+﻿namespace Orchard.Themes.Models {
+    public class ThemeSiteSettingsPartRecord {
+        public string CurrentThemeName { get; set; }
     }
 }

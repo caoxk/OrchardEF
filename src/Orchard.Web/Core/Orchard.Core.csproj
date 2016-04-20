@@ -37,6 +37,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>..\..\OrchardBasicCorrectness.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,6 +51,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -60,14 +65,28 @@
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\aspnetmvc\System.Web.Mvc.dll</HintPath>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\aspnetmvc\System.Web.WebPages.dll</HintPath>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
@@ -75,46 +94,39 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings\AdminMenu.cs" />
     <Compile Include="Settings\Commands\SiteSettingsCommands.cs" />
-    <Compile Include="Settings\Controllers\AdminController.cs" />
-    <Compile Include="Settings\Controllers\StartController.cs" />
-    <Compile Include="Settings\Descriptor\Records\ShellDescriptorRecord.cs" />
-    <Compile Include="Settings\Descriptor\Records\ShellFeatureRecord.cs" />
-    <Compile Include="Settings\Descriptor\Records\ShellParameterRecord.cs" />
-    <Compile Include="Settings\Descriptor\ShellDescriptorManager.cs" />
-    <Compile Include="Settings\Models\SiteSettings2Part.cs" />
-    <Compile Include="Settings\Models\SiteSettings2PartRecord.cs" />
-    <Compile Include="Settings\Models\SiteSettingsPart.cs" />
-    <Compile Include="Settings\Models\SiteSettingsPartRecord.cs" />
+    <Compile Include="Settings\Permissions.cs" />
     <Compile Include="Settings\ResourceManifest.cs" />
+    <Compile Include="Settings\Migrations.cs" />
     <Compile Include="Settings\Routes.cs" />
-    <Compile Include="Settings\Services\SiteService.cs" />
+    <Compile Include="Settings\ViewModels\SiteCulturesViewModel.cs" />
     <Compile Include="Settings\State\Records\ShellFeatureStateRecord.cs" />
     <Compile Include="Settings\State\Records\ShellStateRecord.cs" />
     <Compile Include="Settings\State\ShellStateManager.cs" />
-    <Compile Include="Settings\ViewModels\SiteCulturesViewModel.cs" />
+    <Compile Include="Settings\Descriptor\Records\ShellFeatureRecord.cs" />
+    <Compile Include="Settings\Descriptor\Records\ShellParameterRecord.cs" />
+    <Compile Include="Settings\Descriptor\Records\ShellDescriptorRecord.cs" />
+    <Compile Include="Settings\Descriptor\ShellDescriptorManager.cs" />
+    <Compile Include="Settings\AdminMenu.cs" />
+    <Compile Include="Settings\Controllers\AdminController.cs" />
+    <Compile Include="Settings\Models\SiteSettingsPartRecord.cs" />
+    <Compile Include="Settings\Services\SiteService.cs" />
     <Compile Include="Settings\ViewModels\SiteSettingsPartViewModel.cs" />
+    <Compile Include="Shapes\ResourceManifest.cs" />
     <Compile Include="Shapes\CoreShapes.cs" />
     <Compile Include="Shapes\DateTimeShapes.cs" />
-    <Compile Include="Shapes\Localization\DateTimeLocalization.cs" />
-    <Compile Include="Shapes\ResourceManifest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Orchard\Orchard.Framework.csproj">
-      <Project>{2D1D92BB-4555-4CBE-8D0E-63563D6CE4C6}</Project>
-      <Name>Orchard.Framework</Name>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="Shapes\Scripts\admin-localnavigation.js" />
     <Content Include="Settings\Module.txt" />
     <Content Include="Settings\Styles\admin.css" />
     <Content Include="Settings\Styles\images\menu.settings.png" />
     <Content Include="Settings\Styles\menu.settings-admin.css" />
+    <Content Include="Settings\Views\Admin\Index.cshtml" />
+    <Content Include="Settings\Views\Admin\Culture.cshtml" />
+    <Content Include="Settings\Placement.info" />
+    <Content Include="Settings\Views\DisplayTemplates\CurrentCulture.cshtml" />
+    <Content Include="Settings\Views\DisplayTemplates\RemovableCulture.cshtml" />
     <Content Include="Shapes\Module.txt" />
     <Content Include="Shapes\Scripts\base.js" />
     <Content Include="Shapes\Scripts\html5.js" />
@@ -127,45 +139,72 @@
     <Content Include="Shapes\Styles\Images\toolBarBackground.gif" />
     <Content Include="Shapes\Styles\Images\toolBarHoverButtonBackground.gif" />
     <Content Include="Shapes\Styles\jquery.switchable.css" />
+    <Content Include="Shapes\Styles\site.css" />
     <Content Include="Shapes\Styles\special.css" />
-    <Content Include="web.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Settings\Placement.info" />
-    <Content Include="Settings\Styles\Web.config" />
-    <Content Include="Settings\Views\Admin\Culture.cshtml" />
-    <Content Include="Settings\Views\Admin\Index.cshtml" />
-    <Content Include="Settings\Views\DisplayTemplates\CurrentCulture.cshtml" />
-    <Content Include="Settings\Views\DisplayTemplates\RemovableCulture.cshtml" />
-    <Content Include="Settings\Views\EditorTemplates\Parts.Settings.SiteSettingsPart.cshtml" />
-    <Content Include="Settings\Views\Web.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Shapes\Scripts\Web.config" />
-    <Content Include="Shapes\Styles\Web.config" />
-    <Content Include="Shapes\Views\Breadcrumb.cshtml" />
-    <Content Include="Shapes\Views\Document.cshtml" />
-    <Content Include="Shapes\Views\ErrorPage.cshtml" />
-    <Content Include="Shapes\Views\Header.cshtml" />
     <Content Include="Shapes\Views\HeadPreload.cshtml" />
-    <Content Include="Shapes\Views\Layout.cshtml" />
-    <Content Include="Shapes\Views\LocalMenu.cshtml" />
-    <Content Include="Shapes\Views\LocalMenuItem.cshtml" />
-    <Content Include="Shapes\Views\Menu.cshtml" />
-    <Content Include="Shapes\Views\MenuItem.cshtml" />
-    <Content Include="Shapes\Views\MenuItemLink.cshtml" />
     <Content Include="Shapes\Views\Message.cshtml" />
     <Content Include="Shapes\Views\NotFound.cshtml" />
-    <Content Include="Shapes\Views\ShapeResult\Display.cshtml" />
-    <Content Include="Shapes\Views\ShapeResult\DisplayPartial.cshtml" />
+    <Content Include="Settings\Views\EditorTemplates\Parts.Settings.SiteSettingsPart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Orchard\Orchard.Framework.csproj">
+      <Project>{2D1D92BB-4555-4CBE-8D0E-63563D6CE4C6}</Project>
+      <Name>Orchard.Framework</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Shapes\Views\Document.cshtml" />
     <Content Include="Shapes\Views\User.cshtml" />
-    <Content Include="Shapes\Views\Web.config" />
+    <Content Include="Shapes\Views\Header.cshtml" />
+    <Content Include="Shapes\Views\Layout.cshtml" />
+    <Content Include="Shapes\Views\Menu.cshtml" />
+    <Content Include="Shapes\Views\MenuItem.cshtml" />
+    <Content Include="Shapes\Scripts\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Shapes\Styles\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Settings\Styles\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Settings\Views\Start\StartPage.cshtml" />
+    <Content Include="Shapes\Views\ShapeResult\Display.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Shapes\Views\_Modal.cshtml" />
+    <Content Include="Shapes\Views\LocalMenu.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Shapes\Views\LocalMenuItem.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Shapes\Views\ErrorPage.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Shapes\Views\ShapeResult\DisplayPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Shapes\Views\Breadcrumb.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Shapes\Views\MenuItemLink.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Shapes\Views\LocalNavigation.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Shapes\Views\AdminTabs.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

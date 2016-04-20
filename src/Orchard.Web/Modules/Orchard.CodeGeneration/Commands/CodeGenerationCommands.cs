@@ -17,13 +17,17 @@ namespace Orchard.CodeGeneration.Commands {
         private readonly IExtensionManager _extensionManager;
         private readonly ISchemaCommandGenerator _schemaCommandGenerator;
         private const string SolutionDirectoryModules = "E9C9F120-07BA-4DFB-B9C3-3AFB9D44C9D5";
+        private const string SolutionDirectoryTests = "74E681ED-FECC-4034-B9BD-01B0BB1BDECA";
         private const string SolutionDirectoryThemes = "74492CBC-7201-417E-BC29-28B4C25A58B0";
 
-        private static readonly string[] _themeDirectories = new [] {
-            "", "Content", "Styles", "Scripts", "Views", "Zones"
+        private static readonly string[] _themeDirectories = new[] {
+            "", "Assets", "Content", "Styles", "Scripts", "Views"
         };
-        private static readonly string[] _moduleDirectories = new [] {
-            "", "Properties", "Controllers", "Views", "Models", "Scripts", "Styles"
+        private static readonly string[] _moduleDirectories = new[] {
+            "", "Properties", "Assets", "Controllers", "Views", "Models", "Scripts", "Styles"
+        };
+        private static readonly string[] _moduleTestsDirectories = new[] {
+            "", "Properties"
         };
 
         private const string ModuleName = "CodeGeneration";
@@ -50,8 +54,8 @@ namespace Orchard.CodeGeneration.Commands {
         [OrchardSwitch]
         public string BasedOn { get; set; }
 
-        [CommandHelp("codegen -dm <feature-name> \r\n\t" + "Create a new Data Migration class")]
-        [CommandName("codegen -dm")]
+        [CommandHelp("codegen datamigration <feature-name> \r\n\t" + "Create a new Data Migration class")]
+        [CommandName("codegen datamigration")]
         public void CreateDataMigration(string featureName) {
             Context.Output.WriteLine(T("Creating Data Migration for {0}", featureName));
             ExtensionDescriptor extensionDescriptor = _extensionManager.AvailableExtensions().FirstOrDefault(extension => DefaultExtensionTypes.IsModule(extension.ExtensionType) &&
@@ -66,7 +70,7 @@ namespace Orchard.CodeGeneration.Commands {
             string dataMigrationFilePath = dataMigrationFolderPath + "Migrations.cs";
             string templatesPath = HostingEnvironment.MapPath("~/Modules/Orchard." + ModuleName + "/CodeGenerationTemplates/");
             string moduleCsProjPath = HostingEnvironment.MapPath(string.Format("~/Modules/{0}/{0}.csproj", extensionDescriptor.Id));
-                    
+
             if (!Directory.Exists(dataMigrationFolderPath)) {
                 Directory.CreateDirectory(dataMigrationFolderPath);
             }
@@ -95,7 +99,7 @@ namespace Orchard.CodeGeneration.Commands {
             string projectFileText = File.ReadAllText(moduleCsProjPath);
 
             // The string searches in solution/project files can be made aware of comment lines.
-            if ( projectFileText.Contains("<Compile Include") ) {
+            if (projectFileText.Contains("<Compile Include")) {
                 string compileReference = string.Format("<Compile Include=\"{0}\" />\r\n    ", "Migrations.cs");
                 projectFileText = projectFileText.Insert(projectFileText.LastIndexOf("<Compile Include"), compileReference);
             }
@@ -109,13 +113,13 @@ namespace Orchard.CodeGeneration.Commands {
             Context.Output.WriteLine(T("Data migration created successfully in Module {0}", extensionDescriptor.Id));
         }
 
-        [CommandHelp("codegen -m <module-name> [/IncludeInSolution:true|false]\r\n\t" + "Create a new Orchard module")]
-        [CommandName("codegen -m")]
+        [CommandHelp("codegen module <module-name> [/IncludeInSolution:true|false]\r\n\t" + "Create a new Orchard module")]
+        [CommandName("codegen module")]
         [OrchardSwitches("IncludeInSolution")]
         public void CreateModule(string moduleName) {
             Context.Output.WriteLine(T("Creating Module {0}", moduleName));
 
-            if ( _extensionManager.AvailableExtensions().Any(extension => String.Equals(moduleName, extension.Name, StringComparison.OrdinalIgnoreCase)) ) {
+            if (_extensionManager.AvailableExtensions().Any(extension => String.Equals(moduleName, extension.Name, StringComparison.OrdinalIgnoreCase))) {
                 Context.Output.WriteLine(T("Creating Module {0} failed: a module of the same name already exists", moduleName));
                 return;
             }
@@ -124,8 +128,61 @@ namespace Orchard.CodeGeneration.Commands {
             Context.Output.WriteLine(T("Module {0} created successfully", moduleName));
         }
 
-        [CommandName("codegen -t")]
-        [CommandHelp("codegen -t <theme-name> [/CreateProject:true|false][/IncludeInSolution:true|false][/BasedOn:<theme-name>]\r\n\tCreate a new Orchard theme")]
+        [CommandHelp("codegen moduletests <module-name> [/IncludeInSolution:true|false]\r\n\t" + "Creates a new test project for a module")]
+        [CommandName("codegen moduletests")]
+        [OrchardSwitches("IncludeInSolution")]
+        public void CreateModuleTests(string moduleName) {
+            var projectName = moduleName + ".Tests";
+
+            Context.Output.WriteLine(T("Creating module tests project {0}", projectName));
+
+            var testsPath = HostingEnvironment.MapPath("~/Modules/" + moduleName + "/" + projectName + "/");
+
+            if (Directory.Exists(testsPath)) {
+                Context.Output.WriteLine(T("Creating module tests project {0} failed: a project of the same name already exists", projectName));
+                return;
+            }
+
+            var propertiesPath = testsPath + "Properties";
+            var content = new HashSet<string>();
+            var folders = new HashSet<string>();
+
+            foreach (var folder in _moduleTestsDirectories) {
+                Directory.CreateDirectory(testsPath + folder);
+                if (!String.IsNullOrEmpty(folder)) {
+                    folders.Add(testsPath + folder);
+                }
+            }
+
+            var projectGuid = Guid.NewGuid().ToString().ToUpper();
+
+            var templateText = File.ReadAllText(_codeGenTemplatePath + "ModuleAssemblyInfo.txt");
+            templateText = templateText.Replace("$$ModuleName$$", projectName);
+            templateText = templateText.Replace("$$ModuleTypeLibGuid$$", Guid.NewGuid().ToString());
+            File.WriteAllText(propertiesPath + "\\AssemblyInfo.cs", templateText);
+            content.Add(propertiesPath + "\\AssemblyInfo.cs");
+
+            var itemGroup = CreateProjectItemGroup(testsPath, content, folders);
+
+            var csprojText = File.ReadAllText(_codeGenTemplatePath + "\\ModuleTestsCsProj.txt");
+            csprojText = csprojText.Replace("$$ProjectName$$", projectName);
+            csprojText = csprojText.Replace("$$TestsProjectGuid$$", projectGuid);
+            csprojText = csprojText.Replace("$$FileIncludes$$", itemGroup ?? "");
+            csprojText = csprojText.Replace("$$OrchardReferences$$", GetOrchardReferences());
+
+            File.WriteAllText(testsPath + projectName + ".csproj", csprojText);
+
+
+            // The string searches in solution/project files can be made aware of comment lines.
+            if (IncludeInSolution) {
+                AddToSolution(Context.Output, projectName, projectGuid, "Modules\\" + moduleName, SolutionDirectoryTests);
+            }
+
+            Context.Output.WriteLine(T("Module tests project {0} created successfully", projectName));
+        }
+
+        [CommandName("codegen theme")]
+        [CommandHelp("codegen theme <theme-name> [/CreateProject:true|false][/IncludeInSolution:true|false][/BasedOn:<theme-name>]\r\n\tCreate a new Orchard theme")]
         [OrchardSwitches("IncludeInSolution,BasedOn,CreateProject")]
         public void CreateTheme(string themeName) {
             Context.Output.WriteLine(T("Creating Theme {0}", themeName));
@@ -146,8 +203,8 @@ namespace Orchard.CodeGeneration.Commands {
             Context.Output.WriteLine(T("Theme {0} created successfully", themeName));
         }
 
-        [CommandHelp("codegen -c <module-name> <controller-name>\r\n\t" + "Create a new Orchard controller in a module")]
-        [CommandName("codegen -c")]
+        [CommandHelp("codegen controller <module-name> <controller-name>\r\n\t" + "Create a new Orchard controller in a module")]
+        [CommandName("codegen controller")]
         public void CreateController(string moduleName, string controllerName) {
             Context.Output.WriteLine(T("Creating Controller {0} in Module {1}", controllerName, moduleName));
 
@@ -217,17 +274,24 @@ namespace Orchard.CodeGeneration.Commands {
             var content = new HashSet<string>();
             var folders = new HashSet<string>();
 
-            foreach(var folder in _moduleDirectories) {
+            foreach (var folder in _moduleDirectories) {
                 Directory.CreateDirectory(modulePath + folder);
                 if (!String.IsNullOrEmpty(folder)) {
                     folders.Add(modulePath + folder);
                 }
             }
 
+            File.WriteAllText(modulePath + "Assets.json", File.ReadAllText(_codeGenTemplatePath + "ModuleAssetsJson.txt"));
+            content.Add(modulePath + "Assets.json");
+            File.WriteAllText(modulePath + "Assets\\Styles.less", File.ReadAllText(_codeGenTemplatePath + "ModuleStylesLess.txt"));
+            content.Add(modulePath + "Assets\\Styles.less");
+            File.WriteAllText(modulePath + "Styles\\Styles.css", File.ReadAllText(_codeGenTemplatePath + "ModuleStylesCss.txt"));
+            content.Add(modulePath + "Styles\\Styles.css");
+            File.WriteAllText(modulePath + "Styles\\Styles.min.css", File.ReadAllText(_codeGenTemplatePath + "ModuleStylesMinCss.txt"));
+            content.Add(modulePath + "Styles\\Styles.min.css");
+
             File.WriteAllText(modulePath + "Web.config", File.ReadAllText(_codeGenTemplatePath + "ModuleRootWebConfig.txt"));
             content.Add(modulePath + "Web.config");
-            File.WriteAllText(modulePath + "Views\\Web.config", File.ReadAllText(_codeGenTemplatePath + "ViewsWebConfig.txt"));
-            content.Add(modulePath + "Views\\Web.config");
             File.WriteAllText(modulePath + "Scripts\\Web.config", File.ReadAllText(_codeGenTemplatePath + "StaticFilesWebConfig.txt"));
             content.Add(modulePath + "Scripts\\Web.config");
             File.WriteAllText(modulePath + "Styles\\Web.config", File.ReadAllText(_codeGenTemplatePath + "StaticFilesWebConfig.txt"));
@@ -259,27 +323,31 @@ namespace Orchard.CodeGeneration.Commands {
         }
 
         private static string GetOrchardReferences() {
-            return IsSourceEnlistment() ? 
+            return IsSourceEnlistment() ?
 @"<ProjectReference Include=""..\..\..\Orchard\Orchard.Framework.csproj"">
       <Project>{2D1D92BB-4555-4CBE-8D0E-63563D6CE4C6}</Project>
       <Name>Orchard.Framework</Name>
+      <Private>false</Private>
     </ProjectReference>
     <ProjectReference Include=""..\..\Core\Orchard.Core.csproj"">
       <Project>{9916839C-39FC-4CEB-A5AF-89CA7E87119F}</Project>
       <Name>Orchard.Core</Name>
+      <Private>false</Private>
     </ProjectReference>" :
 @"<Reference Include=""Orchard.Core"">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\bin\Orchard.Core.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include=""Orchard.Framework"">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\bin\Orchard.Framework.dll</HintPath>
+      <Private>false</Private>
     </Reference>";
         }
 
         private static bool IsSourceEnlistment() {
-            return File.Exists(Directory.GetParent(_orchardWebProj).Parent.FullName + "\\OrchardNoCMS.sln");
+            return File.Exists(Directory.GetParent(_orchardWebProj).Parent.FullName + "\\Orchard.sln");
         }
 
         private void CreateThemeFromTemplates(TextWriter output, string themeName, string baseTheme, string projectGuid, bool includeInSolution) {
@@ -296,11 +364,17 @@ namespace Orchard.CodeGeneration.Commands {
                 }
             }
 
+            File.WriteAllText(themePath + "Assets.json", File.ReadAllText(_codeGenTemplatePath + "ModuleAssetsJson.txt"));
+            createdFiles.Add(themePath + "Assets.json");
+            File.WriteAllText(themePath + "Assets\\Styles.less", File.ReadAllText(_codeGenTemplatePath + "ModuleStylesLess.txt"));
+            createdFiles.Add(themePath + "Assets\\Styles.less");
+            File.WriteAllText(themePath + "Styles\\Styles.css", File.ReadAllText(_codeGenTemplatePath + "ModuleStylesCss.txt"));
+            createdFiles.Add(themePath + "Styles\\Styles.css");
+            File.WriteAllText(themePath + "Styles\\Styles.min.css", File.ReadAllText(_codeGenTemplatePath + "ModuleStylesMinCss.txt"));
+            createdFiles.Add(themePath + "Styles\\Styles.min.css");
+
             File.WriteAllText(themePath + "Web.config", File.ReadAllText(_codeGenTemplatePath + "ModuleRootWebConfig.txt"));
             createdFiles.Add(themePath + "Web.config");
-            var webConfig = themePath + "Views\\Web.config";
-            File.WriteAllText(webConfig, File.ReadAllText(_codeGenTemplatePath + "\\ViewsWebConfig.txt"));
-            createdFiles.Add(webConfig);
             File.WriteAllText(themePath + "Scripts\\Web.config", File.ReadAllText(_codeGenTemplatePath + "StaticFilesWebConfig.txt"));
             createdFiles.Add(themePath + "Scripts\\Web.config");
             File.WriteAllText(themePath + "Styles\\Web.config", File.ReadAllText(_codeGenTemplatePath + "StaticFilesWebConfig.txt"));
@@ -349,17 +423,24 @@ namespace Orchard.CodeGeneration.Commands {
 
         private void AddToSolution(TextWriter output, string projectName, string projectGuid, string containingFolder, string solutionFolderGuid) {
             if (!string.IsNullOrEmpty(projectGuid)) {
-                var solutionPath = Directory.GetParent(_orchardWebProj).Parent.FullName + "\\OrchardNoCMS.sln";
+                var solutionPath = Directory.GetParent(_orchardWebProj).Parent.FullName + "\\Orchard.sln";
                 if (File.Exists(solutionPath)) {
                     var projectReference = string.Format("EndProject\r\nProject(\"{{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}}\") = \"{0}\", \"Orchard.Web\\{2}\\{0}\\{0}.csproj\", \"{{{1}}}\"\r\n", projectName, projectGuid, containingFolder);
-                    var projectConfiguationPlatforms = string.Format("GlobalSection(ProjectConfigurationPlatforms) = postSolution\r\n\t\t{{{0}}}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\r\n\t\t{{{0}}}.Debug|Any CPU.Build.0 = Debug|Any CPU\r\n\t\t{{{0}}}.Release|Any CPU.ActiveCfg = Release|Any CPU\r\n\t\t{{{0}}}.Release|Any CPU.Build.0 = Release|Any CPU\r\n", projectGuid);
+                    var projectConfiguationPlatforms = string.Format("\t{{{0}}}.Debug|Any CPU.ActiveCfg = Debug|Any CPU\r\n\t\t{{{0}}}.Debug|Any CPU.Build.0 = Debug|Any CPU\r\n\t\t{{{0}}}.Release|Any CPU.ActiveCfg = Release|Any CPU\r\n\t\t{{{0}}}.Release|Any CPU.Build.0 = Release|Any CPU\r\n\t", projectGuid);
                     var solutionText = File.ReadAllText(solutionPath);
-                    solutionText = solutionText.Insert(solutionText.LastIndexOf("EndProject\r\n"), projectReference).Replace("GlobalSection(ProjectConfigurationPlatforms) = postSolution\r\n", projectConfiguationPlatforms);
-                    solutionText = solutionText.Insert(solutionText.LastIndexOf("EndGlobalSection"), "\t{" + projectGuid + "} = {" + solutionFolderGuid + "}\r\n\t");
+                    solutionText = solutionText.Insert(solutionText.LastIndexOf("EndProject\r\n"), projectReference);
+                    solutionText = AppendGlobalSection(solutionText, "ProjectConfigurationPlatforms", projectConfiguationPlatforms);
+                    solutionText = AppendGlobalSection(solutionText, "NestedProjects", "\t{" + projectGuid + "} = {" + solutionFolderGuid + "}\r\n\t");
                     File.WriteAllText(solutionPath, solutionText);
                     TouchSolution(output);
                 }
             }
+        }
+
+        private string AppendGlobalSection(string solutionText, string sectionName, string content) {
+            var sectionStart = solutionText.IndexOf(string.Format("GlobalSection({0})", sectionName));
+            var sectionEnd = solutionText.IndexOf("EndGlobalSection", sectionStart);
+            return solutionText.Insert(sectionEnd, content);
         }
 
         private static string CreateProjectItemGroup(string relativeFromPath, HashSet<string> content, HashSet<string> folders) {
@@ -406,7 +487,7 @@ namespace Orchard.CodeGeneration.Commands {
 
         private void TouchSolution(TextWriter output) {
             string rootWebProjectPath = HostingEnvironment.MapPath("~/Orchard.Web.csproj");
-            string solutionPath = Directory.GetParent(rootWebProjectPath).Parent.FullName + "\\OrchardNoCMS.sln";
+            string solutionPath = Directory.GetParent(rootWebProjectPath).Parent.FullName + "\\Orchard.sln";
             if (!File.Exists(solutionPath)) {
                 output.WriteLine(T("Warning: Solution file could not be found at {0}", solutionPath));
                 return;

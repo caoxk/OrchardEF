@@ -1,32 +1,59 @@
-﻿using System;
-using Orchard.Settings;
+﻿using Orchard.Settings;
 
 namespace Orchard.Core.Settings.Models {
-    public class SiteSettingsPartRecord  {
-        public const int DefaultPageSize = 10;
-
-        public SiteSettingsPartRecord() {
-            PageSize = DefaultPageSize;
+    public class SiteSettingsPartRecord : ISite {
+        public virtual int Id { get; set; }
+        public virtual string PageTitleSeparator { get; set; }
+        public string SiteName {
+            get; set;
         }
 
-        public virtual Guid Id { get; set; }
+        public string SiteSalt {
+            get; set;
+        }
 
-        public virtual string SiteSalt { get; set; }
+        public string SuperUser {
+            get; set;
+        }
 
-        public virtual string SiteName { get; set; }
+        public string HomePage {
+            get; set;
+        }
 
-        public virtual string SuperUser { get; set; }
+        public string SiteCulture {
+            get; set;
+        }
 
-        public virtual string PageTitleSeparator { get; set; }
+		public string SiteCalendar {
+            get; set;
+        }
 
-        public virtual string HomePage { get; set; }
+        public ResourceDebugMode ResourceDebugMode {
+            get; set;
+        }
+        
+        public bool UseCdn {
+            get; set;
+        }
 
-        public virtual string SiteCulture { get; set; }
+        public int PageSize {
+            get; set;
+        }
 
-        public virtual ResourceDebugMode ResourceDebugMode { get; set; }
+        public int MaxPageSize {
+            get; set;
+        }
 
-        public virtual int PageSize { get; set; }
+        public int MaxPagedCount {
+            get; set;
+        }
 
-        public virtual string SiteTimeZone { get; set; }
+        public string SiteTimeZone {
+            get; set;
+        }
+
+        public string BaseUrl {
+            get; set;
+        }
     }
 }

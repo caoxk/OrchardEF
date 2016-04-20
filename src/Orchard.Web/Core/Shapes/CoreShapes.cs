@@ -94,29 +94,26 @@ namespace Orchard.Core.Shapes {
                 .OnDisplaying(displaying => {
                     var menuItem = displaying.Shape;
                     var menu = menuItem.Menu;
+                    int level = menuItem.Level;
+
+                    menuItem.Metadata.Alternates.Add("MenuItem__level__" + level);
                     menuItem.Metadata.Alternates.Add("MenuItem__" + EncodeAlternateElement(menu.MenuName));
+                    menuItem.Metadata.Alternates.Add("MenuItem__" + EncodeAlternateElement(menu.MenuName) + "__level__" + level);
                 });
 
             builder.Describe("MenuItemLink")
                 .OnDisplaying(displaying => {
                     var menuItem = displaying.Shape;
                     string menuName = menuItem.Menu.MenuName;
-                    string contentType = null;
-                    
+                    int level = menuItem.Level;
 
-                    // MenuItemLink__[ContentType] e.g. MenuItemLink-HtmlMenuItem
-                    if (contentType != null) {
-                        menuItem.Metadata.Alternates.Add("MenuItemLink__" + EncodeAlternateElement(contentType));
-                    }
+                    menuItem.Metadata.Alternates.Add("MenuItemLink__level__" + level);
 
                     // MenuItemLink__[MenuName] e.g. MenuItemLink-Main-Menu
+                    // MenuItemLink__[MenuName]__level__[level] e.g. MenuItemLink-Main-Menu-level-2
                     menuItem.Metadata.Alternates.Add("MenuItemLink__" + EncodeAlternateElement(menuName));
+                    menuItem.Metadata.Alternates.Add("MenuItemLink__" + EncodeAlternateElement(menuName) + "__level__" + level);
 
-                    // MenuItemLink__[MenuName]__[ContentType] e.g. MenuItemLink-Main-Menu-HtmlMenuItem
-                    if (contentType != null) {
-                        menuItem.Metadata.Alternates.Add("MenuItemLink__" + EncodeAlternateElement(menuName) + "__" + EncodeAlternateElement(contentType));
-                    }
-                    
                 });
 
             builder.Describe("LocalMenu")
@@ -215,7 +212,7 @@ namespace Orchard.Core.Shapes {
                 .OnDisplaying(displaying => {
                     var resource = displaying.Shape;
                     string url = resource.Url;
-                    string fileName = StaticFileBindingStrategy.GetAlternateShapeNameFromFileName(url);
+                    var fileName = url != null ? StaticFileBindingStrategy.GetAlternateShapeNameFromFileName(url) : default(string);
                     if (!string.IsNullOrEmpty(fileName)) {
                         resource.Metadata.Alternates.Add("Style__" + fileName);
                     }
@@ -225,7 +222,7 @@ namespace Orchard.Core.Shapes {
                 .OnDisplaying(displaying => {
                     var resource = displaying.Shape;
                     string url = resource.Url;
-                    string fileName = StaticFileBindingStrategy.GetAlternateShapeNameFromFileName(url);
+                    var fileName = url != null ? StaticFileBindingStrategy.GetAlternateShapeNameFromFileName(url) : default(string);
                     if (!string.IsNullOrEmpty(fileName)) {
                         resource.Metadata.Alternates.Add("Script__" + fileName);
                     }
@@ -235,7 +232,7 @@ namespace Orchard.Core.Shapes {
                 .OnDisplaying(displaying => {
                     var resource = displaying.Shape;
                     string url = resource.Url;
-                    string fileName = StaticFileBindingStrategy.GetAlternateShapeNameFromFileName(url);
+                    var fileName = url != null ? StaticFileBindingStrategy.GetAlternateShapeNameFromFileName(url) : default(string);
                     if (!string.IsNullOrEmpty(fileName)) {
                         resource.Metadata.Alternates.Add("Resource__" + fileName);
                     }
@@ -260,26 +257,42 @@ namespace Orchard.Core.Shapes {
             IDictionary<string, string> attributes = Shape.Attributes;
             var zoneWrapper = GetTagBuilder("div", id, classes, attributes);
             Output.Write(zoneWrapper.ToString(TagRenderMode.StartTag));
-            foreach (var item in ordered_hack(Shape))
+            foreach (var item in Order(Shape))
                 Output.Write(Display(item));
             Output.Write(zoneWrapper.ToString(TagRenderMode.EndTag));
         }
 
         [Shape]
         public void ContentZone(dynamic Display, dynamic Shape, TextWriter Output) {
-            foreach (var item in ordered_hack(Shape))
-                Output.Write(Display(item));
+            var unordered = ((IEnumerable<dynamic>)Shape).ToArray();
+            var tabbed = unordered.GroupBy(x => (string)x.Metadata.Tab);
+
+            if (tabbed.Count() > 1) {
+                foreach (var tab in tabbed) {
+                    var tabName = String.IsNullOrWhiteSpace(tab.Key) ? "Content" : tab.Key;
+                    var tabBuilder = new TagBuilder("div");
+                    tabBuilder.Attributes["id"] = "tab-" + tabName.HtmlClassify();
+                    tabBuilder.Attributes["data-tab"] = tabName;
+                    Output.Write(tabBuilder.ToString(TagRenderMode.StartTag));
+                    foreach (var item in Order(tab))
+                        Output.Write(Display(item));
+
+                    Output.Write(tabBuilder.ToString(TagRenderMode.EndTag));
+                }
+            }
+            else {
+                foreach (var item in Order(unordered))
+                    Output.Write(Display(item));
+            }
         }
 
         [Shape]
         public void DocumentZone(dynamic Display, dynamic Shape, TextWriter Output) {
-            foreach (var item in ordered_hack(Shape))
+            foreach (var item in Order(Shape))
                 Output.Write(Display(item));
         }
 
-        #region ordered_hack
-
-        private static IEnumerable<dynamic> ordered_hack(dynamic shape) {
+        public static IEnumerable<dynamic> Order(dynamic shape) {
             IEnumerable<dynamic> unordered = shape;
             if (unordered == null || unordered.Count() < 2)
                 return shape;
@@ -288,9 +301,12 @@ namespace Orchard.Core.Shapes {
             var progress = 1;
             var flatPositionComparer = new FlatPositionComparer();
             var ordering = unordered.Select(item => {
-                var position = (item == null || item.GetType().GetProperty("Metadata") == null || item.Metadata.GetType().GetProperty("Position") == null)
-                                   ? null
-                                   : item.Metadata.Position;
+                string position = null;
+                var itemPosition = item as IPositioned;
+                if (itemPosition != null) {
+                    position = itemPosition.Position;
+                }
+
                 return new { item, position };
             }).ToList();
 
@@ -314,7 +330,29 @@ namespace Orchard.Core.Shapes {
             return ordering.Select(ordered => ordered.item).ToList();
         }
 
-        #endregion
+        public static IEnumerable<string> HarvestAndSortTabs(IEnumerable<dynamic> shapes) {
+            var orderedShapes = Order(shapes).ToArray();
+            var tabs = new List<string>();
+
+            foreach (var shape in orderedShapes) {
+                var tab = (string)shape.Metadata.Tab;
+
+                if (String.IsNullOrEmpty(tab))
+                    continue;
+
+                if(!tabs.Contains(tab))
+                    tabs.Add(tab);
+            }
+
+            // If we have any tabs, make sure we have at least the Content tab and that it is the first one,
+            // since that's where we will put anything else not part of a tab.
+            if (tabs.Any()) {
+                tabs.Remove("Content");
+                tabs.Insert(0, "Content");
+            }
+
+            return tabs;
+        }
 
         [Shape]
         public void HeadScripts(dynamic Display, TextWriter Output) {
@@ -385,15 +423,21 @@ namespace Orchard.Core.Shapes {
                     break;
                 default:
                     Debug.Assert(site.ResourceDebugMode == ResourceDebugMode.FromAppSetting, "Unknown ResourceDebugMode value.");
-                    debugMode = _httpContextAccessor.Value.Current().IsDebuggingEnabled;
+                    var context = _httpContextAccessor.Value.Current();
+                    debugMode = context != null && context.IsDebuggingEnabled;
                     break;
             }
             var defaultSettings = new RequireSettings {
                 DebugMode = debugMode,
+                CdnMode = site.UseCdn,
                 Culture = _workContext.Value.CurrentCulture,
             };
             var requiredResources = _resourceManager.Value.BuildRequiredResources(resourceType);
-            var appPath = _httpContextAccessor.Value.Current().Request.ApplicationPath;
+            var httpContext = _httpContextAccessor.Value.Current();
+            var appPath = httpContext == null || httpContext.Request == null
+                ? null
+                : httpContext.Request.ApplicationPath;
+
             foreach (var context in requiredResources.Where(r =>
                 (includeLocation.HasValue ? r.Settings.Location == includeLocation.Value : true) &&
                 (excludeLocation.HasValue ? r.Settings.Location != excludeLocation.Value : true))) {
@@ -437,19 +481,17 @@ namespace Orchard.Core.Shapes {
                 currentPage = 1;
 
             var pageSize = PageSize;
-            if (pageSize < 1)
-                pageSize = _workContext.Value.CurrentSite.PageSize;
-
+            
             var numberOfPagesToShow = Quantity ?? 0;
             if (Quantity == null || Quantity < 0)
                 numberOfPagesToShow = 7;
     
-            var totalPageCount = (int)Math.Ceiling(TotalItemCount / pageSize);
+            var totalPageCount = pageSize > 0 ? (int)Math.Ceiling(TotalItemCount / pageSize) : 1;
 
-            var firstText = FirstText ?? T("<<");
-            var previousText = PreviousText ?? T("<");
-            var nextText = NextText ?? T(">");
-            var lastText = LastText ?? T(">>");
+            var firstText = FirstText ?? T("&lt;&lt;");
+            var previousText = PreviousText ?? T("&lt;");
+            var nextText = NextText ?? T("&gt;");
+            var lastText = LastText ?? T("&gt;&gt;");
             var gapText = GapText ?? T("...");
 
             var routeData = new RouteValueDictionary(Html.ViewContext.RouteData.Values);
@@ -517,7 +559,7 @@ namespace Orchard.Core.Shapes {
             }
 
             // page numbers
-            if (numberOfPagesToShow > 0) {
+            if (numberOfPagesToShow > 0 && lastPage > 1) {
                 for (var p = firstPage; p <= lastPage; p++) {
                     if (p == currentPage) {
                         Shape.Add(New.Pager_CurrentPage(Value: p, RouteValues: new RouteValueDictionary(routeData), Pager: Shape));
@@ -615,7 +657,7 @@ namespace Orchard.Core.Shapes {
 
             IEnumerable<string> classes = Shape.Classes;
             IDictionary<string, string> attributes = Shape.Attributes;
-            attributes.Add("href", action);
+            attributes["href"] = action;
             string id = Shape.Id;
             var tag = GetTagBuilder("a", id, classes, attributes);
             tag.InnerHtml = EncodeOrDisplay(Value, Display, Html).ToString();
@@ -742,6 +784,11 @@ namespace Orchard.Core.Shapes {
         [Shape]
         public void EditorTemplate(HtmlHelper Html, TextWriter Output, string TemplateName, object Model, string Prefix) {
             RenderInternal(Html, Output, "EditorTemplates/" + TemplateName, Model, Prefix);
+        }
+
+        [Shape]
+        public void DefinitionTemplate(HtmlHelper Html, TextWriter Output, string TemplateName, object Model, string Prefix) {
+            RenderInternal(Html, Output, "DefinitionTemplates/" + TemplateName, Model, Prefix);
         }
 
         static void RenderInternal(HtmlHelper Html, TextWriter Output, string TemplateName, object Model, string Prefix) {

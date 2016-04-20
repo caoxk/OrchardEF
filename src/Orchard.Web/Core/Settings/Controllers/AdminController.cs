@@ -1,17 +1,16 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Orchard.Core.Settings.ViewModels;
 using Orchard.Localization;
 using Orchard.Localization.Services;
-using Orchard.Security;
+using Orchard.Mvc;
 using Orchard.Settings;
 using Orchard.UI.Notify;
 
 namespace Orchard.Core.Settings.Controllers {
     [ValidateInput(false)]
-    public class AdminController : Controller {
+    public class AdminController : Controller, IUpdateModel {
         private readonly ISiteService _siteService;
         private readonly ICultureManager _cultureManager;
         public IOrchardServices Services { get; private set; }
@@ -29,32 +28,67 @@ namespace Orchard.Core.Settings.Controllers {
         public Localizer T { get; set; }
 
         public ActionResult Index(string groupInfoId) {
-            if (!Services.Authorizer.Authorize(StandardPermissions.SiteOwner, T("Not authorized to manage settings")))
+            if (!Services.Authorizer.Authorize(Permissions.ManageSettings, T("Not authorized to manage settings")))
                 return new HttpUnauthorizedResult();
 
-           
-            var site = _siteService.GetSiteSettings();
-           
-            return View();
+            dynamic model = null;
+            //var site = _siteService.GetSiteSettings();
+            //if (!string.IsNullOrWhiteSpace(groupInfoId)) {
+            //    model = Services.ContentManager.BuildEditor(site, groupInfoId);
+
+            //    if (model == null)
+            //        return HttpNotFound();
+
+            //    var groupInfo = Services.ContentManager.GetEditorGroupInfo(site, groupInfoId);
+            //    if (groupInfo == null)
+            //        return HttpNotFound();
+
+            //    model.GroupInfo = groupInfo;
+            //}
+            //else {
+            //    model = Services.ContentManager.BuildEditor(site);
+            //}
+
+            return View(model);
         }
 
         [HttpPost, ActionName("Index")]
         public ActionResult IndexPOST(string groupInfoId) {
-            if (!Services.Authorizer.Authorize(StandardPermissions.SiteOwner, T("Not authorized to manage settings")))
+            if (!Services.Authorizer.Authorize(Permissions.ManageSettings, T("Not authorized to manage settings")))
                 return new HttpUnauthorizedResult();
 
-            var site = _siteService.GetSiteSettings();
-            
+            //var site = _siteService.GetSiteSettings();
+            //var model = Services.ContentManager.UpdateEditor(site, this, groupInfoId);
 
-                // Casting to avoid invalid (under medium trust) reflection over the protected View method and force a static invocation.
-                 return View();
-                     
-          
+            //GroupInfo groupInfo = null;
+
+            //if (!string.IsNullOrWhiteSpace(groupInfoId)) {
+            //    if (model == null) {
+            //        Services.TransactionManager.Cancel();
+            //        return HttpNotFound();
+            //    }
+
+            //    groupInfo = Services.ContentManager.GetEditorGroupInfo(site, groupInfoId);
+            //    if (groupInfo == null) {
+            //        Services.TransactionManager.Cancel();
+            //        return HttpNotFound();
+            //    }
+            //}
+
+            //if (!ModelState.IsValid) {
+            //    Services.TransactionManager.Cancel();
+            //    model.GroupInfo = groupInfo;
+
+            //    return System.Web.UI.WebControls.View(model);
+            //}
+
+            Services.Notifier.Information(T("Settings updated"));
+            return RedirectToAction("Index");
         }
 
         public ActionResult Culture() {
             //todo: class and/or method attributes for our auth?
-            if (!Services.Authorizer.Authorize(StandardPermissions.SiteOwner, T("Not authorized to manage settings")))
+            if (!Services.Authorizer.Authorize(Permissions.ManageSettings, T("Not authorized to manage settings")))
                 return new HttpUnauthorizedResult();
 
             var model = new SiteCulturesViewModel {
@@ -70,7 +104,7 @@ namespace Orchard.Core.Settings.Controllers {
 
         [HttpPost]
         public ActionResult AddCulture(string systemCultureName, string cultureName) {
-            if (!Services.Authorizer.Authorize(StandardPermissions.SiteOwner, T("Not authorized to manage settings")))
+            if (!Services.Authorizer.Authorize(Permissions.ManageSettings, T("Not authorized to manage settings")))
                 return new HttpUnauthorizedResult();
 
             cultureName = string.IsNullOrWhiteSpace(cultureName) ? systemCultureName : cultureName;
@@ -83,11 +117,19 @@ namespace Orchard.Core.Settings.Controllers {
 
         [HttpPost]
         public ActionResult DeleteCulture(string cultureName) {
-            if (!Services.Authorizer.Authorize(StandardPermissions.SiteOwner, T("Not authorized to manage settings")))
+            if (!Services.Authorizer.Authorize(Permissions.ManageSettings, T("Not authorized to manage settings")))
                 return new HttpUnauthorizedResult();
 
             _cultureManager.DeleteCulture(cultureName);
             return RedirectToAction("Culture");
-        }  
+        }
+
+        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties) {
+            return TryUpdateModel(model, prefix, includeProperties, excludeProperties);
+        }
+
+        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage) {
+            ModelState.AddModelError(key, errorMessage.ToString());
+        }
     }
 }

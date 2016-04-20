@@ -37,14 +37,16 @@ namespace Orchard.Themes.Services {
 
         public void SetSiteTheme(string themeName) {
             var site = _orchardServices.WorkContext.CurrentSite;
-             
+            //site.As<ThemeSiteSettingsPart>().CurrentThemeName = themeName;
+
             _signals.Trigger(CurrentThemeSignal);
         }
 
         public string GetCurrentThemeName() {
             return _cacheManager.Get("CurrentThemeName", ctx => {
                 ctx.Monitor(_signals.When(CurrentThemeSignal));
-                return "VuLu";
+                return (string)null;
+                //return _orchardServices.WorkContext.CurrentSite.As<ThemeSiteSettingsPart>().CurrentThemeName;
             });
         }
     }
