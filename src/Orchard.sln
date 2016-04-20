@@ -63,6 +63,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orchard.Setup", "Orchard.We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orchard.Recipes", "Orchard.Web\Modules\Orchard.Recipes\Orchard.Recipes.csproj", "{FC1D74E8-7A4D-48F4-83DE-95C6173780C4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orchard.Users", "Orchard.Web\Modules\Orchard.Users\Orchard.Users.csproj", "{79AED36E-ABD0-4747-93D3-8722B042454B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orchard.Roles", "Orchard.Web\Modules\Orchard.Roles\Orchard.Roles.csproj", "{D10AD48F-407D-4DB5-A328-173EC7CB010F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CodeCoverage|Any CPU = CodeCoverage|Any CPU
@@ -232,6 +236,26 @@ Global
 		{FC1D74E8-7A4D-48F4-83DE-95C6173780C4}.FxCop|Any CPU.Build.0 = Release|Any CPU
 		{FC1D74E8-7A4D-48F4-83DE-95C6173780C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC1D74E8-7A4D-48F4-83DE-95C6173780C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79AED36E-ABD0-4747-93D3-8722B042454B}.CodeCoverage|Any CPU.ActiveCfg = Release|Any CPU
+		{79AED36E-ABD0-4747-93D3-8722B042454B}.CodeCoverage|Any CPU.Build.0 = Release|Any CPU
+		{79AED36E-ABD0-4747-93D3-8722B042454B}.Coverage|Any CPU.ActiveCfg = Release|Any CPU
+		{79AED36E-ABD0-4747-93D3-8722B042454B}.Coverage|Any CPU.Build.0 = Release|Any CPU
+		{79AED36E-ABD0-4747-93D3-8722B042454B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79AED36E-ABD0-4747-93D3-8722B042454B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79AED36E-ABD0-4747-93D3-8722B042454B}.FxCop|Any CPU.ActiveCfg = Release|Any CPU
+		{79AED36E-ABD0-4747-93D3-8722B042454B}.FxCop|Any CPU.Build.0 = Release|Any CPU
+		{79AED36E-ABD0-4747-93D3-8722B042454B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79AED36E-ABD0-4747-93D3-8722B042454B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F}.CodeCoverage|Any CPU.ActiveCfg = Release|Any CPU
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F}.CodeCoverage|Any CPU.Build.0 = Release|Any CPU
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F}.Coverage|Any CPU.ActiveCfg = Release|Any CPU
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F}.Coverage|Any CPU.Build.0 = Release|Any CPU
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F}.FxCop|Any CPU.ActiveCfg = Release|Any CPU
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F}.FxCop|Any CPU.Build.0 = Release|Any CPU
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -250,6 +274,8 @@ Global
 		{D4E8F7C8-2DB2-4C50-A422-DA1DF1E3CC73} = {E9C9F120-07BA-4DFB-B9C3-3AFB9D44C9D5}
 		{8C7FCBC2-E6E1-405E-BFB5-D8D9E67A09C4} = {E9C9F120-07BA-4DFB-B9C3-3AFB9D44C9D5}
 		{FC1D74E8-7A4D-48F4-83DE-95C6173780C4} = {E9C9F120-07BA-4DFB-B9C3-3AFB9D44C9D5}
+		{79AED36E-ABD0-4747-93D3-8722B042454B} = {E9C9F120-07BA-4DFB-B9C3-3AFB9D44C9D5}
+		{D10AD48F-407D-4DB5-A328-173EC7CB010F} = {E9C9F120-07BA-4DFB-B9C3-3AFB9D44C9D5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4

@@ -88,10 +88,9 @@ namespace Orchard.Setup.Services {
                 // Framework
                 "Orchard.Framework",
                 // Core
-                "Common", "Containers", "Contents", "Dashboard", "Feeds", "Navigation","Scheduling", "Settings", "Shapes", "Title",
+                 "Settings", "Shapes", 
                 // Modules
-                "Orchard.Pages", "Orchard.ContentPicker", "Orchard.Themes", "Orchard.Users", "Orchard.Roles", "Orchard.Modules",
-                "PackagingServices", "Orchard.Packaging", "Gallery", "Orchard.Recipes"
+                "Orchard.Themes", "Orchard.Users", "Orchard.Roles", "Orchard.Modules"//, "Orchard.Recipes"
             };
 
             context.EnabledFeatures = hardcoded.Union(context.EnabledFeatures ?? Enumerable.Empty<string>()).Distinct().ToList();
