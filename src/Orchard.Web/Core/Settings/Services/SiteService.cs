@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using JetBrains.Annotations;
 using Orchard.Caching;
 using Orchard.Core.Settings.Models;
 using Orchard.Data;
@@ -8,7 +7,6 @@ using Orchard.Logging;
 using Orchard.Settings;
 
 namespace Orchard.Core.Settings.Services {
-    [UsedImplicitly]
     public class SiteService : ISiteService {       
         private readonly ICacheManager _cacheManager;
 

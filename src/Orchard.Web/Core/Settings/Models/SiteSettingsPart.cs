@@ -64,5 +64,29 @@ namespace Orchard.Core.Settings.Models {
             get;
             set;
         }
+
+        public string SiteCalendar
+        {
+            get;
+            set;
+        }
+
+        public bool UseCdn
+        {
+            get;
+            set;
+        }
+
+        public int MaxPageSize
+        {
+            get;
+            set;
+        }
+
+        public int MaxPagedCount
+        {
+            get;
+            set;
+        }
     }
 }
