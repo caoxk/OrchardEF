@@ -4,7 +4,6 @@ using System.Linq;
 using Orchard.DisplayManagement;
 using Orchard.Localization;
 using Orchard.Logging;
-using Orchard.ContentManagement;
 using Orchard.Settings;
 using Orchard.Users.Models;
 using Orchard.Security;
@@ -115,11 +114,11 @@ namespace Orchard.Users.Services {
             if (validateByUtc < _clock.UtcNow)
                 return null;
 
-            var user = _membershipService.GetUser(username);
+            var user = (UserPartRecord)_membershipService.GetUser(username);
             if (user == null)
                 return null;
 
-            user.As<UserPart>().EmailStatus = UserStatus.Approved;
+            user.EmailStatus = UserStatus.Approved;
 
             return user;
         }
@@ -128,49 +127,49 @@ namespace Orchard.Users.Services {
             string nonce = CreateNonce(user, DelayToValidate);
             string url = createUrl(nonce);
 
-            if (user != null) {
-                var site = _siteService.GetSiteSettings();
+            //if (user != null) {
+            //    var site = _siteService.GetSiteSettings();
 
-                var template = _shapeFactory.Create("Template_User_Validated", Arguments.From(new {
-                    RegisteredWebsite = site.As<RegistrationSettingsPart>().ValidateEmailRegisteredWebsite,
-                    ContactEmail = site.As<RegistrationSettingsPart>().ValidateEmailContactEMail,
-                    ChallengeUrl = url
-                }));
-                template.Metadata.Wrappers.Add("Template_User_Wrapper");
+            //    var template = _shapeFactory.Create("Template_User_Validated", Arguments.From(new {
+            //        RegisteredWebsite = site.As<RegistrationSettingsPart>().ValidateEmailRegisteredWebsite,
+            //        ContactEmail = site.As<RegistrationSettingsPart>().ValidateEmailContactEMail,
+            //        ChallengeUrl = url
+            //    }));
+            //    template.Metadata.Wrappers.Add("Template_User_Wrapper");
                 
-                var parameters = new Dictionary<string, object> {
-                            {"Subject", T("Verification E-Mail").Text},
-                            {"Body", _shapeDisplay.Display(template)},
-                            {"Recipients", user.Email}
-                        };
+            //    var parameters = new Dictionary<string, object> {
+            //                {"Subject", T("Verification E-Mail").Text},
+            //                {"Body", _shapeDisplay.Display(template)},
+            //                {"Recipients", user.Email}
+            //            };
 
-                _messageService.Send("Email", parameters);
-            }
+            //    _messageService.Send("Email", parameters);
+            //}
         }
 
         public bool SendLostPasswordEmail(string usernameOrEmail, Func<string, string> createUrl) {
-            var lowerName = usernameOrEmail.ToLowerInvariant();
-            var user = _contentManager.Query<UserPart, UserPartRecord>().Where(u => u.NormalizedUserName == lowerName || u.Email == lowerName).List().FirstOrDefault();
+            //var lowerName = usernameOrEmail.ToLowerInvariant();
+            //var user = _contentManager.Query<UserPart, UserPartRecord>().Where(u => u.NormalizedUserName == lowerName || u.Email == lowerName).List().FirstOrDefault();
 
-            if (user != null) {
-                string nonce = CreateNonce(user, DelayToResetPassword);
-                string url = createUrl(nonce);
+            //if (user != null) {
+            //    string nonce = CreateNonce(user, DelayToResetPassword);
+            //    string url = createUrl(nonce);
 
-                var template = _shapeFactory.Create("Template_User_LostPassword", Arguments.From(new {
-                    User = user,
-                    LostPasswordUrl = url
-                }));
-                template.Metadata.Wrappers.Add("Template_User_Wrapper");
+            //    var template = _shapeFactory.Create("Template_User_LostPassword", Arguments.From(new {
+            //        User = user,
+            //        LostPasswordUrl = url
+            //    }));
+            //    template.Metadata.Wrappers.Add("Template_User_Wrapper");
 
-                var parameters = new Dictionary<string, object> {
-                            {"Subject", T("Lost password").Text},
-                            {"Body", _shapeDisplay.Display(template)},
-                            {"Recipients", user.Email }
-                        };
+            //    var parameters = new Dictionary<string, object> {
+            //                {"Subject", T("Lost password").Text},
+            //                {"Body", _shapeDisplay.Display(template)},
+            //                {"Recipients", user.Email }
+            //            };
 
-                _messageService.Send("Email", parameters);
-                return true;
-            }
+            //    _messageService.Send("Email", parameters);
+            //    return true;
+            //}
 
             return false;
         }

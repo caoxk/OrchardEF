@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Orchard.ContentManagement;
+using System.Linq;
 using Orchard.Localization;
 using Orchard.Messaging.Services;
 using Orchard.UI.Admin.Notification;
@@ -21,19 +21,20 @@ namespace Orchard.Users.Services {
 
         public IEnumerable<NotifyEntry> GetNotifications() {
 
-            var registrationSettings = _orchardServices.WorkContext.CurrentSite.As<RegistrationSettingsPart>();
+            //var registrationSettings = _orchardServices.WorkContext.CurrentSite.As<RegistrationSettingsPart>();
 
-            if ( registrationSettings != null &&
-                    ( registrationSettings.UsersMustValidateEmail ||
-                    registrationSettings.NotifyModeration ||
-                    registrationSettings.EnableLostPassword ) &&
-                null == _messageManager.GetMessageChannel("Email", new Dictionary<string, object> {
-                    {"Body", ""}, 
-                    {"Subject", "Subject"},
-                    {"Recipients", "john.doe@outlook.com"}
-                }) ) {
-                yield return new NotifyEntry { Message = T("Some Orchard.User settings require an Email channel to be enabled."), Type = NotifyType.Warning };
-            }
+            //if ( registrationSettings != null &&
+            //        ( registrationSettings.UsersMustValidateEmail ||
+            //        registrationSettings.NotifyModeration ||
+            //        registrationSettings.EnableLostPassword ) &&
+            //    null == _messageManager.GetMessageChannel("Email", new Dictionary<string, object> {
+            //        {"Body", ""}, 
+            //        {"Subject", "Subject"},
+            //        {"Recipients", "john.doe@outlook.com"}
+            //    }) ) {
+            //    yield return new NotifyEntry { Message = T("Some Orchard.User settings require an Email channel to be enabled."), Type = NotifyType.Warning };
+            //}
+            return Enumerable.Empty<NotifyEntry>();
         }
     }
 }

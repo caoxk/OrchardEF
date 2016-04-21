@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Orchard.ContentManagement;
 using Orchard.Core.Settings.Models;
 using Orchard.DisplayManagement;
 using Orchard.Localization;
@@ -16,6 +15,7 @@ using Orchard.Users.Services;
 using Orchard.Users.ViewModels;
 using Orchard.Mvc.Extensions;
 using System;
+using Orchard.Data;
 using Orchard.Settings;
 using Orchard.UI.Navigation;
 using Orchard.Utility.Extensions;
@@ -27,6 +27,7 @@ namespace Orchard.Users.Controllers {
         private readonly IUserService _userService;
         private readonly IUserEventHandler _userEventHandlers;
         private readonly ISiteService _siteService;
+        private readonly IRepository<UserPartRecord> _useRepository;
 
         public AdminController(
             IOrchardServices services,
@@ -34,12 +35,14 @@ namespace Orchard.Users.Controllers {
             IUserService userService,
             IShapeFactory shapeFactory,
             IUserEventHandler userEventHandlers,
-            ISiteService siteService) {
+            ISiteService siteService, 
+            IRepository<UserPartRecord> useRepository) {
             Services = services;
             _membershipService = membershipService;
             _userService = userService;
             _userEventHandlers = userEventHandlers;
             _siteService = siteService;
+            _useRepository = useRepository;
 
             T = NullLocalizer.Instance;
             Shape = shapeFactory;
@@ -59,8 +62,7 @@ namespace Orchard.Users.Controllers {
             if (options == null)
                 options = new UserIndexOptions();
 
-            var users = Services.ContentManager
-                .Query<UserPart, UserPartRecord>();
+            var users = _useRepository.Table;
 
             switch (options.Filter) {
                 case UsersFilter.Approved:
@@ -96,12 +98,13 @@ namespace Orchard.Users.Controllers {
             }
 
             var results = users
-                .Slice(pager.GetStartIndex(), pager.PageSize)
+                .Skip(pager.GetStartIndex())
+                .Take(pager.PageSize)
                 .ToList();
 
             var model = new UsersIndexViewModel {
                 Users = results
-                    .Select(x => new UserEntry { User = x.Record })
+                    .Select(x => new UserEntry { User = x })
                     .ToList(),
                     Options = options,
                     Pager = pagerShape
@@ -160,13 +163,13 @@ namespace Orchard.Users.Controllers {
             if (!Services.Authorizer.Authorize(Permissions.ManageUsers, T("Not authorized to manage users")))
                 return new HttpUnauthorizedResult();
 
-            var user = Services.ContentManager.New<IUser>("User");
-            var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Create", Model: new UserCreateViewModel(), Prefix: null);
-            editor.Metadata.Position = "2";
-            var model = Services.ContentManager.BuildEditor(user);
-            model.Content.Add(editor);
+            var user = new UserPartRecord();
+            //var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Create", Model: new UserCreateViewModel(), Prefix: null);
+            //editor.Metadata.Position = "2";
+            //var model = Services.ContentManager.BuildEditor(user);
+            //model.Content.Add(editor);
 
-            return View(model);
+            return View(user);
         }
 
         [HttpPost, ActionName("Create")]
@@ -180,7 +183,7 @@ namespace Orchard.Users.Controllers {
                 }
             }
             
-            if (!Regex.IsMatch(createModel.Email ?? "", UserPart.EmailPattern, RegexOptions.IgnoreCase)) {
+            if (!Regex.IsMatch(createModel.Email ?? "", UserPartRecord.EmailPattern, RegexOptions.IgnoreCase)) {
                 // http://haacked.com/archive/2007/08/21/i-knew-how-to-validate-an-email-address-until-i.aspx    
                 ModelState.AddModelError("Email", T("You must specify a valid email address."));
             }
@@ -189,7 +192,7 @@ namespace Orchard.Users.Controllers {
                 AddModelError("ConfirmPassword", T("Password confirmation must match"));
             }
 
-            var user = Services.ContentManager.New<IUser>("User");
+            IUser user = new UserPartRecord();
             if (ModelState.IsValid) {
                 user = _membershipService.CreateUser(new CreateUserParams(
                                                   createModel.UserName,
@@ -198,17 +201,17 @@ namespace Orchard.Users.Controllers {
                                                   null, null, true));
             }
 
-            var model = Services.ContentManager.UpdateEditor(user, this);
+            //var model = Services.ContentManager.UpdateEditor(user, this);
 
-            if (!ModelState.IsValid) {
-                Services.TransactionManager.Cancel();
+            //if (!ModelState.IsValid) {
+            //    Services.TransactionManager.Cancel();
 
-                var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Create", Model: createModel, Prefix: null);
-                editor.Metadata.Position = "2";
-                model.Content.Add(editor);
+            //    var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Create", Model: createModel, Prefix: null);
+            //    editor.Metadata.Position = "2";
+            //    model.Content.Add(editor);
 
-                return View(model);
-            }
+            //    return View(model);
+            //}
 
             Services.Notifier.Information(T("User created"));
             return RedirectToAction("Index");
@@ -218,17 +221,17 @@ namespace Orchard.Users.Controllers {
             if (!Services.Authorizer.Authorize(Permissions.ManageUsers, T("Not authorized to manage users")))
                 return new HttpUnauthorizedResult();
 
-            var user = Services.ContentManager.Get<UserPart>(id);
+            var user = _useRepository.Get(id);
 
             if (user == null)
                 return HttpNotFound();
 
-            var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Edit", Model: new UserEditViewModel {User = user}, Prefix: null);
-            editor.Metadata.Position = "2";
-            var model = Services.ContentManager.BuildEditor(user);
-            model.Content.Add(editor);
+            //var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Edit", Model: new UserEditViewModel {User = user}, Prefix: null);
+            //editor.Metadata.Position = "2";
+            //var model = Services.ContentManager.BuildEditor(user);
+            //model.Content.Add(editor);
 
-            return View(model);
+            return View(user);
         }
 
         [HttpPost, ActionName("Edit")]
@@ -236,45 +239,45 @@ namespace Orchard.Users.Controllers {
             if (!Services.Authorizer.Authorize(Permissions.ManageUsers, T("Not authorized to manage users")))
                 return new HttpUnauthorizedResult();
 
-            var user = Services.ContentManager.Get<UserPart>(id, VersionOptions.DraftRequired);
+            //var user = Services.ContentManager.Get<UserPart>(id, VersionOptions.DraftRequired);
 
-            if (user == null)
-                return HttpNotFound();
+            //if (user == null)
+            //    return HttpNotFound();
 
-            string previousName = user.UserName;
+            //string previousName = user.UserName;
 
-            var model = Services.ContentManager.UpdateEditor(user, this);
+            //var model = Services.ContentManager.UpdateEditor(user, this);
 
-            var editModel = new UserEditViewModel { User = user };
-            if (TryUpdateModel(editModel)) {
-                if (!_userService.VerifyUserUnicity(id, editModel.UserName, editModel.Email)) {
-                    AddModelError("NotUniqueUserName", T("User with that username and/or email already exists."));
-                }
-                else if (!Regex.IsMatch(editModel.Email ?? "", UserPart.EmailPattern, RegexOptions.IgnoreCase)) {
-                    // http://haacked.com/archive/2007/08/21/i-knew-how-to-validate-an-email-address-until-i.aspx    
-                    ModelState.AddModelError("Email", T("You must specify a valid email address."));
-                }
-                else {
-                    // also update the Super user if this is the renamed account
-                    if (string.Equals(Services.WorkContext.CurrentSite.SuperUser, previousName, StringComparison.Ordinal)) {
-                        _siteService.GetSiteSettings().As<SiteSettingsPart>().SuperUser = editModel.UserName;
-                    }
+            //var editModel = new UserEditViewModel { User = user };
+            //if (TryUpdateModel(editModel)) {
+            //    if (!_userService.VerifyUserUnicity(id, editModel.UserName, editModel.Email)) {
+            //        AddModelError("NotUniqueUserName", T("User with that username and/or email already exists."));
+            //    }
+            //    else if (!Regex.IsMatch(editModel.Email ?? "", UserPartRecord.EmailPattern, RegexOptions.IgnoreCase)) {
+            //        // http://haacked.com/archive/2007/08/21/i-knew-how-to-validate-an-email-address-until-i.aspx    
+            //        ModelState.AddModelError("Email", T("You must specify a valid email address."));
+            //    }
+            //    else {
+            //        // also update the Super user if this is the renamed account
+            //        if (string.Equals(Services.WorkContext.CurrentSite.SuperUser, previousName, StringComparison.Ordinal)) {
+            //            _siteService.GetSiteSettings().As<SiteSettingsPart>().SuperUser = editModel.UserName;
+            //        }
 
-                    user.NormalizedUserName = editModel.UserName.ToLowerInvariant();
-                }
-            }
+            //        user.NormalizedUserName = editModel.UserName.ToLowerInvariant();
+            //    }
+            //}
 
-            if (!ModelState.IsValid) {
-                Services.TransactionManager.Cancel();
+            //if (!ModelState.IsValid) {
+            //    Services.TransactionManager.Cancel();
 
-                var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Edit", Model: editModel, Prefix: null);
-                editor.Metadata.Position = "2";
-                model.Content.Add(editor);
+            //    var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Edit", Model: editModel, Prefix: null);
+            //    editor.Metadata.Position = "2";
+            //    model.Content.Add(editor);
 
-                return View(model);
-            }
+            //    return View(model);
+            //}
 
-            Services.ContentManager.Publish(user.ContentItem);
+            //Services.ContentManager.Publish(user.ContentItem);
 
             Services.Notifier.Information(T("User information updated"));
             return RedirectToAction("Index");
@@ -285,21 +288,21 @@ namespace Orchard.Users.Controllers {
             if (!Services.Authorizer.Authorize(Permissions.ManageUsers, T("Not authorized to manage users")))
                 return new HttpUnauthorizedResult();
 
-            var user = Services.ContentManager.Get<IUser>(id);
+            //var user = Services.ContentManager.Get<IUser>(id);
 
-            if (user == null)
-                return HttpNotFound();
+            //if (user == null)
+            //    return HttpNotFound();
 
-            if (string.Equals(Services.WorkContext.CurrentSite.SuperUser, user.UserName, StringComparison.Ordinal)) {
-                Services.Notifier.Error(T("The Super user can't be removed. Please disable this account or specify another Super user account."));
-            }
-            else if (string.Equals(Services.WorkContext.CurrentUser.UserName, user.UserName, StringComparison.Ordinal)) {
-                Services.Notifier.Error(T("You can't remove your own account. Please log in with another account."));
-            }
-            else {
-                Services.ContentManager.Remove(user.ContentItem);
-                Services.Notifier.Information(T("User {0} deleted", user.UserName));
-            }
+            //if (string.Equals(Services.WorkContext.CurrentSite.SuperUser, user.UserName, StringComparison.Ordinal)) {
+            //    Services.Notifier.Error(T("The Super user can't be removed. Please disable this account or specify another Super user account."));
+            //}
+            //else if (string.Equals(Services.WorkContext.CurrentUser.UserName, user.UserName, StringComparison.Ordinal)) {
+            //    Services.Notifier.Error(T("You can't remove your own account. Please log in with another account."));
+            //}
+            //else {
+            //    Services.ContentManager.Remove(user.ContentItem);
+            //    Services.Notifier.Information(T("User {0} deleted", user.UserName));
+            //}
 
             return RedirectToAction("Index");
         }
@@ -309,19 +312,19 @@ namespace Orchard.Users.Controllers {
             if (!Services.Authorizer.Authorize(Permissions.ManageUsers, T("Not authorized to manage users")))
                 return new HttpUnauthorizedResult();
 
-            var user = Services.ContentManager.Get<IUser>(id);
+            //var user = Services.ContentManager.Get<IUser>(id);
 
-            if (user == null)
-                return HttpNotFound();
+            //if (user == null)
+            //    return HttpNotFound();
 
-            var siteUrl = Services.WorkContext.CurrentSite.BaseUrl;
+            //var siteUrl = Services.WorkContext.CurrentSite.BaseUrl;
 
-            if (string.IsNullOrWhiteSpace(siteUrl)) {
-                siteUrl = HttpContext.Request.ToRootUrlString();
-            }
+            //if (string.IsNullOrWhiteSpace(siteUrl)) {
+            //    siteUrl = HttpContext.Request.ToRootUrlString();
+            //}
 
-            _userService.SendChallengeEmail(user.As<UserPart>(), nonce => Url.MakeAbsolute(Url.Action("ChallengeEmail", "Account", new { Area = "Orchard.Users", nonce = nonce }), siteUrl));
-            Services.Notifier.Information(T("Challenge email sent to {0}", user.UserName));
+            //_userService.SendChallengeEmail(user.As<UserPart>(), nonce => Url.MakeAbsolute(Url.Action("ChallengeEmail", "Account", new { Area = "Orchard.Users", nonce = nonce }), siteUrl));
+            //Services.Notifier.Information(T("Challenge email sent to {0}", user.UserName));
 
 
             return RedirectToAction("Index");
@@ -332,14 +335,14 @@ namespace Orchard.Users.Controllers {
             if (!Services.Authorizer.Authorize(Permissions.ManageUsers, T("Not authorized to manage users")))
                 return new HttpUnauthorizedResult();
 
-            var user = Services.ContentManager.Get<IUser>(id);
+            //var user = Services.ContentManager.Get<IUser>(id);
 
-            if (user == null)
-                return HttpNotFound();
+            //if (user == null)
+            //    return HttpNotFound();
 
-            user.As<UserPart>().RegistrationStatus = UserStatus.Approved;
-            Services.Notifier.Information(T("User {0} approved", user.UserName));
-            _userEventHandlers.Approved(user);
+            //user.As<UserPart>().RegistrationStatus = UserStatus.Approved;
+            //Services.Notifier.Information(T("User {0} approved", user.UserName));
+            //_userEventHandlers.Approved(user);
 
             return RedirectToAction("Index");
         }
@@ -349,18 +352,18 @@ namespace Orchard.Users.Controllers {
             if (!Services.Authorizer.Authorize(Permissions.ManageUsers, T("Not authorized to manage users")))
                 return new HttpUnauthorizedResult();
 
-            var user = Services.ContentManager.Get<IUser>(id);
+            //var user = Services.ContentManager.Get<IUser>(id);
 
-            if (user == null)
-                return HttpNotFound();
+            //if (user == null)
+            //    return HttpNotFound();
 
-            if (string.Equals(Services.WorkContext.CurrentUser.UserName, user.UserName, StringComparison.Ordinal)) {
-                Services.Notifier.Error(T("You can't disable your own account. Please log in with another account"));
-            }
-            else {
-                user.As<UserPart>().RegistrationStatus = UserStatus.Pending;
-                Services.Notifier.Information(T("User {0} disabled", user.UserName));
-            }
+            //if (string.Equals(Services.WorkContext.CurrentUser.UserName, user.UserName, StringComparison.Ordinal)) {
+            //    Services.Notifier.Error(T("You can't disable your own account. Please log in with another account"));
+            //}
+            //else {
+            //    user.As<UserPart>().RegistrationStatus = UserStatus.Pending;
+            //    Services.Notifier.Information(T("User {0} disabled", user.UserName));
+            //}
 
             return RedirectToAction("Index");
         }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using Orchard.ContentManagement;
 using Orchard.Security;
 using Orchard.Services;
 using Orchard.Users.Models;
@@ -20,11 +19,11 @@ namespace Orchard.Users.Events {
         public void Created(UserContext context) { }
 
         public void LoggedIn(IUser user) {
-            user.As<UserPart>().LastLoginUtc = _clock.UtcNow;
+            ((UserPartRecord)user).LastLoginUtc = _clock.UtcNow;
         }
 
         public void LoggedOut(IUser user) {
-            user.As<UserPart>().LastLogoutUtc = _clock.UtcNow;
+            ((UserPartRecord)user).LastLogoutUtc = _clock.UtcNow;
         }
 
         public void AccessDenied(IUser user) { }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Orchard.Data;
 using Orchard.Localization;
 using Orchard.Logging;
-using Orchard.ContentManagement;
 using Orchard.Roles.Models;
 using Orchard.Security;
 using Orchard.Security.Permissions;
@@ -15,11 +15,16 @@ namespace Orchard.Roles.Services {
         private readonly IAuthorizationServiceEventHandler _authorizationServiceEventHandler;
         private static readonly string[] AnonymousRole = new[] { "Anonymous" };
         private static readonly string[] AuthenticatedRole = new[] { "Authenticated" };
+        private readonly IRepository<UserRolesPartRecord> _userRolesRepository; 
 
-        public RolesBasedAuthorizationService(IRoleService roleService, IWorkContextAccessor workContextAccessor, IAuthorizationServiceEventHandler authorizationServiceEventHandler) {
+        public RolesBasedAuthorizationService(IRoleService roleService, 
+            IWorkContextAccessor workContextAccessor, 
+            IAuthorizationServiceEventHandler authorizationServiceEventHandler, 
+            IRepository<UserRolesPartRecord> userRolesRepository) {
             _roleService = roleService;
             _workContextAccessor = workContextAccessor;
             _authorizationServiceEventHandler = authorizationServiceEventHandler;
+            _userRolesRepository = userRolesRepository;
 
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
@@ -29,17 +34,16 @@ namespace Orchard.Roles.Services {
         public ILogger Logger { get; set; }
 
 
-        public void CheckAccess(Permission permission, IUser user, IContent content) {
+        public void CheckAccess(Permission permission, IUser user, object content) {
             if (!TryCheckAccess(permission, user, content)) {
                 throw new OrchardSecurityException(T("A security exception occurred in the content management system.")) {
                     PermissionName = permission.Name,
-                    User = user,
-                    Content = content
+                    User = user
                 };
             }
         }
 
-        public bool TryCheckAccess(Permission permission, IUser user, IContent content) {
+        public bool TryCheckAccess(Permission permission, IUser user, object content) {
             var context = new CheckAccessContext { Permission = permission, User = user, Content = content };
             _authorizationServiceEventHandler.Checking(context);
 
@@ -61,18 +65,26 @@ namespace Orchard.Roles.Services {
                     if (context.User == null) {
                         rolesToExamine = AnonymousRole;
                     }
-                    else if (context.User.Has<IUserRoles>()) {
-                        // the current user is not null, so get his roles and add "Authenticated" to it
-                        rolesToExamine = context.User.As<IUserRoles>().Roles;
+                    else{
+                        var userRoleRecords = context.User as IUserRoles;
 
-                        // when it is a simulated anonymous user in the admin
-                        if (!rolesToExamine.Contains(AnonymousRole[0])) {
-                            rolesToExamine = rolesToExamine.Concat(AuthenticatedRole);   
+                        IList<string> userRoles = userRoleRecords !=null? userRoleRecords.Roles: 
+                            _userRolesRepository.Table.Where(x => x.UserId == context.User.Id).Select(x => x.Role.Name).ToList();
+                        
+                        if (userRoles.Any()) {
+                            // the current user is not null, so get his roles and add "Authenticated" to it
+                            rolesToExamine = userRoles;
+                            // when it is a simulated anonymous user in the admin
+                            if (!rolesToExamine.Contains(AnonymousRole[0]))
+                            {
+                                rolesToExamine = rolesToExamine.Concat(AuthenticatedRole);
+                            }
                         }
-                    }
-                    else {
-                        // the user is not null and has no specific role, then it's just "Authenticated"
-                        rolesToExamine = AuthenticatedRole;
+                        else
+                        {
+                            // the user is not null and has no specific role, then it's just "Authenticated"
+                            rolesToExamine = AuthenticatedRole;
+                        }
                     }
 
                     foreach (var role in rolesToExamine) {

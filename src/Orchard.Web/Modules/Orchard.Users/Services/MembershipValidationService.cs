@@ -5,7 +5,7 @@ namespace Orchard.Users.Services {
     public class MembershipValidationService : IMembershipValidationService {
 
         public bool CanAuthenticateWithCookie(IUser user) {
-            var userPart = user as UserPart;
+            var userPart = user as UserPartRecord;
 
             if (userPart == null) {
                 return false;

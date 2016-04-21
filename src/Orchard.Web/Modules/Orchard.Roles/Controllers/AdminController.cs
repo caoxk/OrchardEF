@@ -108,15 +108,17 @@ namespace Orchard.Roles.Controllers {
                 return HttpNotFound();
             }
 
-            var model = new RoleEditViewModel { Name = role.Name, Id = role.Id, 
-                                                RoleCategoryPermissions = _roleService.GetInstalledPermissions(),
-                                                CurrentPermissions = _roleService.GetPermissionsForRole(id)};
+            var model = new RoleEditViewModel {
+                Name = role.Name, Id = role.Id,
+                RoleCategoryPermissions = _roleService.GetInstalledPermissions(),
+                CurrentPermissions = _roleService.GetPermissionsForRole(id)
+            };
 
             var simulation = UserSimulation.Create(role.Name);
             model.EffectivePermissions = model.RoleCategoryPermissions
                 .SelectMany(group => group.Value)
                 .Where(permission => _authorizationService.TryCheckAccess(permission, simulation, null))
-                .Select(permission=>permission.Name)
+                .Select(permission => permission.Name)
                 .Distinct()
                 .ToList();
 

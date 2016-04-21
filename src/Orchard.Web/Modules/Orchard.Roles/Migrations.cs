@@ -45,8 +45,8 @@ namespace Orchard.Roles {
         public int UpdateFrom1() {
 
             // creates default permissions for Orchard v1.4 instances and earlier
-            _roleService.CreatePermissionForRole("Anonymous", Orchard.Core.Contents.Permissions.ViewContent.Name);
-            _roleService.CreatePermissionForRole("Authenticated", Orchard.Core.Contents.Permissions.ViewContent.Name);
+            _roleService.CreatePermissionForRole("Anonymous", CommonPermissions.ViewContent.Name);
+            _roleService.CreatePermissionForRole("Authenticated", CommonPermissions.ViewContent.Name);
 
             return 2;
         }
