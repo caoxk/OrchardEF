@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Orchard.ContentManagement;
 using Orchard.Environment.Configuration;
 using Orchard.Logging;
 using Orchard.Security;
@@ -49,13 +48,13 @@ namespace Orchard.Core.Navigation.Services {
             return FinishMenu(Reduce(Filter(Merge(sources)), menuName == "admin", hasDebugShowAllMenuItems).ToArray());
         }
 
-        public IEnumerable<MenuItem> BuildMenu(IContent menu) {
+        public IEnumerable<MenuItem> BuildMenu(object menu) {
             var sources = GetSources(menu);
             var hasDebugShowAllMenuItems = _authorizationService.TryCheckAccess(Permission.Named("DebugShowAllMenuItems"), _orchardServices.WorkContext.CurrentUser, null);
             return FinishMenu(Reduce(Arrange(Filter(Merge(sources))), false, hasDebugShowAllMenuItems).ToArray());
         }
 
-        public string GetNextPosition(IContent menu) {
+        public string GetNextPosition(object menu) {
             var sources = GetSources(menu);
             var hasDebugShowAllMenuItems = _authorizationService.TryCheckAccess(Permission.Named("DebugShowAllMenuItems"), _orchardServices.WorkContext.CurrentUser, null);
             return Position.GetNext(Reduce(Arrange(Filter(Merge(sources))), false, hasDebugShowAllMenuItems).ToArray());
@@ -164,7 +163,7 @@ namespace Orchard.Core.Navigation.Services {
             }
         }
 
-        private IEnumerable<IEnumerable<MenuItem>> GetSources(IContent menu) {
+        private IEnumerable<IEnumerable<MenuItem>> GetSources(object menu) {
             foreach (var provider in _menuProviders) {
                 var builder = new NavigationBuilder();
                 IEnumerable<MenuItem> items = null;

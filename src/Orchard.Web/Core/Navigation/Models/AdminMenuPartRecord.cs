@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Orchard.ContentManagement.Records;
 
 namespace Orchard.Core.Navigation.Models {
-    public class AdminMenuPartRecord : ContentPartRecord {
+    public class AdminMenuPartRecord {
+        public virtual  int Id { get; set; }
         public const ushort DefaultMenuTextLength = 255;
 
         [StringLength(DefaultMenuTextLength)]

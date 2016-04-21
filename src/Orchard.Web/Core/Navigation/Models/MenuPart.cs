@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Orchard.ContentManagement;
-using Orchard.ContentManagement.Utilities;
 
 namespace Orchard.Core.Navigation.Models {
     public class MenuPart : ContentPart<MenuPartRecord> {

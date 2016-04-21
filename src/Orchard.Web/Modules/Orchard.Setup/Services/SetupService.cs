@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Web;
 using System.Xml.Linq;
-using Orchard.Core.Settings.Models;
 using Orchard.Data;
 using Orchard.Data.Migration;
 using Orchard.Data.Migration.Interpreters;
@@ -90,7 +89,7 @@ namespace Orchard.Setup.Services {
                 // Core
                  "Settings", "Shapes", 
                 // Modules
-                "Orchard.Themes", "Orchard.Users", "Orchard.Roles", "Orchard.Modules"//, "Orchard.Recipes"
+                "Orchard.Themes", "Orchard.Users", "Orchard.Roles", "Orchard.Modules", "Orchard.Recipes"//, "Orchard.Recipes"
             };
 
             context.EnabledFeatures = hardcoded.Union(context.EnabledFeatures ?? Enumerable.Empty<string>()).Distinct().ToList();
@@ -214,17 +213,21 @@ namespace Orchard.Setup.Services {
             //var recipe = context.Recipe;
             //var executionId = recipeManager.Execute(recipe);
 
-            //// Once the recipe has finished executing, we need to update the shell state to "Running", so add a recipe step that does exactly that.
-            //var recipeStepQueue = environment.Resolve<IRecipeStepQueue>();
-            //var recipeStepResultRecordRepository = environment.Resolve<IRepository<RecipeStepResultRecord>>();
-            //var activateShellStep = new RecipeStep(Guid.NewGuid().ToString("N"), recipe.Name, "ActivateShell", new XElement("ActivateShell"));
-            //recipeStepQueue.Enqueue(executionId, activateShellStep);
-            //recipeStepResultRecordRepository.Create(new RecipeStepResultRecord {
-            //    ExecutionId = executionId,
-            //    RecipeName = recipe.Name,
-            //    StepId = activateShellStep.Id,
-            //    StepName = activateShellStep.Name
-            //});
+            var recipeScheduler = environment.Resolve<IRecipeScheduler>();
+
+            // Once the recipe has finished executing, we need to update the shell state to "Running", so add a recipe step that does exactly that.
+            var recipeStepQueue = environment.Resolve<IRecipeStepQueue>();
+            var recipeStepResultRecordRepository = environment.Resolve<IRepository<RecipeStepResultRecord>>();
+            var activateShellStep = new RecipeStep(Guid.NewGuid().ToString("N"), "Setup", "ActivateShell", new XElement("ActivateShell"));
+            recipeStepQueue.Enqueue(activateShellStep.Id, activateShellStep);
+            recipeStepResultRecordRepository.Create(new RecipeStepResultRecord
+            {
+                ExecutionId = activateShellStep.Id,
+                RecipeName = activateShellStep.RecipeName,
+                StepId = activateShellStep.Id,
+                StepName = activateShellStep.Name
+            });
+            recipeScheduler.ScheduleWork(activateShellStep.Id);
 
             // Null check: temporary fix for running setup in command line.
             if (HttpContext.Current != null) {

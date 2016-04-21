@@ -47,7 +47,7 @@ namespace Orchard.Core.Settings {
         public int UpdateFrom1() {
             SchemaBuilder.CreateTable("SiteSettingsPartRecord",
                 table => table
-                    .ContentPartRecord()
+                    .Column<int>("Id", column => column.PrimaryKey().Identity())
                     .Column<string>("BaseUrl", c => c.Unlimited())
                 );
 
@@ -76,7 +76,6 @@ namespace Orchard.Core.Settings {
                 table => table.AddUniqueConstraint("UC_SFSR_SSRId_Name", "ShellStateRecord_Id", "Name"));
             SchemaBuilder.AlterTable("ShellParameterRecord",
                 table => table.AddUniqueConstraint("UC_SPR_SDRId_Component_Name", "ShellDescriptorRecord_id", "Component", "Name"));
-
             return 5;
         }
     }

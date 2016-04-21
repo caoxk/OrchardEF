@@ -1,5 +1,4 @@
-﻿using Orchard.ContentManagement;
-using Orchard.Localization;
+﻿using Orchard.Localization;
 using Orchard.UI.Navigation;
 using System.Linq;
 

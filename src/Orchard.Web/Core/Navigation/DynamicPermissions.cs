@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Orchard.ContentManagement;
-using Orchard.ContentManagement.MetaData.Models;
 using Orchard.Core.Navigation.Services;
-using Orchard.Core.Title.Models;
 using Orchard.Environment.Extensions.Models;
 using Orchard.Security.Permissions;
 

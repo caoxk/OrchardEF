@@ -7,7 +7,7 @@ namespace Orchard.Users {
         public int Create() {
             SchemaBuilder.CreateTable("UserPartRecord", 
                 table => table
-                    .ContentPartRecord()
+                    .Column<int>("Id", column => column.PrimaryKey().Identity())
                     .Column<string>("UserName")
                     .Column<string>("Email")
                     .Column<string>("NormalizedUserName")

@@ -34,7 +34,7 @@ namespace Orchard.Core.Settings {
                 },
                 new RouteDescriptor {
                     Route = new Route(
-                        "StartPage",
+                        "",
                         new RouteValueDictionary {
                             {"area", "Settings"},
                             {"controller", "Start"},

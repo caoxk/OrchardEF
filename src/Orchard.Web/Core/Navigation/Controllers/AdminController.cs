@@ -20,19 +20,16 @@ namespace Orchard.Core.Navigation.Controllers {
     public class AdminController : Controller, IUpdateModel {
         private readonly IMenuService _menuService;
         private readonly INavigationManager _navigationManager;
-        private readonly IEnumerable<IContentHandler> _handlers;
         private readonly IMenuManager _menuManager;
 
         public AdminController(
             IOrchardServices orchardServices,
             IMenuService menuService,
             IMenuManager menuManager,
-            INavigationManager navigationManager,
-            IEnumerable<IContentHandler> handlers) {
+            INavigationManager navigationManager) {
             _menuService = menuService;
             _menuManager = menuManager;
             _navigationManager = navigationManager;
-            _handlers = handlers;
 
             Services = orchardServices;
             T = NullLocalizer.Instance;
