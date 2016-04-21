@@ -94,22 +94,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Navigation\AdminMenu.cs" />
-    <Compile Include="Navigation\Controllers\AdminController.cs" />
     <Compile Include="Navigation\Migrations.cs" />
-    <Compile Include="Navigation\Models\AdminMenuPartRecord.cs" />
-    <Compile Include="Navigation\Models\MenuPartRecord.cs" />
     <Compile Include="Navigation\Permissions.cs" />
-    <Compile Include="Navigation\Services\DefaultMenuProvider.cs" />
-    <Compile Include="Navigation\Services\IMenuManager.cs" />
-    <Compile Include="Navigation\Services\IMenuService.cs" />
-    <Compile Include="Navigation\Services\MainMenuService.cs" />
     <Compile Include="Navigation\Services\NavigationManager.cs" />
-    <Compile Include="Navigation\Settings\AdminMenuPartTypeSettings.cs" />
-    <Compile Include="Navigation\ViewModels\CreateMenuItemViewModel.cs" />
-    <Compile Include="Navigation\ViewModels\MenuItemEntry.cs" />
-    <Compile Include="Navigation\ViewModels\MenuPartViewModel.cs" />
-    <Compile Include="Navigation\ViewModels\MenuWidgetViewModel.cs" />
-    <Compile Include="Navigation\ViewModels\NavigationManagementViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\Commands\SiteSettingsCommands.cs" />
     <Compile Include="Settings\Controllers\StartController.cs" />
@@ -136,12 +123,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Navigation\Module.txt" />
-    <Content Include="Navigation\Scripts\jquery.mjs.nestedSortable.js" />
-    <Content Include="Navigation\Scripts\navigation-admin.js" />
-    <Content Include="Navigation\Styles\images\menu.navigation.png" />
-    <Content Include="Navigation\Styles\images\move.gif" />
-    <Content Include="Navigation\Styles\menu.navigation-admin.css" />
-    <Content Include="Navigation\Styles\navigation-admin.css" />
     <Content Include="Shapes\Scripts\admin-localnavigation.js" />
     <Content Include="Settings\Module.txt" />
     <Content Include="Settings\Styles\admin.css" />
@@ -235,27 +216,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Navigation\Placement.info" />
-    <Content Include="Navigation\Scripts\Web.config" />
-    <Content Include="Navigation\Styles\Web.config" />
-    <Content Include="Navigation\Views\Admin\CreateMenuItem.cshtml" />
-    <Content Include="Navigation\Views\Admin\Index.cshtml" />
-    <Content Include="Navigation\Views\Content-Menu.Edit.cshtml" />
-    <Content Include="Navigation\Views\DefinitionTemplates\AdminMenuPartTypeSettings.cshtml" />
-    <Content Include="Navigation\Views\EditorTemplates\Parts.MenuItem.Edit.cshtml" />
-    <Content Include="Navigation\Views\EditorTemplates\Parts.MenuWidget.Edit.cshtml" />
-    <Content Include="Navigation\Views\EditorTemplates\Parts.Navigation.AdminMenu.Edit.cshtml" />
-    <Content Include="Navigation\Views\EditorTemplates\Parts.Navigation.Menu.Edit.cshtml" />
-    <Content Include="Navigation\Views\EditorTemplates\Parts.ShapeMenuItemPart.Edit.cshtml" />
-    <Content Include="Navigation\Views\Menu.DeleteButton.cshtml" />
-    <Content Include="Navigation\Views\Menu.Edit.cshtml" />
-    <Content Include="Navigation\Views\MenuItem.Edit.cshtml" />
-    <Content Include="Navigation\Views\MenuItemLink-HtmlMenuItem.cshtml" />
-    <Content Include="Navigation\Views\MenuItemLink-ShapeMenuItem.cshtml" />
-    <Content Include="Navigation\Views\Parts.MenuWidget.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Navigation\Security\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

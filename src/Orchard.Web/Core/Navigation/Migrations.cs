@@ -1,11 +1,11 @@
-﻿using Orchard.Data.Migration;
+﻿//using Orchard.Data.Migration;
 
-namespace Orchard.Core.Navigation {
-    public class Migrations : DataMigrationImpl {
-        public int Create() {
+//namespace Orchard.Core.Navigation {
+//    public class Migrations : DataMigrationImpl {
+//        public int Create() {
             
 
-            return 4;
-        }
-    }
-}
+//            return 4;
+//        }
+//    }
+//}

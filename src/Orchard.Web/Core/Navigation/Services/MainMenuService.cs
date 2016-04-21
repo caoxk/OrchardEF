@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Orchard.ContentManagement;
 using Orchard.Core.Navigation.Models;
-using Orchard.Core.Title.Models;
 
 namespace Orchard.Core.Navigation.Services {
     public class MainMenuService : IMenuService {

@@ -17,12 +17,12 @@ namespace Orchard.Core.Navigation {
             var user = Services.WorkContext.CurrentUser;
 
             // if the current user cannot manage menus, check if they can manage at least one
-            if (!Services.Authorizer.Authorize(Permissions.ManageMenus)) { 
-                var menus = Services.ContentManager.Query("Menu").List();
+            if (!Services.Authorizer.Authorize(Permissions.ManageMenus)) {
+                //var menus = Services.ContentManager.Query("Menu").List();
 
-                if (!menus.Any(x => Services.Authorizer.Authorize(Permissions.ManageMenus, x))) {
+                //if (!menus.Any(x => Services.Authorizer.Authorize(Permissions.ManageMenus, x))) {
                     return;
-                }
+                //}
             }
 
             builder.AddImageSet("navigation")

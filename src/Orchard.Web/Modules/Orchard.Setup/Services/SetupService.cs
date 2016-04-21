@@ -87,7 +87,7 @@ namespace Orchard.Setup.Services {
                 // Framework
                 "Orchard.Framework",
                 // Core
-                 "Settings", "Shapes", 
+                 "Settings", "Shapes", "Navigation",
                 // Modules
                 "Orchard.Themes", "Orchard.Users", "Orchard.Roles", "Orchard.Modules", "Orchard.Recipes"//, "Orchard.Recipes"
             };
