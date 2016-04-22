@@ -82,7 +82,7 @@ namespace Orchard.Data.Migration {
         /// </summary>
         private void EnsureDistributedLockSchemaExists() {
             // Ensure the distributed lock record schema exists.
-            var schemaBuilder = new SchemaBuilder(_dataMigrationInterpreter);
+            var schemaBuilder = new SchemaBuilder();
             var distributedLockSchemaBuilder = new DistributedLockSchemaBuilder(_shellSettings, schemaBuilder);
             if (distributedLockSchemaBuilder.EnsureSchema())
                 _transactionManager.RequireNew();

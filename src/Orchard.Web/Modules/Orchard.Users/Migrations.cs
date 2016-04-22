@@ -5,24 +5,22 @@ namespace Orchard.Users {
     public class UsersDataMigration : DataMigrationImpl {
 
         public int Create() {
-            SchemaBuilder.CreateTable("UserPartRecord", 
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<string>("UserName")
-                    .Column<string>("Email")
-                    .Column<string>("NormalizedUserName")
-                    .Column<string>("Password")
-                    .Column<string>("PasswordFormat")
-                    .Column<string>("HashAlgorithm")
-                    .Column<string>("PasswordSalt")
-                    .Column<string>("RegistrationStatus", c => c.WithDefault("Approved"))
-                    .Column<string>("EmailStatus", c => c.WithDefault("Approved"))
-                    .Column<string>("EmailChallengeToken")
-                    .Column<DateTime>("CreatedUtc")
-                    .Column<DateTime>("LastLoginUtc")
-                    .Column<DateTime>("LastLogoutUtc")
-                );
-
+            SchemaBuilder.Create
+                .Table("UserPartRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("UserName").AsString()
+                .WithColumn("Email").AsString()
+                .WithColumn("NormalizedUserName").AsString()
+                .WithColumn("Password").AsString()
+                .WithColumn("PasswordFormat").AsString()
+                .WithColumn("HashAlgorithm").AsString()
+                .WithColumn("PasswordSalt").AsString()
+                .WithColumn("RegistrationStatus").AsString().WithDefaultValue("Approved")
+                .WithColumn("EmailStatus").AsString().WithDefaultValue("Approved")
+                .WithColumn("EmailChallengeToken").AsString()
+                .WithColumn("CreatedUtc").AsDateTime()
+                .WithColumn("LastLoginUtc").AsDateTime()
+                .WithColumn("LastLogoutUtc").AsDateTime();
             return 4;
         }
 
@@ -32,20 +30,18 @@ namespace Orchard.Users {
         }
 
         public int UpdateFrom2() {
-            SchemaBuilder.AlterTable("UserPartRecord",
-                table => {
-                    table.AddColumn<DateTime>("CreatedUtc");
-                    table.AddColumn<DateTime>("LastLoginUtc");
-                });
+            SchemaBuilder.Alter
+                .Table("UserPartRecord")
+                .AddColumn("CreatedUtc").AsDateTime()
+                .AddColumn("LastLoginUtc").AsDateTime();
 
             return 3;
         }
 
         public int UpdateFrom3() {
-            SchemaBuilder.AlterTable("UserPartRecord",
-                table => {
-                    table.AddColumn<DateTime>("LastLogoutUtc");
-                });
+            SchemaBuilder.Alter
+                .Table("UserPartRecord")
+                .AddColumn("LastLogoutUtc").AsDateTime();
 
             return 4;
         }

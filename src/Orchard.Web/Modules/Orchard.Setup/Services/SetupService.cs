@@ -126,11 +126,11 @@ namespace Orchard.Setup.Services {
                 using (var environment = bootstrapLifetimeScope.CreateWorkContextScope()) {
 
                     // Check if the database is already created (in case an exception occured in the second phase).
-                    var schemaBuilder = new SchemaBuilder(environment.Resolve<IDataMigrationInterpreter>());
+                    var schemaBuilder = new SchemaBuilder();
                     var installationPresent = true;
                     try {
                         var tablePrefix = String.IsNullOrEmpty(shellSettings.DataTablePrefix) ? "" : shellSettings.DataTablePrefix + "_";
-                        schemaBuilder.ExecuteSql("SELECT * FROM " + tablePrefix + "Settings_ShellDescriptorRecord");
+                        schemaBuilder.Execute.Sql("SELECT * FROM " + tablePrefix + "Settings_ShellDescriptorRecord");
                     }
                     catch {
                         installationPresent = false;
@@ -143,13 +143,15 @@ namespace Orchard.Setup.Services {
                     // Workaround to avoid some Transaction issue for PostgreSQL.
                     environment.Resolve<ITransactionManager>().RequireNew();
 
-                    schemaBuilder.CreateTable("Orchard_Framework_DataMigrationRecord", table => table
-                        .Column<int>("Id", column => column.PrimaryKey().Identity())
-                        .Column<string>("DataMigrationClass")
-                        .Column<int>("Version"));
+                    schemaBuilder.Create.Table("Orchard_Framework_DataMigrationRecord")
+                        .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                        .WithColumn("DataMigrationClass").AsString()
+                        .WithColumn("Version").AsInt32();
 
-                    schemaBuilder.AlterTable("Orchard_Framework_DataMigrationRecord",
-                        table => table.AddUniqueConstraint("UC_DMR_DataMigrationClass_Version", "DataMigrationClass", "Version"));
+                    schemaBuilder.Create
+                        .UniqueConstraint("UC_DMR_DataMigrationClass_Version")
+                        .OnTable("Orchard_Framework_DataMigrationRecord")
+                        .Columns("DataMigrationClass", "Version");
 
                     var dataMigrationManager = environment.Resolve<IDataMigrationManager>();
                     dataMigrationManager.Update("Settings");

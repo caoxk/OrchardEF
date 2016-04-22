@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FluentMigrator;
+using FluentMigrator.Expressions;
+using Orchard.Data.Migration.Announcers;
 using Orchard.Data.Migration.Interpreters;
+using Orchard.Data.Migration.Processors;
 using Orchard.Data.Migration.Records;
 using Orchard.Data.Migration.Schema;
+using Orchard.Environment.Configuration;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Logging;
@@ -17,23 +22,22 @@ namespace Orchard.Data.Migration {
     public class DataMigrationManager : IDataMigrationManager {
         private readonly IEnumerable<IDataMigration> _dataMigrations;
         private readonly IRepository<DataMigrationRecord> _dataMigrationRepository;
-        private readonly IExtensionManager _extensionManager;
-        private readonly IDataMigrationInterpreter _interpreter;       
+        private readonly IExtensionManager _extensionManager;   
         private readonly ITransactionManager _transactionManager;
-
         private readonly List<string> _processedFeatures;
+        private readonly IMigrationExecutor _migrationExecutor;
 
         public DataMigrationManager(
             IEnumerable<IDataMigration> dataMigrations, 
             IRepository<DataMigrationRecord> dataMigrationRepository,
-            IExtensionManager extensionManager,
-            IDataMigrationInterpreter interpreter,           
-            ITransactionManager transactionManager) {
+            IExtensionManager extensionManager,          
+            ITransactionManager transactionManager, 
+            IMigrationExecutor migrationExecutor) {
             _dataMigrations = dataMigrations;
             _dataMigrationRepository = dataMigrationRepository;
-            _extensionManager = extensionManager;
-            _interpreter = interpreter;            
+            _extensionManager = extensionManager;       
             _transactionManager = transactionManager;
+            _migrationExecutor = migrationExecutor;
 
             _processedFeatures = new List<string>();
             Logger = NullLogger.Instance;
@@ -108,7 +112,7 @@ namespace Orchard.Data.Migration {
 
                         var createMethod = GetCreateMethod(migration);
                         if (createMethod != null) {
-                            current = (int)createMethod.Invoke(migration, new object[0]);
+                            current = _migrationExecutor.ExecuteMigrationMethod(createMethod, migration);
                         }
                     }
 
@@ -117,7 +121,7 @@ namespace Orchard.Data.Migration {
                     while (lookupTable.ContainsKey(current)) {
                         try {
                             Logger.Information("Applying migration for {0} from version {1}.", feature, current);
-                            current = (int)lookupTable[current].Invoke(migration, new object[0]);
+                            current = _migrationExecutor.ExecuteMigrationMethod(lookupTable[current], migration);
                         }
                         catch (Exception ex) {
                             if (ex.IsFatal()) {
@@ -194,7 +198,7 @@ namespace Orchard.Data.Migration {
                     .ToList();
 
             foreach (var migration in migrations.OfType<DataMigrationImpl>()) {
-                migration.SchemaBuilder = new SchemaBuilder(_interpreter, migration.Feature.Descriptor.Extension.Id, s => s.Replace(".", "_") + "_");               
+                migration.SchemaBuilder = new SchemaBuilder();               
             }
 
             return migrations;
@@ -256,6 +260,5 @@ namespace Orchard.Data.Migration {
 
             return null;
         }
-
     }
 }

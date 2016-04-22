@@ -4,66 +4,37 @@ namespace Orchard.Core.Settings {
     public class Migrations : DataMigrationImpl {
 
         public int Create() {
-            
-            SchemaBuilder.CreateTable("ShellDescriptorRecord",
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<int>("SerialNumber")
-                );
+            SchemaBuilder.Create
+                .Table("ShellDescriptorRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("SerialNumber").AsInt32();
 
-            SchemaBuilder.CreateTable("ShellFeatureRecord",
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<string>("Name")
-                    .Column<int>("ShellDescriptorRecord_id"));
+            SchemaBuilder.Create
+                .Table("ShellFeatureRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Name").AsString()
+                .WithColumn("ShellDescriptorRecord_id").AsInt32();
 
-            SchemaBuilder.CreateTable("ShellFeatureStateRecord",
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<string>("Name")
-                    .Column<string>("InstallState")
-                    .Column<string>("EnableState")
-                    .Column<int>("ShellStateRecord_Id")
-                );
+            SchemaBuilder.Create
+                .Table("ShellFeatureStateRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Name").AsString()
+                .WithColumn("InstallState").AsString()
+                .WithColumn("EnableState").AsString()
+                .WithColumn("ShellStateRecord_Id").AsInt32();
 
-            SchemaBuilder.CreateTable("ShellParameterRecord",
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<string>("Component")
-                    .Column<string>("Name")
-                    .Column<string>("Value")
-                    .Column<int>("ShellDescriptorRecord_id")
-                );
+            SchemaBuilder.Create
+                .Table("ShellParameterRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Component").AsString()
+                .WithColumn("Name").AsString()
+                .WithColumn("Value").AsString()
+                .WithColumn("ShellDescriptorRecord_id").AsInt32();
 
-            SchemaBuilder.CreateTable("ShellStateRecord",
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<string>("Unused")
-                );
-
-            return 4;
-        }
-
-        public int UpdateFrom1() {
-            SchemaBuilder.CreateTable("SiteSettingsPartRecord",
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<string>("BaseUrl", c => c.Unlimited())
-                );
-
-            return 2;
-        }
-
-        public int UpdateFrom2() {
-            SchemaBuilder.AlterTable("SiteSettingsPartRecord",
-                table => table
-                    .AddColumn<string>("SiteTimeZone")
-                );
-
-            return 3;
-        }
-
-        public int UpdateFrom3() {
+            SchemaBuilder.Create
+                .Table("ShellStateRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Unused").AsString();
 
             return 4;
         }
@@ -72,10 +43,10 @@ namespace Orchard.Core.Settings {
             // TODO: Orchard creates dupes in this table so no can do for now.
             //SchemaBuilder.AlterTable("ShellFeatureRecord",
             //    table => table.AddUniqueConstraint("UC_SFR_SDRId_Name", "ShellDescriptorRecord_id", "Name"));
-            SchemaBuilder.AlterTable("ShellFeatureStateRecord",
-                table => table.AddUniqueConstraint("UC_SFSR_SSRId_Name", "ShellStateRecord_Id", "Name"));
-            SchemaBuilder.AlterTable("ShellParameterRecord",
-                table => table.AddUniqueConstraint("UC_SPR_SDRId_Component_Name", "ShellDescriptorRecord_id", "Component", "Name"));
+            SchemaBuilder.Create.UniqueConstraint("UC_SFSR_SSRId_Name").OnTable("ShellFeatureStateRecord").Columns("ShellStateRecord_Id", "Name");
+            SchemaBuilder.Create.UniqueConstraint("UC_SPR_SDRId_Component_Name")
+                .OnTable("ShellParameterRecord")
+                .Columns("ShellDescriptorRecord_id", "Component", "Name");
             return 5;
         }
     }

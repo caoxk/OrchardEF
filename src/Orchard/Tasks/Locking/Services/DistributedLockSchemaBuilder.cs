@@ -22,22 +22,21 @@ namespace Orchard.Tasks.Locking.Services {
         }
 
         public void CreateSchema() {
-            _schemaBuilder.CreateTable(TableName, table => table
-                .Column<int>("Id", column => column.PrimaryKey().Identity())
-                .Column<string>("Name", column => column.NotNull().WithLength(512).Unique())
-                .Column<string>("MachineName", column => column.WithLength(256))
-                .Column<DateTime>("CreatedUtc")
-                .Column<DateTime>("ValidUntilUtc", column => column.Nullable()));
+            _schemaBuilder.Create.Table(TableName)
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Name").AsString(512).NotNullable().Unique()
+                .WithColumn("MachineName").AsString(256)
+                .WithColumn("CreatedUtc").AsDateTime()
+                .WithColumn("ValidUntilUtc").AsDateTime().Nullable();
 
-            _schemaBuilder.AlterTable(TableName, table => {
-                table.CreateIndex("IDX_DistributedLockRecord_Name", "Name");
-            });
+            _schemaBuilder.Create.Index("IDX_DistributedLockRecord_Name")
+                .OnTable(TableName).OnColumn("Name");
         }
 
         public bool SchemaExists() {
             try {
                 var tablePrefix = String.IsNullOrEmpty(_shellSettings.DataTablePrefix) ? "" : _shellSettings.DataTablePrefix + "_";
-                _schemaBuilder.ExecuteSql(String.Format("select * from {0}{1}", tablePrefix, TableName));
+                _schemaBuilder.Execute.Sql(string.Format("select * from {0}", TableName));
                 return true;
             }
             catch {

@@ -3,21 +3,21 @@
 namespace Orchard.Recipes {
     public class Migrations : DataMigrationImpl {
         public int Create() {
-            SchemaBuilder.CreateTable("RecipeStepResultRecord", table => table
-                .Column<int>("Id", c => c.PrimaryKey().Identity())
-                .Column<string>("ExecutionId", c => c.WithLength(128).NotNull())
-                .Column<string>("RecipeName", c => c.WithLength(256))
-                .Column<string>("StepId", c => c.WithLength(32).NotNull())
-                .Column<string>("StepName", c => c.WithLength(256).NotNull())
-                .Column<bool>("IsCompleted", c => c.NotNull())
-                .Column<bool>("IsSuccessful", c => c.NotNull())
-                .Column<string>("ErrorMessage", c => c.Unlimited())
-            );
+            SchemaBuilder.Create
+                .Table("RecipeStepResultRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("ExecutionId").AsString(128)
+                .WithColumn("RecipeName").AsString(256)
+                .WithColumn("StepId").AsString(32).NotNullable()
+                .WithColumn("StepName").AsString(256).NotNullable()
+                .WithColumn("IsCompleted").AsBoolean()
+                .WithColumn("IsSuccessful").AsBoolean()
+                .WithColumn("ErrorMessage").AsString(int.MaxValue);
 
-            SchemaBuilder.AlterTable("RecipeStepResultRecord", table => {
-                table.CreateIndex("IDX_RecipeStepResultRecord_ExecutionId", "ExecutionId");
-                table.CreateIndex("IDX_RecipeStepResultRecord_ExecutionId_StepName", "ExecutionId", "StepName");
-            });
+            SchemaBuilder.Create
+                .UniqueConstraint("IDX_RecipeStepResultRecord_ExecutionId").OnTable("RecipeStepResultRecord").Column("ExecutionId");
+            SchemaBuilder.Create
+                .UniqueConstraint("IDX_RecipeStepResultRecord_ExecutionId_StepName").OnTable("RecipeStepResultRecord").Columns("ExecutionId", "StepName");
             
             return 1;
         }

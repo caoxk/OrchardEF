@@ -9,22 +9,19 @@ namespace Orchard.Localization
 {
     public class LocationDataMigration : DataMigrationImpl
     {
-        public int Create()
-        {
-            SchemaBuilder.CreateTable("CultureRecord",
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<string>("Culture")
-                );
+        public int Create() {
+            SchemaBuilder.Create
+                .Table("CultureRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Culture").AsString();
 
             return 1;
         }
 
         public int UpdateFrom1()
         {
-            SchemaBuilder
-                .AlterTable("CultureRecord", table =>
-                    table.AddUniqueConstraint("UC_CR_Name", "Culture"));
+            SchemaBuilder.Create
+                .UniqueConstraint("UC_CR_Name").OnTable("CultureRecord").Column("Culture");
 
             return 2;
         }

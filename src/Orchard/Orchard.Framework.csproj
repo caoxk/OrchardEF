@@ -71,6 +71,10 @@
       <HintPath>..\packages\Castle.Core.3.3.1\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FluentMigrator, Version=1.6.1.0, Culture=neutral, PublicKeyToken=aacfc7de5acabf05, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentMigrator.1.6.1\lib\40\FluentMigrator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FluentNHibernate, Version=1.4.0.0, Culture=neutral, PublicKeyToken=8aa435e3cb308880, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentNHibernate.1.4.0.0\lib\net35\FluentNHibernate.dll</HintPath>
       <Private>True</Private>
@@ -117,6 +121,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http">
       <Private>True</Private>
     </Reference>
@@ -176,6 +181,95 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Migration\Announcers\Announcer.cs" />
+    <Compile Include="Data\Migration\Announcers\CompositeAnnouncer.cs" />
+    <Compile Include="Data\Migration\Announcers\ConsoleAnnouncer.cs" />
+    <Compile Include="Data\Migration\Announcers\NullAnnouncer.cs" />
+    <Compile Include="Data\Migration\Announcers\TextWriterAnnouncer.cs" />
+    <Compile Include="Data\Migration\Announcers\TextWriterWithGoAnnouncer.cs" />
+    <Compile Include="Data\Migration\Extensions\SqlServerExtensions.cs" />
+    <Compile Include="Data\Migration\Extensions\TagsExtensions.cs" />
+    <Compile Include="Data\Migration\Extensions\TypeExtensions.cs" />
+    <Compile Include="Data\Migration\FormatHelper.cs" />
+    <Compile Include="Data\Migration\Generators\Base\ColumnBase.cs" />
+    <Compile Include="Data\Migration\Generators\Base\GeneratorBase.cs" />
+    <Compile Include="Data\Migration\Generators\Base\TypeMapBase.cs" />
+    <Compile Include="Data\Migration\Generators\EmptyDescriptionGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\Generic\GenericDescriptionGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\Generic\GenericGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\Generic\GenericQuoter.cs" />
+    <Compile Include="Data\Migration\Generators\IColumn.cs" />
+    <Compile Include="Data\Migration\Generators\IDescriptionGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\IQuoter.cs" />
+    <Compile Include="Data\Migration\Generators\ITypeMap.cs" />
+    <Compile Include="Data\Migration\Generators\MigrationGeneratorFactory.cs" />
+    <Compile Include="Data\Migration\Generators\MySql\MySqlColumn.cs" />
+    <Compile Include="Data\Migration\Generators\MySql\MySqlGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\MySql\MySqlQuoter.cs" />
+    <Compile Include="Data\Migration\Generators\MySql\MySqlTypeMap.cs" />
+    <Compile Include="Data\Migration\Generators\Oracle\OracleColumn.cs" />
+    <Compile Include="Data\Migration\Generators\Oracle\OracleDescriptionGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\Oracle\OracleGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\Oracle\OracleQuoter.cs" />
+    <Compile Include="Data\Migration\Generators\Oracle\OracleQuoterQuotedIdentifier.cs" />
+    <Compile Include="Data\Migration\Generators\Oracle\OracleTypeMap.cs" />
+    <Compile Include="Data\Migration\Generators\Postgres\PostgresColumn.cs" />
+    <Compile Include="Data\Migration\Generators\Postgres\PostgresDescriptionGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\Postgres\PostgresGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\Postgres\PostgresQuoter.cs" />
+    <Compile Include="Data\Migration\Generators\Postgres\PostgresTypeMap.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServer2000Generator.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServer2000TypeMap.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServer2005DescriptionGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServer2005Generator.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServer2005TypeMap.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServer2008Generator.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServer2008TypeMap.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServer2012Generator.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServer2014Generator.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServerCeColumn.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServerCeGenerator.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServerCeTypeMap.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServerColumn.cs" />
+    <Compile Include="Data\Migration\Generators\SqlServer\SqlServerQuoter.cs" />
+    <Compile Include="Data\Migration\IAnnouncer.cs" />
+    <Compile Include="Data\Migration\IMigrationExecutor.cs" />
+    <Compile Include="Data\Migration\MigrationContext.cs" />
+    <Compile Include="Data\Migration\Processors\DbFactoryBase.cs" />
+    <Compile Include="Data\Migration\Processors\DotConnectOracle\DotConnectOracleDbFactory.cs" />
+    <Compile Include="Data\Migration\Processors\DotConnectOracle\DotConnectOracleProcessor.cs" />
+    <Compile Include="Data\Migration\Processors\DotConnectOracle\DotConnectOracleProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\GenericProcessorBase.cs" />
+    <Compile Include="Data\Migration\Processors\IDbFactory.cs" />
+    <Compile Include="Data\Migration\Processors\IMigrationProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\MigrationProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\MigrationProcessorFactoryProvider.cs" />
+    <Compile Include="Data\Migration\Processors\MySql\MySqlDbFactory.cs" />
+    <Compile Include="Data\Migration\Processors\MySql\MySqlProcessor.cs" />
+    <Compile Include="Data\Migration\Processors\MySql\MySqlProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\Oracle\OracleDbFactory.cs" />
+    <Compile Include="Data\Migration\Processors\Oracle\OracleManagedDbFactory.cs" />
+    <Compile Include="Data\Migration\Processors\Oracle\OracleManagedProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\Oracle\OracleProcessor.cs" />
+    <Compile Include="Data\Migration\Processors\Oracle\OracleProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\Postgres\PostgresDbFactory.cs" />
+    <Compile Include="Data\Migration\Processors\Postgres\PostgresProcessor.cs" />
+    <Compile Include="Data\Migration\Processors\Postgres\PostgresProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\ProcessorBase.cs" />
+    <Compile Include="Data\Migration\Processors\ProcessorOptions.cs" />
+    <Compile Include="Data\Migration\Processors\ReflectionBasedDbFactory.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServer2000Processor.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServer2000ProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServer2005ProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServer2008ProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServer2012ProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServer2014ProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServerCeDbFactory.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServerCeProcessor.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServerCeProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServerDbFactory.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServerProcessor.cs" />
+    <Compile Include="Data\Migration\Processors\SqlServer\SqlServerProcessorFactory.cs" />
     <Compile Include="Environment\Configuration\ExtensionLocations.cs" />
     <Compile Include="DisplayManagement\IPositioned.cs" />
     <Compile Include="DisplayManagement\PositionWrapper.cs" />
@@ -827,7 +921,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

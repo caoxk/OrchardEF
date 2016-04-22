@@ -10,34 +10,30 @@ namespace Orchard.Roles {
         }
 
         public int Create() {
-            SchemaBuilder.CreateTable("PermissionRecord", 
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<string>("Name")
-                    .Column<string>("FeatureName")
-                    .Column<string>("Description")
-                );
+            SchemaBuilder.Create
+                .Table("PermissionRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Name").AsString()
+                .WithColumn("FeatureName").AsString()
+                .WithColumn("Description").AsString();
 
-            SchemaBuilder.CreateTable("RoleRecord", 
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<string>("Name")
-                );
+            SchemaBuilder.Create
+                .Table("RoleRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Name").AsString();
 
-            SchemaBuilder.CreateTable("RolesPermissionsRecord", 
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<int>("Role_id")
-                    .Column<int>("Permission_id")
-                    .Column<int>("RoleRecord_Id")
-                );
+            SchemaBuilder.Create
+                .Table("RolesPermissionsRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Role_id").AsInt32()
+                .WithColumn("Permission_id").AsInt32()
+                .WithColumn("RoleRecord_Id").AsInt32();
 
-            SchemaBuilder.CreateTable("UserRolesPartRecord", 
-                table => table
-                    .Column<int>("Id", column => column.PrimaryKey().Identity())
-                    .Column<int>("UserId")
-                    .Column<int>("Role_id")
-                );
+            SchemaBuilder.Create
+                .Table("UserRolesPartRecord")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("UserId").AsInt32()
+                .WithColumn("Role_id").AsInt32();
 
             return 2;
         }
