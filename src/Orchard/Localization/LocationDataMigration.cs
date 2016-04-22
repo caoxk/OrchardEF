@@ -11,7 +11,7 @@ namespace Orchard.Localization
     {
         public int Create() {
             SchemaBuilder.Create
-                .Table("CultureRecord")
+                .Table("Orchard_Framework_CultureRecord")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Culture").AsString();
 
@@ -21,7 +21,7 @@ namespace Orchard.Localization
         public int UpdateFrom1()
         {
             SchemaBuilder.Create
-                .UniqueConstraint("UC_CR_Name").OnTable("CultureRecord").Column("Culture");
+                .UniqueConstraint("UC_CR_Name").OnTable("Orchard_Framework_CultureRecord").Column("Culture");
 
             return 2;
         }

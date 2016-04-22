@@ -6,21 +6,21 @@ namespace Orchard.Users {
 
         public int Create() {
             SchemaBuilder.Create
-                .Table("UserPartRecord")
+                .Table("Orchard_Users_UserPartRecord")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
-                .WithColumn("UserName").AsString()
-                .WithColumn("Email").AsString()
-                .WithColumn("NormalizedUserName").AsString()
+                .WithColumn("UserName").AsString().Nullable()
+                .WithColumn("Email").AsString().Nullable()
+                .WithColumn("NormalizedUserName").AsString().Nullable()
                 .WithColumn("Password").AsString()
                 .WithColumn("PasswordFormat").AsString()
                 .WithColumn("HashAlgorithm").AsString()
                 .WithColumn("PasswordSalt").AsString()
                 .WithColumn("RegistrationStatus").AsString().WithDefaultValue("Approved")
                 .WithColumn("EmailStatus").AsString().WithDefaultValue("Approved")
-                .WithColumn("EmailChallengeToken").AsString()
+                .WithColumn("EmailChallengeToken").AsString().Nullable()
                 .WithColumn("CreatedUtc").AsDateTime()
-                .WithColumn("LastLoginUtc").AsDateTime()
-                .WithColumn("LastLogoutUtc").AsDateTime();
+                .WithColumn("LastLoginUtc").AsDateTime().Nullable()
+                .WithColumn("LastLogoutUtc").AsDateTime().Nullable();
             return 4;
         }
 
@@ -31,17 +31,17 @@ namespace Orchard.Users {
 
         public int UpdateFrom2() {
             SchemaBuilder.Alter
-                .Table("UserPartRecord")
+                .Table("Orchard_Users_UserPartRecord")
                 .AddColumn("CreatedUtc").AsDateTime()
-                .AddColumn("LastLoginUtc").AsDateTime();
+                .AddColumn("LastLoginUtc").AsDateTime().Nullable();
 
             return 3;
         }
 
         public int UpdateFrom3() {
             SchemaBuilder.Alter
-                .Table("UserPartRecord")
-                .AddColumn("LastLogoutUtc").AsDateTime();
+                .Table("Orchard_Users_UserPartRecord")
+                .AddColumn("LastLogoutUtc").AsDateTime().Nullable();
 
             return 4;
         }

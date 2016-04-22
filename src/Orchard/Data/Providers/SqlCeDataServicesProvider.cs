@@ -26,7 +26,7 @@ namespace Orchard.Data.Providers {
         }
 
         public static string ProviderName {
-            get { return "SqlCe"; }
+            get { return "SqlServerCe"; }
         }
 
         public override IPersistenceConfigurer GetPersistenceConfigurer(bool createDatabase) {

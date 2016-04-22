@@ -4,10 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web.Hosting;
-using Orchard.CodeGeneration.Services;
+//using Orchard.CodeGeneration.Services;
 using Orchard.Commands;
-using Orchard.Data.Migration.Generator;
-using Orchard.Data.Migration.Schema;
 using Orchard.Environment.Extensions;
 using Orchard.Environment.Extensions.Models;
 
@@ -15,7 +13,7 @@ namespace Orchard.CodeGeneration.Commands {
 
     public class CodeGenerationCommands : DefaultOrchardCommandHandler {
         private readonly IExtensionManager _extensionManager;
-        private readonly ISchemaCommandGenerator _schemaCommandGenerator;
+        //private readonly ISchemaCommandGenerator _schemaCommandGenerator;
         private const string SolutionDirectoryModules = "E9C9F120-07BA-4DFB-B9C3-3AFB9D44C9D5";
         private const string SolutionDirectoryTests = "74E681ED-FECC-4034-B9BD-01B0BB1BDECA";
         private const string SolutionDirectoryThemes = "74492CBC-7201-417E-BC29-28B4C25A58B0";
@@ -36,10 +34,10 @@ namespace Orchard.CodeGeneration.Commands {
         private static readonly string _orchardThemesProj = HostingEnvironment.MapPath("~/Themes/Themes.csproj");
 
         public CodeGenerationCommands(
-            IExtensionManager extensionManager,
-            ISchemaCommandGenerator schemaCommandGenerator) {
+            IExtensionManager extensionManager
+            ) {
             _extensionManager = extensionManager;
-            _schemaCommandGenerator = schemaCommandGenerator;
+            //_schemaCommandGenerator = schemaCommandGenerator;
 
             // Default is to include in the solution when generating modules / themes
             IncludeInSolution = true;
@@ -54,64 +52,64 @@ namespace Orchard.CodeGeneration.Commands {
         [OrchardSwitch]
         public string BasedOn { get; set; }
 
-        [CommandHelp("codegen datamigration <feature-name> \r\n\t" + "Create a new Data Migration class")]
-        [CommandName("codegen datamigration")]
-        public void CreateDataMigration(string featureName) {
-            Context.Output.WriteLine(T("Creating Data Migration for {0}", featureName));
-            ExtensionDescriptor extensionDescriptor = _extensionManager.AvailableExtensions().FirstOrDefault(extension => DefaultExtensionTypes.IsModule(extension.ExtensionType) &&
-                                                                                                             extension.Features.Any(feature => String.Equals(feature.Id, featureName, StringComparison.OrdinalIgnoreCase)));
+        //[CommandHelp("codegen datamigration <feature-name> \r\n\t" + "Create a new Data Migration class")]
+        //[CommandName("codegen datamigration")]
+        //public void CreateDataMigration(string featureName) {
+        //    Context.Output.WriteLine(T("Creating Data Migration for {0}", featureName));
+        //    ExtensionDescriptor extensionDescriptor = _extensionManager.AvailableExtensions().FirstOrDefault(extension => DefaultExtensionTypes.IsModule(extension.ExtensionType) &&
+        //                                                                                                     extension.Features.Any(feature => String.Equals(feature.Id, featureName, StringComparison.OrdinalIgnoreCase)));
 
-            if (extensionDescriptor == null) {
-                Context.Output.WriteLine(T("Creating data migration failed: target Feature {0} could not be found.", featureName));
-                return;
-            }
+        //    if (extensionDescriptor == null) {
+        //        Context.Output.WriteLine(T("Creating data migration failed: target Feature {0} could not be found.", featureName));
+        //        return;
+        //    }
 
-            string dataMigrationFolderPath = HostingEnvironment.MapPath("~/Modules/" + extensionDescriptor.Id + "/");
-            string dataMigrationFilePath = dataMigrationFolderPath + "Migrations.cs";
-            string templatesPath = HostingEnvironment.MapPath("~/Modules/Orchard." + ModuleName + "/CodeGenerationTemplates/");
-            string moduleCsProjPath = HostingEnvironment.MapPath(string.Format("~/Modules/{0}/{0}.csproj", extensionDescriptor.Id));
+        //    string dataMigrationFolderPath = HostingEnvironment.MapPath("~/Modules/" + extensionDescriptor.Id + "/");
+        //    string dataMigrationFilePath = dataMigrationFolderPath + "Migrations.cs";
+        //    string templatesPath = HostingEnvironment.MapPath("~/Modules/Orchard." + ModuleName + "/CodeGenerationTemplates/");
+        //    string moduleCsProjPath = HostingEnvironment.MapPath(string.Format("~/Modules/{0}/{0}.csproj", extensionDescriptor.Id));
 
-            if (!Directory.Exists(dataMigrationFolderPath)) {
-                Directory.CreateDirectory(dataMigrationFolderPath);
-            }
+        //    if (!Directory.Exists(dataMigrationFolderPath)) {
+        //        Directory.CreateDirectory(dataMigrationFolderPath);
+        //    }
 
-            if (File.Exists(dataMigrationFilePath)) {
-                Context.Output.WriteLine(T("Data migration already exists in target Module {0}.", extensionDescriptor.Id));
-                return;
-            }
+        //    if (File.Exists(dataMigrationFilePath)) {
+        //        Context.Output.WriteLine(T("Data migration already exists in target Module {0}.", extensionDescriptor.Id));
+        //        return;
+        //    }
 
-            List<SchemaCommand> commands = _schemaCommandGenerator.GetCreateFeatureCommands(featureName, false).ToList();
-            string dataMigrationText;
-            using (var stringWriter = new StringWriter()) {
-                var interpreter = new CodeGenerationCommandInterpreter(stringWriter);
+        //    List<SchemaCommand> commands = _schemaCommandGenerator.GetCreateFeatureCommands(featureName, false).ToList();
+        //    string dataMigrationText;
+        //    using (var stringWriter = new StringWriter()) {
+        //        var interpreter = new CodeGenerationCommandInterpreter(stringWriter);
 
-                foreach (var command in commands) {
-                    interpreter.Visit(command);
-                    stringWriter.WriteLine();
-                }
+        //        foreach (var command in commands) {
+        //            interpreter.Visit(command);
+        //            stringWriter.WriteLine();
+        //        }
 
-                dataMigrationText = File.ReadAllText(templatesPath + "DataMigration.txt");
-                dataMigrationText = dataMigrationText.Replace("$$FeatureName$$", featureName);
-                dataMigrationText = dataMigrationText.Replace("$$Commands$$", stringWriter.ToString());
-            }
-            File.WriteAllText(dataMigrationFilePath, dataMigrationText);
+        //        dataMigrationText = File.ReadAllText(templatesPath + "DataMigration.txt");
+        //        dataMigrationText = dataMigrationText.Replace("$$FeatureName$$", featureName);
+        //        dataMigrationText = dataMigrationText.Replace("$$Commands$$", stringWriter.ToString());
+        //    }
+        //    File.WriteAllText(dataMigrationFilePath, dataMigrationText);
 
-            string projectFileText = File.ReadAllText(moduleCsProjPath);
+        //    string projectFileText = File.ReadAllText(moduleCsProjPath);
 
-            // The string searches in solution/project files can be made aware of comment lines.
-            if (projectFileText.Contains("<Compile Include")) {
-                string compileReference = string.Format("<Compile Include=\"{0}\" />\r\n    ", "Migrations.cs");
-                projectFileText = projectFileText.Insert(projectFileText.LastIndexOf("<Compile Include"), compileReference);
-            }
-            else {
-                string itemGroupReference = string.Format("</ItemGroup>\r\n  <ItemGroup>\r\n    <Compile Include=\"{0}\" />\r\n  ", "Migrations.cs");
-                projectFileText = projectFileText.Insert(projectFileText.LastIndexOf("</ItemGroup>"), itemGroupReference);
-            }
+        //    // The string searches in solution/project files can be made aware of comment lines.
+        //    if (projectFileText.Contains("<Compile Include")) {
+        //        string compileReference = string.Format("<Compile Include=\"{0}\" />\r\n    ", "Migrations.cs");
+        //        projectFileText = projectFileText.Insert(projectFileText.LastIndexOf("<Compile Include"), compileReference);
+        //    }
+        //    else {
+        //        string itemGroupReference = string.Format("</ItemGroup>\r\n  <ItemGroup>\r\n    <Compile Include=\"{0}\" />\r\n  ", "Migrations.cs");
+        //        projectFileText = projectFileText.Insert(projectFileText.LastIndexOf("</ItemGroup>"), itemGroupReference);
+        //    }
 
-            File.WriteAllText(moduleCsProjPath, projectFileText);
-            TouchSolution(Context.Output);
-            Context.Output.WriteLine(T("Data migration created successfully in Module {0}", extensionDescriptor.Id));
-        }
+        //    File.WriteAllText(moduleCsProjPath, projectFileText);
+        //    TouchSolution(Context.Output);
+        //    Context.Output.WriteLine(T("Data migration created successfully in Module {0}", extensionDescriptor.Id));
+        //}
 
         [CommandHelp("codegen module <module-name> [/IncludeInSolution:true|false]\r\n\t" + "Create a new Orchard module")]
         [CommandName("codegen module")]

@@ -91,7 +91,6 @@
   <ItemGroup>
     <Compile Include="Commands\CodeGenerationCommands.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\CodeGenerationCommandInterpreter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="CodeGenerationTemplates\ModuleStylesMinCss.txt" />

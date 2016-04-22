@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Orchard.Data.Migration.Interpreters;
 using Orchard.Data.Migration.Schema;
 using Orchard.Environment;
 using Orchard.Environment.Configuration;
@@ -17,16 +16,16 @@ namespace Orchard.Data.Migration {
         private readonly IDataMigrationManager _dataMigrationManager;
         private readonly IFeatureManager _featureManager;
         private readonly IDistributedLockService _distributedLockService;
-        private readonly IDataMigrationInterpreter _dataMigrationInterpreter;
         private readonly ShellSettings _shellSettings;
         private readonly ITransactionManager _transactionManager;
+        private readonly IMigrationExecutor _migrationExecutor;
 
         public AutomaticDataMigrations(
             IDataMigrationManager dataMigrationManager,
-            IDataMigrationInterpreter dataMigrationInterpreter,
             IFeatureManager featureManager,
             IDistributedLockService distributedLockService,
             ITransactionManager transactionManager,
+            IMigrationExecutor migrationExecutor,
             ShellSettings shellSettings) {
 
             _dataMigrationManager = dataMigrationManager;
@@ -34,7 +33,7 @@ namespace Orchard.Data.Migration {
             _distributedLockService = distributedLockService;
             _shellSettings = shellSettings;
             _transactionManager = transactionManager;
-            _dataMigrationInterpreter = dataMigrationInterpreter;
+            _migrationExecutor = migrationExecutor;
 
             Logger = NullLogger.Instance;
         }
@@ -82,8 +81,7 @@ namespace Orchard.Data.Migration {
         /// </summary>
         private void EnsureDistributedLockSchemaExists() {
             // Ensure the distributed lock record schema exists.
-            var schemaBuilder = new SchemaBuilder();
-            var distributedLockSchemaBuilder = new DistributedLockSchemaBuilder(_shellSettings, schemaBuilder);
+            var distributedLockSchemaBuilder = new DistributedLockSchemaBuilder(_shellSettings, _migrationExecutor);
             if (distributedLockSchemaBuilder.EnsureSchema())
                 _transactionManager.RequireNew();
         }

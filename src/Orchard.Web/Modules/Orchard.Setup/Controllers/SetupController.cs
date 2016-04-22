@@ -118,7 +118,7 @@ namespace Orchard.Setup.Controllers {
 
                 switch (model.DatabaseProvider) {
                     case SetupDatabaseType.Builtin:
-                        providerName = "SqlCe";
+                        providerName = "SqlServerCe";
                         break;
 
                     case SetupDatabaseType.SqlServer:

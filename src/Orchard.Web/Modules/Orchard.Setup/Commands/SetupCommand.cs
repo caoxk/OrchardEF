@@ -39,7 +39,7 @@ namespace Orchard.Setup.Commands {
         [OrchardSwitch]
         public string Recipe { get; set; }
 
-        [CommandHelp("setup /SiteName:<siteName> /AdminUsername:<username> /AdminPassword:<password> /DatabaseProvider:<SqlCe|SQLServer|MySql|PostgreSql> " + 
+        [CommandHelp("setup /SiteName:<siteName> /AdminUsername:<username> /AdminPassword:<password> /DatabaseProvider:<SqlServerCe|SQLServer|MySql|PostgreSql> " + 
             "/DatabaseConnectionString:<connection_string> /DatabaseTablePrefix:<table_prefix> /EnabledFeatures:<feature1,feature2,...> " +
             "/Recipe:<recipe>" + 
             "\r\n\tRuns first time setup for the site or for a given tenant.")]

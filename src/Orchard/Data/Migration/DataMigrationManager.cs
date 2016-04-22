@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using FluentMigrator;
-using FluentMigrator.Expressions;
-using Orchard.Data.Migration.Announcers;
-using Orchard.Data.Migration.Interpreters;
-using Orchard.Data.Migration.Processors;
 using Orchard.Data.Migration.Records;
 using Orchard.Data.Migration.Schema;
 using Orchard.Environment.Configuration;

@@ -1,7 +1,7 @@
 ﻿namespace Orchard.Data.Providers {
     public class SqlCeStatementProvider : ISqlStatementProvider {
         public string DataProvider {
-            get { return "SqlCe"; }
+            get { return "SqlServerCe"; }
         }
 
         public string GetStatement(string command) {

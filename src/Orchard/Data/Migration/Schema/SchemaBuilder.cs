@@ -9,9 +9,6 @@ using FluentMigrator.Builders.Rename;
 using FluentMigrator.Builders.Schema;
 using FluentMigrator.Builders.Update;
 using FluentMigrator.Infrastructure;
-using Orchard.Data.Migration.Interpreters;
-using Orchard.Localization;
-using Orchard.Exceptions;
 
 namespace Orchard.Data.Migration.Schema {
     //public class SchemaBuilder {

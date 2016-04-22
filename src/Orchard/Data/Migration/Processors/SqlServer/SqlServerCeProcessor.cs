@@ -95,7 +95,7 @@ namespace Orchard.Data.Migration.Processors.SqlServer
 
             using (var command = session.Connection.CreateCommand())
             {
-                command.CommandTimeout = Options.Timeout;
+                command.CommandTimeout = 0;
                 command.CommandText = String.Format(template, args);
                 session.Transaction.Enlist(command);
                 using (var reader = command.ExecuteReader())
@@ -117,6 +117,7 @@ namespace Orchard.Data.Migration.Processors.SqlServer
             var ds = new DataSet();
             using (var command = session.Connection.CreateCommand())
             {
+                command.CommandTimeout = 0;
                 command.CommandText = String.Format(template, args);
                 session.Transaction.Enlist(command);
                 var adapter = Factory.CreateDataAdapter(command);

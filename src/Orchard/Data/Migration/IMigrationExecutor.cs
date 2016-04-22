@@ -16,6 +16,7 @@ namespace Orchard.Data.Migration
     public interface IMigrationExecutor: IDependency {
         void ExecuteMigration(Action<SchemaBuilder> migraitonAction);
         int ExecuteMigrationMethod(MethodInfo method, IDataMigration migration);
+        bool TableExists(string schemaName, string tableName);
     }
 
     public class DefaultMigrationExecutor : IMigrationExecutor {
@@ -42,6 +43,14 @@ namespace Orchard.Data.Migration
             {
                 expression.ExecuteWith(processor);
             }
+        }
+
+        public bool TableExists(string schemaName, string tableName) {
+            var processorFactory = _migrationProcessorFactoryProvider.GetFactory(_shellSettings.DataProvider);
+            var announcer = new TextWriterAnnouncer(s => System.Diagnostics.Debug.WriteLine(s));
+            var options = new MigrationOptions { PreviewOnly = false, Timeout = 60 };
+            var processor = (ProcessorBase)processorFactory.Create(announcer, options);
+            return processor.TableExists(schemaName, tableName);
         }
 
         public int ExecuteMigrationMethod(MethodInfo method, IDataMigration migration)

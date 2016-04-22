@@ -11,29 +11,29 @@ namespace Orchard.Roles {
 
         public int Create() {
             SchemaBuilder.Create
-                .Table("PermissionRecord")
+                .Table("Orchard_Roles_PermissionRecord")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Name").AsString()
                 .WithColumn("FeatureName").AsString()
-                .WithColumn("Description").AsString();
+                .WithColumn("Description").AsString().Nullable();
 
             SchemaBuilder.Create
-                .Table("RoleRecord")
+                .Table("Orchard_Roles_RoleRecord")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Name").AsString();
 
             SchemaBuilder.Create
-                .Table("RolesPermissionsRecord")
+                .Table("Orchard_Roles_RolesPermissionsRecord")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Role_id").AsInt32()
-                .WithColumn("Permission_id").AsInt32()
-                .WithColumn("RoleRecord_Id").AsInt32();
+                .WithColumn("Permission_id").AsInt32().Nullable()
+                .WithColumn("RoleRecord_Id").AsInt32().Nullable();
 
             SchemaBuilder.Create
-                .Table("UserRolesPartRecord")
+                .Table("Orchard_Roles_UserRolesPartRecord")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
-                .WithColumn("UserId").AsInt32()
-                .WithColumn("Role_id").AsInt32();
+                .WithColumn("UserId").AsInt32().Nullable()
+                .WithColumn("Role_id").AsInt32().Nullable();
 
             return 2;
         }
