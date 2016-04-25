@@ -40,6 +40,12 @@ namespace Orchard.Logging {
                 foreach (var injector in injectors)
                     injector(e.Context, e.Instance);
             };
+            if ((typeof(Microsoft.Extensions.Logging.ILoggerFactory)).IsAssignableFrom(implementationType)) {
+                registration.Activated += (s, e) => {
+                    var factory = (Microsoft.Extensions.Logging.ILoggerFactory)e.Instance;
+                    factory.AddProvider(new Log4NetProvider(CreateLogger(e.Context, e.Parameters)));
+                };
+            }
         }
 
         private IEnumerable<Action<IComponentContext, object>> BuildLoggerInjectors(Type componentType) {

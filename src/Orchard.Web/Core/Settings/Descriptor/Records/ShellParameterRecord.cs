@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Orchard.Core.Settings.Descriptor.Records {
     public class ShellParameterRecord {
         public virtual int Id { get; set; }

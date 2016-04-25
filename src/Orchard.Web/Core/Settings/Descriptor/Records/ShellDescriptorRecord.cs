@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Orchard.Data.Conventions;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Orchard.Core.Settings.Descriptor.Records {
     public class ShellDescriptorRecord {
@@ -10,11 +10,9 @@ namespace Orchard.Core.Settings.Descriptor.Records {
 
         public virtual int Id { get; set; }
         public virtual int SerialNumber { get; set; }
-        
-        [CascadeAllDeleteOrphan]
+
         public virtual IList<ShellFeatureRecord> Features { get; set; }
-        
-        [CascadeAllDeleteOrphan]
+
         public virtual IList<ShellParameterRecord> Parameters { get; set; }
     }
 }

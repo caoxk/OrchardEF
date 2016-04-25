@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Web.Mvc;
-using NHibernate;
 using Orchard.Mvc.Filters;
 
 namespace Orchard.Data {
@@ -10,7 +9,7 @@ namespace Orchard.Data {
         void RequireNew(IsolationLevel level);
         void Cancel();
 
-        ISession GetSession();
+        DataContext GetSession();
     }
 
     public class TransactionFilter : FilterProvider, IExceptionFilter {

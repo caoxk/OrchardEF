@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Orchard.Data.Conventions;
 
 namespace Orchard.Roles.Models {
     public class RoleRecord {
@@ -10,7 +9,6 @@ namespace Orchard.Roles.Models {
         public virtual int Id { get; set; }
         public virtual string Name { get; set; }
 
-        [CascadeAllDeleteOrphan]
         public virtual IList<RolesPermissionsRecord> RolesPermissions { get; set; }
     }
 }

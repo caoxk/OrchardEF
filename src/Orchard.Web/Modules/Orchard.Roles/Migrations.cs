@@ -26,14 +26,14 @@ namespace Orchard.Roles {
                 .Table("Orchard_Roles_RolesPermissionsRecord")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Role_id").AsInt32()
-                .WithColumn("Permission_id").AsInt32().Nullable()
+                .WithColumn("Permission_Id").AsInt32().Nullable()
                 .WithColumn("RoleRecord_Id").AsInt32().Nullable();
 
             SchemaBuilder.Create
                 .Table("Orchard_Roles_UserRolesPartRecord")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("UserId").AsInt32().Nullable()
-                .WithColumn("Role_id").AsInt32().Nullable();
+                .WithColumn("Role_Id").AsInt32().Nullable();
 
             return 2;
         }

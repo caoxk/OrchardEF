@@ -13,7 +13,7 @@ namespace Orchard.Core.Settings {
                 .Table("Settings_ShellFeatureRecord")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Name").AsString()
-                .WithColumn("ShellDescriptorRecord_id").AsInt32().Nullable();
+                .WithColumn("ShellDescriptorRecord_Id").AsInt32().Nullable();
 
             SchemaBuilder.Create
                 .Table("Settings_ShellFeatureStateRecord")

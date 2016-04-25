@@ -1,0 +1,25 @@
+﻿{
+  "defaultAssembly": "Orchard.Framework",
+  "components": [
+    {
+      "type": "Orchard.Localization.Services.CultureDateTimeFormatProvider, Orchard.Framework",
+      "services": [
+        {
+          "type": "Orchard.Localization.Services.IDateTimeFormatProvider"
+        }
+      ],
+      "injectProperties": true,
+      "instanceScope": "single-instance"
+    },
+    {
+      "type": "Orchard.Environment.ApplicationEnvironment, Orchard.Framework",
+      "services": [
+        {
+          "type": "Orchard.Environment.IApplicationEnvironment, Orchard.Framework"
+        }
+      ],
+      "injectProperties": true,
+      "instanceScope": "single-instance"
+    }
+  ]
+}

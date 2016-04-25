@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using NHibernate;
-using NHibernate.Linq;
+using Microsoft.Data.Entity;
 using Orchard.Logging;
 using Orchard.Utility.Extensions;
 
@@ -19,12 +18,13 @@ namespace Orchard.Data {
 
         public ILogger Logger { get; set; }
 
-        protected virtual ISession Session {
+        protected virtual DataContext Session {
             get { return _transactionManager.GetSession(); }
         }
 
-        public virtual IQueryable<T> Table {
-            get { return Session.Query<T>().Cacheable(); }
+        public virtual DbSet<T> Table
+        {
+            get { return Session.Set<T>(); }
         }
 
         #region IRepository<T> Members
@@ -81,7 +81,35 @@ namespace Orchard.Data {
         #endregion
 
         public virtual T Get(int id) {
-            return Session.Get<T>(id);
+            var entityType = Session.Model.FindEntityType(typeof(T));
+            var key = entityType.FindPrimaryKey();
+
+            var entries = Session.ChangeTracker.Entries<T>();
+
+            var i = 0;
+            foreach (var property in key.Properties) {
+                entries = entries.Where(e => e.Property(property.Name).CurrentValue == (object)id);
+                i++;
+            }
+
+            var entry = entries.FirstOrDefault();
+            if (entry != null) {
+                // Return the local object if it exists.
+                return entry.Entity;
+            }
+
+            // TODO: Build the real LINQ Expression
+            // set.Where(x => x.Id == keyValues[0]);
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var query = Table.Where((Expression<Func<T, bool>>)
+                Expression.Lambda(
+                    Expression.Equal(
+                        Expression.Property(parameter, "Id"),
+                        Expression.Constant(id)),
+                    parameter));
+
+            // Look in the database
+            return query.FirstOrDefault();
         }
 
         public virtual T Get(Expression<Func<T, bool>> predicate) {
@@ -90,53 +118,54 @@ namespace Orchard.Data {
 
         public virtual void Create(T entity) {
             Logger.Debug("Create {0}", entity);
-            Session.Save(entity);
+            Table.Add(entity);
         }
 
         public virtual void Update(T entity) {
             Logger.Debug("Update {0}", entity);
-            Session.Evict(entity);
-            Session.Merge(entity);
+            Table.Update(entity);
         }
 
         public virtual void Delete(T entity) {
             Logger.Debug("Delete {0}", entity);
-            Session.Delete(entity);            
+            Table.Remove(entity);           
         }
 
         public virtual void Copy(T source, T target) {
             Logger.Debug("Copy {0} {1}", source, target);
-            var metadata = Session.SessionFactory.GetClassMetadata(typeof (T));
-            var values = metadata.GetPropertyValues(source, EntityMode.Poco);
+            var entityType = Session.Model.FindEntityType(typeof(T));
 
-            //This method is currently only used by StorageVersionFilter<>.Versioning()
-            //In order to prevent shared references to the same collection instance
-            //Instances of IList<> need to be copied to a new collection instance
-            for (var index = 0; index < values.Length; index++) {
-                var value = values[index];
-                if (value == null)
-                    continue;
+            //var metadata = Session.SessionFactory.GetClassMetadata(typeof (T));
+            //var values = metadata.GetPropertyValues(source, EntityMode.Poco);
+
+            ////This method is currently only used by StorageVersionFilter<>.Versioning()
+            ////In order to prevent shared references to the same collection instance
+            ////Instances of IList<> need to be copied to a new collection instance
+            //for (var index = 0; index < values.Length; index++) {
+            //    var value = values[index];
+            //    if (value == null)
+            //        continue;
                 
-                var type = value.GetType();
-                var isGenericList = type.GetInterfaces()
-                    .Where(i => i.IsGenericType)
-                    .Any(i => i.GetGenericTypeDefinition() == typeof(IList<>));
+            //    var type = value.GetType();
+            //    var isGenericList = type.GetInterfaces()
+            //        .Where(i => i.IsGenericType)
+            //        .Any(i => i.GetGenericTypeDefinition() == typeof(IList<>));
 
-                if(!isGenericList)
-                    continue;
+            //    if(!isGenericList)
+            //        continue;
 
-                var genericArgument = type.GetGenericArguments().First();
-                var genericType = typeof(List<>).MakeGenericType(new[] { genericArgument });
+            //    var genericArgument = type.GetGenericArguments().First();
+            //    var genericType = typeof(List<>).MakeGenericType(new[] { genericArgument });
 
-                var listValues = ((IList)value);
-                values[index] = Activator.CreateInstance(genericType, new[] { listValues });
-            }
+            //    var listValues = ((IList)value);
+            //    values[index] = Activator.CreateInstance(genericType, new[] { listValues });
+            //}
 
-            metadata.SetPropertyValues(target, values, EntityMode.Poco);
+            //metadata.SetPropertyValues(target, values, EntityMode.Poco);
         }
 
         public virtual void Flush() {
-            Session.Flush();
+            Session.SaveChanges();
         }
 
         public virtual int Count(Expression<Func<T, bool>> predicate) {

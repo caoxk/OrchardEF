@@ -10,12 +10,21 @@ namespace Orchard.Data {
 
         }
         protected override void AttachToComponentRegistration(Autofac.Core.IComponentRegistry componentRegistry, Autofac.Core.IComponentRegistration registration) {
-            if (typeof(IDataServicesProvider).IsAssignableFrom(registration.Activator.LimitType)) {
-                var propertyInfo = registration.Activator.LimitType.GetProperty("ProviderName", BindingFlags.Static | BindingFlags.Public);
-                if (propertyInfo != null) {
-                    registration.Metadata["ProviderName"] = propertyInfo.GetValue(null, null);
-                }
-            }
+            //if (typeof(IDataServicesProvider).IsAssignableFrom(registration.Activator.LimitType)) {
+            //    var propertyInfo = registration.Activator.LimitType.GetProperty("ProviderName", BindingFlags.Static | BindingFlags.Public);
+            //    if (propertyInfo != null) {
+            //        registration.Metadata["ProviderName"] = propertyInfo.GetValue(null, null);
+            //    }
+            //}
+            //registration.Activating += (s, e) => {
+            //    e.
+            //};
+            //if (typeof(System.IServiceProvider).IsAssignableFrom(registration.Activator.LimitType)) {
+            //    Microsoft.Data.Entity.Internal.DbContextActivator.ServiceProvider =
+
+            ////
+            //}
         }
+
     }
 }

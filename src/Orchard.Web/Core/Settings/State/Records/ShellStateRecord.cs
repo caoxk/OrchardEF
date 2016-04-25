@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Orchard.Data.Conventions;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Orchard.Core.Settings.State.Records {
     public class ShellStateRecord {
@@ -16,7 +16,6 @@ namespace Orchard.Core.Settings.State.Records {
         ///  </summary>
         public virtual string Unused { get; set; }
 
-        [CascadeAllDeleteOrphan]
         public virtual IList<ShellFeatureStateRecord> Features { get; set; }
     }
 }

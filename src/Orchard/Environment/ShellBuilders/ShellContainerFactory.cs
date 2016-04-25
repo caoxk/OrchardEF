@@ -9,6 +9,8 @@ using Autofac.Builder;
 using Autofac.Configuration;
 using Autofac.Core;
 using Autofac.Features.Indexed;
+using Microsoft.Extensions.Configuration;
+using Orchard.Data;
 using Orchard.Environment.AutofacUtil;
 using Orchard.Environment.AutofacUtil.DynamicProxy2;
 using Orchard.Environment.Configuration;
@@ -24,10 +26,14 @@ namespace Orchard.Environment.ShellBuilders {
     public class ShellContainerFactory : IShellContainerFactory {
         private readonly ILifetimeScope _lifetimeScope;
         private readonly IShellContainerRegistrations _shellContainerRegistrations;
+        private readonly IDataModuleRegistrations _dataModuleRegistrations;
 
-        public ShellContainerFactory(ILifetimeScope lifetimeScope, IShellContainerRegistrations shellContainerRegistrations) {
+        public ShellContainerFactory(ILifetimeScope lifetimeScope, 
+            IShellContainerRegistrations shellContainerRegistrations,
+            IDataModuleRegistrations dataModuleRegistrations) {
             _lifetimeScope = lifetimeScope;
             _shellContainerRegistrations = shellContainerRegistrations;
+            _dataModuleRegistrations = dataModuleRegistrations;
         }
 
         public ILifetimeScope CreateContainer(ShellSettings settings, ShellBlueprint blueprint) {
@@ -126,14 +132,25 @@ namespace Orchard.Environment.ShellBuilders {
                     // Register code-only registrations specific to a shell
                     _shellContainerRegistrations.Registrations(builder);
 
-                    var optionalShellByNameConfig = HostingEnvironment.MapPath("~/Config/Sites." + settings.Name + ".config");
+                    _dataModuleRegistrations.Registrations(builder, settings);
+
+                    var optionalShellByNameConfig = HostingEnvironment.MapPath("~/Config/Sites." + settings.Name + ".json");
                     if (File.Exists(optionalShellByNameConfig)) {
-                        builder.RegisterModule(new ConfigurationSettingsReader(ConfigurationSettingsReaderConstants.DefaultSectionName, optionalShellByNameConfig));
+                        var config = new ConfigurationBuilder();
+                        config.AddJsonFile(optionalShellByNameConfig);
+
+                        var module = new ConfigurationModule(config.Build());
+                        builder.RegisterModule(module);
                     }
                     else {
-                        var optionalShellConfig = HostingEnvironment.MapPath("~/Config/Sites.config");
-                        if (File.Exists(optionalShellConfig))
-                            builder.RegisterModule(new ConfigurationSettingsReader(ConfigurationSettingsReaderConstants.DefaultSectionName, optionalShellConfig));
+                        var optionalShellConfig = HostingEnvironment.MapPath("~/Config/Sites.json");
+                        if (File.Exists(optionalShellConfig)) {
+                            var config = new ConfigurationBuilder();
+                            config.AddJsonFile(optionalShellConfig);
+
+                            var module = new ConfigurationModule(config.Build());
+                            builder.RegisterModule(module);
+                        }
                     }
 
                     var optionalComponentsConfig = HostingEnvironment.MapPath("~/Config/HostComponents.config");

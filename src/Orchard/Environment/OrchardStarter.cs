@@ -37,6 +37,7 @@ using Orchard.WebApi;
 using Orchard.WebApi.Filters;
 using System.Linq;
 using System.Web.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace Orchard.Environment {
     public static class OrchardStarter {
@@ -100,6 +101,7 @@ namespace Orchard.Environment {
                     builder.RegisterType<CompositionStrategy>().As<ICompositionStrategy>().SingleInstance();
                     {
                         builder.RegisterType<ShellContainerRegistrations>().As<IShellContainerRegistrations>().SingleInstance();
+                        builder.RegisterType<DefaultDataModuleRegistrations>().As<IDataModuleRegistrations>().SingleInstance();
                         builder.RegisterType<ExtensionLoaderCoordinator>().As<IExtensionLoaderCoordinator>().SingleInstance();
                         builder.RegisterType<ExtensionMonitoringCoordinator>().As<IExtensionMonitoringCoordinator>().SingleInstance();
                         builder.RegisterType<ExtensionManager>().As<IExtensionManager>().SingleInstance();
@@ -128,17 +130,23 @@ namespace Orchard.Environment {
 
             builder.RegisterType<RunningShellTable>().As<IRunningShellTable>().SingleInstance();
             builder.RegisterType<DefaultOrchardShell>().As<IOrchardShell>().InstancePerMatchingLifetimeScope("shell");
-            builder.RegisterType<SessionConfigurationCache>().As<ISessionConfigurationCache>().InstancePerMatchingLifetimeScope("shell");
+            //builder.RegisterType<SessionConfigurationCache>().As<ISessionConfigurationCache>().InstancePerMatchingLifetimeScope("shell");
 
             registrations(builder);
 
-            var autofacSection = ConfigurationManager.GetSection(ConfigurationSettingsReaderConstants.DefaultSectionName);
-            if (autofacSection != null)
-                builder.RegisterModule(new ConfigurationSettingsReader());
+            //var autofacSection = ConfigurationManager.GetSection(ConfigurationSettingsReaderConstants.DefaultSectionName);
+            //if (autofacSection != null)
+            //    builder.RegisterModule(new ConfigurationSettingsReader());
 
-            var optionalHostConfig = HostingEnvironment.MapPath("~/Config/Host.config");
-            if (File.Exists(optionalHostConfig))
-                builder.RegisterModule(new ConfigurationSettingsReader(ConfigurationSettingsReaderConstants.DefaultSectionName, optionalHostConfig));
+            var optionalHostConfig = HostingEnvironment.MapPath("~/Config/Host.json");
+            if (File.Exists(optionalHostConfig)) {
+                var config = new ConfigurationBuilder();
+                config.AddJsonFile(optionalHostConfig);
+
+                // Register the ConfigurationModule with Autofac.
+                var module = new ConfigurationModule(config.Build());
+                builder.RegisterModule(module);
+            }
 
             var optionalComponentsConfig = HostingEnvironment.MapPath("~/Config/HostComponents.config");
             if (File.Exists(optionalComponentsConfig))

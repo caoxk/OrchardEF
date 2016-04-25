@@ -1,9 +1,9 @@
-﻿using FluentNHibernate.Cfg.Db;
-using NHibernate.Cfg;
+﻿using Autofac;
+using Autofac.Core;
+using Microsoft.Data.Entity;
 
 namespace Orchard.Data.Providers {
-    public interface IDataServicesProvider : ITransientDependency {
-        Configuration BuildConfiguration(SessionFactoryParameters sessionFactoryParameters);
-        IPersistenceConfigurer GetPersistenceConfigurer(bool createDatabase);
+    public interface IDataServicesProvider {
+        void ConfigureContextOptions(DbContextOptionsBuilder optionsBuilders, string connectionString);
     }
 }
