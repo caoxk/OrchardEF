@@ -5,7 +5,7 @@ using Orchard.Data.Providers;
 using Orchard.FileSystems.AppData;
 
 namespace Orchard.Data {
-    public interface IDbContextFactoryHolder: IDependency {
+    public interface IDbContextFactoryHolder: ISingletonDependency {
         void Configure(DbContextOptionsBuilder optionsBuilder);
     }
 
@@ -28,7 +28,7 @@ namespace Orchard.Data {
             _appDataFolder.CreateDirectory(shellPath);
 
             var shellFolder = _appDataFolder.MapPath(shellPath);
-            _dataServicesProvider.ConfigureContextOptions(optionsBuilders, _shellSettings.DataConnectionString);
+            _dataServicesProvider.ConfigureContextOptions(optionsBuilders, shellFolder, _shellSettings.DataConnectionString);
             //foreach (var provider in _dataServicesProviders) {
             //    provider.ConfigureContextOptions(optionsBuilders, _shellSettings.DataConnectionString);
             //}

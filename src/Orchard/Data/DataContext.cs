@@ -20,15 +20,10 @@ namespace Orchard.Data {
 
         public DataContext(
             IServiceProvider serviceProvider,
-            //Microsoft.Extensions.Logging.ILoggerFactory factory,
             IComponentContext _componentContext,
-        //Microsoft.Extensions.Logging.ILogger<DbContext> logger,
-        IDbContextFactoryHolder dbContextFactoryHolder,
+            IDbContextFactoryHolder dbContextFactoryHolder,
             ShellBlueprint shellBlueprint):base(serviceProvider) {
 
-            var f = _componentContext.Resolve(typeof(Microsoft.Extensions.Logging.ILoggerFactory));
-            var l =_componentContext.Resolve(typeof(Microsoft.Extensions.Logging.ILogger<DataContext>));
-            var loger = serviceProvider.GetService(typeof(Microsoft.Extensions.Logging.ILogger<DataContext>));
             _dbContextFactoryHolder = dbContextFactoryHolder;
             _shellBlueprint = shellBlueprint;
             _instanceId = Guid.NewGuid();

@@ -38,7 +38,10 @@ namespace Orchard.Data {
                     serviceCollection.AddScoped<IDataServicesProvider, InMemoryDataServicesProvider>();
                     break;
             }
-            //entityFrameworkBuilder.AddDbContext<DataContext>();
+            entityFrameworkBuilder.AddDbContext<DataContext>();
+            RemoveServiceType(serviceCollection, typeof(Microsoft.Extensions.Logging.ILoggerFactory));
+            RemoveServiceType(serviceCollection, typeof(Microsoft.Extensions.Logging.ILogger<>));
+            RemoveServiceType(serviceCollection, typeof(DataContext));
 
             builder.RegisterType<DataContext>().AsSelf();
 
@@ -50,8 +53,14 @@ namespace Orchard.Data {
             //serviceCollection.Add(ServiceDescriptor.Singleton(typeof(Microsoft.Extensions.Logging.ILogger<>), typeof(Microsoft.Extensions.Logging.Logger<>)));
 
             builder.Populate(serviceCollection);
-            //builder.RegisterType<Microsoft.Extensions.Logging.LoggerFactory>().As<Microsoft.Extensions.Logging.ILoggerFactory>().SingleInstance();
-            //builder.RegisterGeneric(typeof(Microsoft.Extensions.Logging.Logger<>)).As(typeof(Microsoft.Extensions.Logging.ILogger<>)).SingleInstance();
+            
+        }
+
+        private void RemoveServiceType(IServiceCollection serviceCollection, Type servicewType) {
+            var descriptor = serviceCollection.FirstOrDefault(x => x.ServiceType == servicewType);
+            if(descriptor != null) {
+                serviceCollection.Remove(descriptor);
+            }
         }
     }
 

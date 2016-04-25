@@ -86,6 +86,7 @@ namespace Orchard.Data {
                         _dataContext.Database.CommitTransaction();
                     }
                 }
+                catch { }
                 finally {
                     Logger.Debug("Disposing session");
                     _dataContext.Dispose();

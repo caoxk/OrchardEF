@@ -4,12 +4,12 @@ using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Orchard.Data.Providers.InMemoryProvider {
-    public class InMemoryDataServicesProvider : AbstractDataServicesProvider {
+    public class InMemoryDataServicesProvider : IDataServicesProvider {
         public static string ProviderName {
             get { return "InMemory"; }
         }
 
-        public override void ConfigureContextOptions(DbContextOptionsBuilder optionsBuilders, string connectionString) {
+        public void ConfigureContextOptions(DbContextOptionsBuilder optionsBuilders, string dataFolder, string connectionString) {
             optionsBuilders.UseInMemoryDatabase();
         }
     }

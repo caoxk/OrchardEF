@@ -361,7 +361,6 @@
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerDbFactory.cs" />
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerProcessor.cs" />
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerProcessorFactory.cs" />
-    <Compile Include="Data\Providers\AbstractDataServicesProvider.cs" />
     <Compile Include="Data\Providers\IDataServicesModule.cs" />
     <Compile Include="Data\Providers\InMemoryProvider\InMemoryDataServicesProvider.cs" />
     <Compile Include="Data\Providers\InMemoryProvider\InMemoryModule.cs" />
@@ -380,6 +379,7 @@
     <Compile Include="Localization\LocationDataMigration.cs" />
     <Compile Include="Logging\Log4NetAdapter.cs" />
     <Compile Include="Logging\Log4NetLoggerProvider.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Mvc\IUpdateModel.cs" />
     <Compile Include="Mvc\Updater.cs" />
     <Compile Include="Recipes\Models\ConfigurationContext.cs" />

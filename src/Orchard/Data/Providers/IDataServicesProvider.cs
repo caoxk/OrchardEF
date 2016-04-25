@@ -4,6 +4,6 @@ using Microsoft.Data.Entity;
 
 namespace Orchard.Data.Providers {
     public interface IDataServicesProvider {
-        void ConfigureContextOptions(DbContextOptionsBuilder optionsBuilders, string connectionString);
+        void ConfigureContextOptions(DbContextOptionsBuilder optionsBuilders, string dataFolder, string connectionString);
     }
 }
