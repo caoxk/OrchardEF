@@ -31,6 +31,7 @@ namespace Orchard.Data.Alterations {
                     Override(type);
                 }
             }
+            ApplyOverrides(modelBuilder);
         }
 
         private void Override(Type overrideType) {
@@ -53,6 +54,13 @@ namespace Orchard.Data.Alterations {
 
         private void AddOverride(Type type, Action<object> action) {
             _inlineOverrides.Add(new InlineOverride(type, action));
+        }
+
+        private void ApplyOverrides(ModelBuilder builder) {
+            foreach (var inlineOverride in _inlineOverrides) {
+                var entityTypeBuilderInstance = EntityTypeBuilder(builder, inlineOverride.Type);
+                inlineOverride.Apply(entityTypeBuilderInstance);
+            }
         }
 
         private bool IsEntityTypeOverrideType(Type type) {

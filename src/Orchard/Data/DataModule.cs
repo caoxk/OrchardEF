@@ -9,6 +9,7 @@ namespace Orchard.Data {
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerDependency();
         }
         protected override void AttachToComponentRegistration(Autofac.Core.IComponentRegistry componentRegistry, Autofac.Core.IComponentRegistration registration) {
+            registration.Activated += Registration_Activated;
             //if (typeof(IDataServicesProvider).IsAssignableFrom(registration.Activator.LimitType)) {
             //    var propertyInfo = registration.Activator.LimitType.GetProperty("ProviderName", BindingFlags.Static | BindingFlags.Public);
             //    if (propertyInfo != null) {
@@ -25,5 +26,8 @@ namespace Orchard.Data {
             //}
         }
 
+        private void Registration_Activated(object sender, Autofac.Core.ActivatedEventArgs<object> e) {
+            var c = e.Context;
+        }
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using Orchard.Logging;
 using Orchard.Environment.ShellBuilders.Models;
 using Autofac;
+using Orchard.Data.Alterations;
 
 namespace Orchard.Data {
     public interface IDataContext {
@@ -17,16 +18,19 @@ namespace Orchard.Data {
         private readonly IDbContextFactoryHolder _dbContextFactoryHolder;
         private readonly ShellBlueprint _shellBlueprint;
         private readonly Guid _instanceId;
+        private readonly IEntityTypeOverrideHandler _entityTypeOverrideHandler;
 
         public DataContext(
             IServiceProvider serviceProvider,
             IComponentContext _componentContext,
             IDbContextFactoryHolder dbContextFactoryHolder,
-            ShellBlueprint shellBlueprint):base(serviceProvider) {
+            ShellBlueprint shellBlueprint,
+            IEntityTypeOverrideHandler entityTypeOverrideHandler) :base(serviceProvider) {
 
             _dbContextFactoryHolder = dbContextFactoryHolder;
             _shellBlueprint = shellBlueprint;
             _instanceId = Guid.NewGuid();
+            _entityTypeOverrideHandler = entityTypeOverrideHandler;
 
             Logger = NullLogger.Instance;
         }
@@ -49,7 +53,7 @@ namespace Orchard.Data {
                 entityMethod.MakeGenericMethod(recordDescriptor.Type)
                     .Invoke(modelBuilder, new object[0]);
             }
-
+            _entityTypeOverrideHandler.Alter(modelBuilder);
             sw.Stop();
             Logger.Information("[{0}]: Records Mapped in {1}ms", GetType().Name, sw.ElapsedMilliseconds);
         }

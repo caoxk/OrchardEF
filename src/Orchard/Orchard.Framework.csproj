@@ -60,7 +60,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.4.0.0-rc1-177\lib\net45\Autofac.dll</HintPath>
+      <HintPath>..\packages\Autofac.4.0.0-rc2-202\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Autofac.Configuration, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -361,6 +361,7 @@
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerDbFactory.cs" />
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerProcessor.cs" />
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerProcessorFactory.cs" />
+    <Compile Include="Data\Migration\Records\DataMigrationRecordOverride.cs" />
     <Compile Include="Data\Providers\IDataServicesModule.cs" />
     <Compile Include="Data\Providers\InMemoryProvider\InMemoryDataServicesProvider.cs" />
     <Compile Include="Data\Providers\InMemoryProvider\InMemoryModule.cs" />
@@ -979,6 +980,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
