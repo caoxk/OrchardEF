@@ -8,7 +8,7 @@ using Orchard.Data.Alterations;
 
 namespace Orchard.Core.Settings.Descriptor.Records.MappingOverrides {
     public class ShellFeatureRecordOverride : IEntityTypeOverride<ShellFeatureRecord> {
-        public void Override(EntityTypeBuilder<ShellFeatureRecord> mapping) {
+        public void Override(EntityTypeBuilder<ShellFeatureRecord> mapping, ModelBuilder modelBuilder) {
             mapping.ToTable("Settings_ShellFeatureRecord");
             mapping.HasKey(x => x.Id);
         }

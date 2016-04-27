@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata.Builders;
 
 namespace Orchard.Data.Alterations {
@@ -16,6 +17,6 @@ namespace Orchard.Data.Alterations {
         /// Alter the mappings for this entity
         /// </summary>
         /// <param name="mapping">EntityTypeBuilder</param>
-        void Override(EntityTypeBuilder<T> mapping);
+        void Override(EntityTypeBuilder<T> mapping, ModelBuilder modelBuilder);
     }
 }

@@ -22,20 +22,23 @@ namespace Orchard.Data {
 
         public ILogger Logger { get; set; }
 
-        public DataContext For(Type entityType) {
+        public DbContext For(Type entityType) {
             Logger.Debug("Acquiring session for {0}", entityType);
             return _transactionManager.GetSession();
         }
     }
 
     public class TransactionManager : ITransactionManager, IDisposable {
-        private DataContext _dataContext;
-        private Func<DataContext> _dataContextFactory;
+        private DbContext _dataContext;
+        private ISessionFactoryHolder _sessionFactoryHolder;
+        //private Func<DataContext> _dataContextFactory;
 
         public TransactionManager(
-            Func<DataContext> dataContextFactory) {
+            //Func<DataContext> dataContextFactory, 
+            ISessionFactoryHolder sessionFactoryHolder) {
+            _sessionFactoryHolder = sessionFactoryHolder;
 
-            _dataContextFactory = dataContextFactory;
+            //_dataContextFactory = dataContextFactory;
 
             Logger = NullLogger.Instance;
             IsolationLevel = IsolationLevel.ReadCommitted;
@@ -44,7 +47,7 @@ namespace Orchard.Data {
         public ILogger Logger { get; set; }
         public IsolationLevel IsolationLevel { get; set; }
 
-        public DataContext GetSession() {
+        public DbContext GetSession() {
             Demand();
             return _dataContext;
         }
@@ -99,7 +102,7 @@ namespace Orchard.Data {
             if (_dataContext != null) {
                 return;
             }
-            _dataContext = _dataContextFactory();
+            _dataContext = _sessionFactoryHolder.Create();
             _dataContext.Database.BeginTransaction(level);
         }
     }

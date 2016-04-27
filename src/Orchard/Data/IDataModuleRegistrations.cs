@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.Data.Entity;
+using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Orchard.Data.Providers;
 using Orchard.Data.Providers.InMemoryProvider;
@@ -38,12 +41,12 @@ namespace Orchard.Data {
                     serviceCollection.AddScoped<IDataServicesProvider, InMemoryDataServicesProvider>();
                     break;
             }
-            entityFrameworkBuilder.AddDbContext<DataContext>();
+            //entityFrameworkBuilder.AddDbContext<DataContext>();
             RemoveServiceType(serviceCollection, typeof(Microsoft.Extensions.Logging.ILoggerFactory));
             RemoveServiceType(serviceCollection, typeof(Microsoft.Extensions.Logging.ILogger<>));
-            RemoveServiceType(serviceCollection, typeof(DataContext));
+            //RemoveServiceType(serviceCollection, typeof(DataContext));
 
-            builder.RegisterType<DataContext>().AsSelf();
+            builder.RegisterType<DataContext>().AsSelf().InstancePerDependency();
 
             //serviceCollection.AddLogging();
             //Microsoft.Extensions.Logging.LoggerFactory logFactory = new Microsoft.Extensions.Logging.LoggerFactory();

@@ -18,7 +18,7 @@ namespace Orchard.Data {
 
         public ILogger Logger { get; set; }
 
-        protected virtual DataContext Session {
+        protected virtual DbContext Session {
             get { return _transactionManager.GetSession(); }
         }
 

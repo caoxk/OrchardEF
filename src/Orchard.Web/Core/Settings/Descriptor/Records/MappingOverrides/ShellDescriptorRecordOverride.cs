@@ -8,13 +8,16 @@ using Orchard.Data.Alterations;
 
 namespace Orchard.Core.Settings.Descriptor.Records.MappingOverrides {
     public class ShellDescriptorRecordOverride : IEntityTypeOverride<ShellDescriptorRecord> {
-        public void Override(EntityTypeBuilder<ShellDescriptorRecord> mapping) {
+        public void Override(EntityTypeBuilder<ShellDescriptorRecord> mapping, ModelBuilder modelBuilder) {
             mapping.ToTable("Settings_ShellDescriptorRecord");
             mapping.HasKey(x => x.Id);
+
+            modelBuilder.Entity<ShellFeatureRecord>().Property<int>("ShellDescriptorRecord_Id");
             mapping.HasMany(x => x.Features)
                 .WithOne(x => x.ShellDescriptorRecord)
                 .HasForeignKey("ShellDescriptorRecord_Id");
 
+            modelBuilder.Entity<ShellParameterRecord>().Property<int>("ShellDescriptorRecord_Id");
             mapping.HasMany(x=>x.Parameters)
                 .WithOne(x=>x.ShellDescriptorRecord)
                 .HasForeignKey("ShellDescriptorRecord_Id");

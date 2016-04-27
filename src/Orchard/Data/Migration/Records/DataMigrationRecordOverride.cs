@@ -8,7 +8,7 @@ using Orchard.Data.Alterations;
 
 namespace Orchard.Data.Migration.Records {
     public class DataMigrationRecordOverride : IEntityTypeOverride<DataMigrationRecord> {
-        public void Override(EntityTypeBuilder<DataMigrationRecord> mapping) {
+        public void Override(EntityTypeBuilder<DataMigrationRecord> mapping, ModelBuilder modelBuilder) {
             mapping.ToTable("Orchard_Framework_DataMigrationRecord");
             mapping.HasKey(x => x.Id);
         }

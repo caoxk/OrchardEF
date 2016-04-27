@@ -270,6 +270,7 @@
     <Compile Include="Data\Alterations\IEntityTypeOverride.cs" />
     <Compile Include="Data\Alterations\IEntityTypeOverrideHandler.cs" />
     <Compile Include="Data\DataContext.cs" />
+    <Compile Include="Data\DbContextFactoryHolder.cs" />
     <Compile Include="Data\IDataModuleRegistrations.cs" />
     <Compile Include="Data\IDbContextFactoryHolder.cs" />
     <Compile Include="Data\Migration\Announcers\Announcer.cs" />
@@ -362,9 +363,13 @@
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerProcessor.cs" />
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerProcessorFactory.cs" />
     <Compile Include="Data\Migration\Records\DataMigrationRecordOverride.cs" />
+    <Compile Include="Data\Providers\DataServiceParameters.cs" />
+    <Compile Include="Data\Providers\DataServicesProviderFactory.cs" />
     <Compile Include="Data\Providers\IDataServicesModule.cs" />
+    <Compile Include="Data\Providers\IDataServicesProviderFactory.cs" />
     <Compile Include="Data\Providers\InMemoryProvider\InMemoryDataServicesProvider.cs" />
     <Compile Include="Data\Providers\InMemoryProvider\InMemoryModule.cs" />
+    <Compile Include="Data\Providers\SessionFactoryParameters.cs" />
     <Compile Include="Data\Providers\SqlCeProvider\SqlServerCompactDataServicesProvider.cs" />
     <Compile Include="Data\Providers\SqlCeProvider\SqlServerCompactModule.cs" />
     <Compile Include="Data\Providers\SqlProvider\SqlServerDataServicesProvider.cs" />

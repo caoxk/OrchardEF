@@ -28,13 +28,13 @@ namespace Orchard.Data.Alterations {
                             where entity != null
                             select type;
                 foreach(var type in types) {
-                    Override(type);
+                    Override(type, modelBuilder);
                 }
             }
             ApplyOverrides(modelBuilder);
         }
 
-        private void Override(Type overrideType) {
+        private void Override(Type overrideType, ModelBuilder modelBuilder) {
             var overrideMethod = typeof(EntityTypeOverrideCoordinator)
                 .GetMethod(nameof(OverrideHelper), BindingFlags.NonPublic | BindingFlags.Instance);
             if (overrideMethod == null)
@@ -47,7 +47,7 @@ namespace Orchard.Data.Alterations {
                 var entityType = overrideInterface.GetGenericArguments().First();
                 AddOverride(entityType, instance => {
                     overrideMethod.MakeGenericMethod(entityType)
-                        .Invoke(this, new[] { instance, overrideInstance });
+                        .Invoke(this, new[] { instance, overrideInstance, modelBuilder });
                 });
             }
         }
@@ -68,8 +68,8 @@ namespace Orchard.Data.Alterations {
                    type.GetGenericArguments().Length > 0;
         }
 
-        private void OverrideHelper<T>(EntityTypeBuilder<T> builder, IEntityTypeOverride<T> mappingOverride) where T : class {
-            mappingOverride.Override(builder);
+        private void OverrideHelper<T>(EntityTypeBuilder<T> builder, IEntityTypeOverride<T> mappingOverride, ModelBuilder modelBuilder) where T : class {
+            mappingOverride.Override(builder,modelBuilder);
         }
 
         private object EntityTypeBuilder(ModelBuilder builder, Type type) {

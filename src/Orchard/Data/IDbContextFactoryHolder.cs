@@ -29,9 +29,6 @@ namespace Orchard.Data {
 
             var shellFolder = _appDataFolder.MapPath(shellPath);
             _dataServicesProvider.ConfigureContextOptions(optionsBuilders, shellFolder, _shellSettings.DataConnectionString);
-            //foreach (var provider in _dataServicesProviders) {
-            //    provider.ConfigureContextOptions(optionsBuilders, _shellSettings.DataConnectionString);
-            //}
         }
     }
 }

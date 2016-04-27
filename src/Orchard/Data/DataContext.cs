@@ -7,6 +7,8 @@ using System.Linq;
 using Orchard.Logging;
 using Orchard.Environment.ShellBuilders.Models;
 using Autofac;
+using Microsoft.Data.Entity.Internal;
+using Microsoft.Data.Entity.Storage;
 using Orchard.Data.Alterations;
 
 namespace Orchard.Data {
@@ -19,10 +21,10 @@ namespace Orchard.Data {
         private readonly ShellBlueprint _shellBlueprint;
         private readonly Guid _instanceId;
         private readonly IEntityTypeOverrideHandler _entityTypeOverrideHandler;
+        private readonly IServiceProvider _serviceProvider;
 
         public DataContext(
             IServiceProvider serviceProvider,
-            IComponentContext _componentContext,
             IDbContextFactoryHolder dbContextFactoryHolder,
             ShellBlueprint shellBlueprint,
             IEntityTypeOverrideHandler entityTypeOverrideHandler) :base(serviceProvider) {
@@ -31,6 +33,7 @@ namespace Orchard.Data {
             _shellBlueprint = shellBlueprint;
             _instanceId = Guid.NewGuid();
             _entityTypeOverrideHandler = entityTypeOverrideHandler;
+            _serviceProvider = serviceProvider;
 
             Logger = NullLogger.Instance;
         }
@@ -42,6 +45,8 @@ namespace Orchard.Data {
         public DataContext Context => this;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            var contextServices = (IDatabaseProvider)_serviceProvider.GetService(typeof (IDatabaseProvider));
+            //var modelSource = contextServices.DatabaseProviderServices.ModelSource;
             Logger.Information("[{0}]: Mapping Records to DB Context", GetType().Name);
             var sw = Stopwatch.StartNew();
 

@@ -182,6 +182,7 @@
     <Compile Include="Events\UserAddedContext.cs" />
     <Compile Include="Events\UserRemovedContext.cs" />
     <Compile Include="Events\UserRoleContext.cs" />
+    <Compile Include="Models\MappingOverrides\PermissionRecordOverride.cs" />
     <Compile Include="Models\MappingOverrides\RoleRecordOverride.cs" />
     <Compile Include="Models\MappingOverrides\RolesPermissionsRecordOverride.cs" />
     <Compile Include="Models\UserSimulation.cs" />

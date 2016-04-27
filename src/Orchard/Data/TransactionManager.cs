@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Web.Mvc;
+using Microsoft.Data.Entity;
 using Orchard.Mvc.Filters;
 
 namespace Orchard.Data {
@@ -9,7 +10,7 @@ namespace Orchard.Data {
         void RequireNew(IsolationLevel level);
         void Cancel();
 
-        DataContext GetSession();
+        DbContext GetSession();
     }
 
     public class TransactionFilter : FilterProvider, IExceptionFilter {
