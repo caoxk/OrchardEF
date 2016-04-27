@@ -11,6 +11,7 @@ using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Internal;
 using Microsoft.Data.Entity.Metadata;
+using Microsoft.Data.Entity.Metadata.Conventions;
 using Microsoft.Data.Entity.Metadata.Conventions.Internal;
 using Microsoft.Data.Entity.Storage.Internal;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +41,7 @@ namespace Orchard.Data
         private readonly IDataServicesProviderFactory _dataServicesProviderFactory;
         private readonly IEntityTypeOverrideHandler _entityTypeOverrideHandler;
 
-        private readonly ConcurrentDictionary<string, IModel> _models = new ConcurrentDictionary<string, IModel>();
+        private DbContextOptions _contextOptions;
 
         public SessionFactoryHolder(
             ShellSettings shellSettings,
@@ -64,15 +65,13 @@ namespace Orchard.Data
 
         public DbContext Create()
         {
-            var contextTypeName = typeof (DbContext).GetTypeInfo().FullName;
-            var compiledModel = _models.GetOrAdd(contextTypeName, t => GetCompiled());
-
-            var optionsBuilder = GetContextOptionsBuilder();
-
-            optionsBuilder.UseModel(compiledModel);
-            var options = optionsBuilder.Options;
-
-            return new DbContext(options);
+            if(_contextOptions == null) {
+                var optionsBuilder = GetContextOptionsBuilder();
+                var compiledModel = GetCompiled(optionsBuilder);
+                optionsBuilder.UseModel(compiledModel);
+                _contextOptions = optionsBuilder.Options;
+            }
+            return new DbContext(_contextOptions);
         }
 
         private DbContextOptionsBuilder<DbContext> GetContextOptionsBuilder() {
@@ -86,13 +85,11 @@ namespace Orchard.Data
             return optionsBuilder;
         }
 
-        private IModel GetCompiled()
-        {
+        private IModel GetCompiled(DbContextOptionsBuilder<DbContext> optionsBuilder) {
             var serviceCollection = new ServiceCollection();
 
             var entityFrameworkBuilder = serviceCollection.AddEntityFramework();
-            switch (_shellSettings.DataProvider)
-            {
+            switch (_shellSettings.DataProvider) {
                 case "SqlServer":
                     entityFrameworkBuilder.AddSqlServer();
                     break;
@@ -103,24 +100,24 @@ namespace Orchard.Data
                     entityFrameworkBuilder.AddInMemoryDatabase();
                     break;
             }
-            serviceCollection.AddSingleton(_ => GetContextOptionsBuilder());
+            serviceCollection.AddSingleton(_ => optionsBuilder.Options);
             serviceCollection.AddSingleton<DbContextOptions>(p => p.GetRequiredService<DbContextOptions<DbContext>>());
-            serviceCollection.AddScoped(typeof(DbContext), DbContextActivator.CreateInstance<DbContext>);
+            serviceCollection.AddScoped(typeof(DbContext), p => DbContextActivator.CreateInstance<DbContext>(p, optionsBuilder.Options));
             var serviceProvider = serviceCollection.BuildServiceProvider();
-            var coreConventionSetBuilder = new CoreConventionSetBuilder();
-            var conventionSetBuilder = new SqlServerConventionSetBuilder(new SqlServerTypeMapper());
-            //var sqlConventionSetBuilder = new SqlServerConventionSetBuilder(new SqlServerTypeMapper());
-            var contextServices = serviceProvider.GetService<IDbContextServices>();
-            var databaseProviderServices = contextServices.DatabaseProviderServices;
-            //var conventionSetBuilder = databaseProviderServices.ConventionSetBuilder;
-            var conventionSet = conventionSetBuilder.AddConventions(coreConventionSetBuilder.CreateConventionSet());
+            ConventionSet conventions;
+            using (var dbContext = serviceProvider.GetService<DbContext>()) {
+                var coreConventionSetBuilder = new CoreConventionSetBuilder();
+                var contextServices = dbContext.GetService<IDbContextServices>();
+                var databaseProviderServices = contextServices.DatabaseProviderServices;
+                var conventionSetBuilder = databaseProviderServices.ConventionSetBuilder;
+                conventions = conventionSetBuilder.AddConventions(coreConventionSetBuilder.CreateConventionSet());
+            }
 
-            var modelBuilder = new ModelBuilder(conventionSet);
+            var modelBuilder = new ModelBuilder(conventions);
 
             var entityMethod = modelBuilder.GetType().GetRuntimeMethod("Entity", new Type[0]);
 
-            foreach (var recordDescriptor in _shellBlueprint.Records)
-            {
+            foreach (var recordDescriptor in _shellBlueprint.Records) {
                 Logger.Debug("Mapping record {0}", recordDescriptor.Type.FullName);
 
                 entityMethod.MakeGenericMethod(recordDescriptor.Type)
@@ -129,6 +126,7 @@ namespace Orchard.Data
             _entityTypeOverrideHandler.Alter(modelBuilder);
 
             return modelBuilder.Model;
+
         }
 
         public SessionFactoryParameters GetSessionFactoryParameters()
