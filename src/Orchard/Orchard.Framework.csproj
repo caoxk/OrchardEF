@@ -383,6 +383,7 @@
     <Compile Include="Environment\ShellBuilders\ICompositionStrategy.cs" />
     <Compile Include="Environment\XmlHelper.cs" />
     <Compile Include="Localization\LocationDataMigration.cs" />
+    <Compile Include="Localization\Records\CultureRecordOverride.cs" />
     <Compile Include="Logging\Log4NetAdapter.cs" />
     <Compile Include="Logging\Log4NetLoggerProvider.cs" />
     <Compile Include="Logging\Logger.cs" />

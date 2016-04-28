@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Data.Entity;
 using Orchard.Core.Settings.Descriptor.Records;
 using Orchard.Data;
 using Orchard.Environment.Configuration;
@@ -51,7 +52,7 @@ namespace Orchard.Core.Settings.Descriptor {
         }
 
         private ShellDescriptorRecord GetDescriptorRecord() {
-            return _shellDescriptorRepository.Get(x => x != null);
+            return _shellDescriptorRepository.Table.Include(x => x.Features).FirstOrDefault();
         }
 
         public void UpdateShellDescriptor(int priorSerialNumber, IEnumerable<ShellFeature> enabledFeatures, IEnumerable<ShellParameter> parameters) {
