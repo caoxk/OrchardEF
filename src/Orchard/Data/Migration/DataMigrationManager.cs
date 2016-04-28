@@ -179,9 +179,10 @@ namespace Orchard.Data.Migration {
         }
 
         private DataMigrationRecord GetDataMigrationRecord(IDataMigration tempMigration) {
+            var dataMigrationClassName = tempMigration.GetType().FullName;
             return _dataMigrationRepository
                 .Table
-                .FirstOrDefault(dm => dm.DataMigrationClass == tempMigration.GetType().FullName);
+                .FirstOrDefault(dm => dm.DataMigrationClass == dataMigrationClassName);
         }
 
         /// <summary>

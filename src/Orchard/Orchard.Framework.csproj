@@ -116,10 +116,6 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NHibernate.Linq, Version=1.1.0.1001, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\nhibernate.linq\NHibernate.Linq.dll</HintPath>
-    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
@@ -288,6 +284,7 @@
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerDbFactory.cs" />
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerProcessor.cs" />
     <Compile Include="Data\Migration\Processors\SqlServer\SqlServerProcessorFactory.cs" />
+    <Compile Include="Data\Providers\AbstractDataServicesProvider.cs" />
     <Compile Include="Data\Providers\SqlCeProvider\SqlCeConfiguration.cs" />
     <Compile Include="Data\Providers\SqlCeProvider\SqlServerCompactDataServicesProvider.cs" />
     <Compile Include="Data\Providers\SqlProvider\SqlServerConfiguration.cs" />
@@ -903,6 +900,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Conventions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

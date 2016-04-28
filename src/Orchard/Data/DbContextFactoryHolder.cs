@@ -36,7 +36,7 @@ namespace Orchard.Data
         private readonly IDataServicesProviderFactory _dataServicesProviderFactory;
         //private readonly IEntityTypeOverrideHandler _entityTypeOverrideHandler;
 
-        private DbCompiledModel _compiledModel;
+        private DbContextOptions _contextOptions;
 
         public SessionFactoryHolder(
             ShellSettings shellSettings,
@@ -58,71 +58,15 @@ namespace Orchard.Data
         public ILogger Logger { get; set; }
 
         public DbContext Create() {
-            var connectionString = _shellSettings.DataConnectionString;
-            if (_compiledModel == null) {
+            if (_contextOptions == null) {
                 var parameters = GetSessionFactoryParameters();
                 var provider = _dataServicesProviderFactory.CreateProvider(parameters);
                 DbConfiguration configuration = provider.BuildConfiguration();
                 DbConfiguration.SetConfiguration(configuration);
-                _compiledModel = GetCompiled(parameters.ConnectionString);
-                var options = provider.GetContextOptions(parameters);
-                connectionString = options.ConnectionString;
+                Database.SetInitializer<DbContext>(null);
+                _contextOptions = provider.GetContextOptions(parameters);
             }
-            return new DbContext(connectionString, _compiledModel);
-        }
-
-        private DbCompiledModel GetCompiled(string dataConnectionString) {
-
-            var connection = DbConfiguration.DependencyResolver.GetService<IDbConnectionFactory>()
-                .CreateConnection(dataConnectionString);
-
-            DbModelBuilder builder = new DbModelBuilder();
-            builder.Types().Having()
-
-            var model = builder.Build(connection);
-            return model.Compile();
-
-            //var serviceCollection = new ServiceCollection();
-
-            //var entityFrameworkBuilder = serviceCollection.AddEntityFramework();
-            //switch (_shellSettings.DataProvider) {
-            //    case "SqlServer":
-            //        entityFrameworkBuilder.AddSqlServer();
-            //        break;
-            //    case "SqlServerCe":
-            //        entityFrameworkBuilder.AddSqlCe();
-            //        break;
-            //    case "InMemory":
-            //        entityFrameworkBuilder.AddInMemoryDatabase();
-            //        break;
-            //}
-            //serviceCollection.AddSingleton(_ => optionsBuilder.Options);
-            //serviceCollection.AddSingleton<DbContextOptions>(p => p.GetRequiredService<DbContextOptions<DbContext>>());
-            //serviceCollection.AddScoped(typeof(DbContext), p => DbContextActivator.CreateInstance<DbContext>(p, optionsBuilder.Options));
-            //var serviceProvider = serviceCollection.BuildServiceProvider();
-            //ConventionSet conventions;
-            //using (var dbContext = serviceProvider.GetService<DbContext>()) {
-            //    var coreConventionSetBuilder = new CoreConventionSetBuilder();
-            //    var contextServices = dbContext.GetService<IDbContextServices>();
-            //    var databaseProviderServices = contextServices.DatabaseProviderServices;
-            //    var conventionSetBuilder = databaseProviderServices.ConventionSetBuilder;
-            //    conventions = conventionSetBuilder.AddConventions(coreConventionSetBuilder.CreateConventionSet());
-            //}
-
-            //var modelBuilder = new ModelBuilder(conventions);
-
-            //var entityMethod = modelBuilder.GetType().GetRuntimeMethod("Entity", new Type[0]);
-
-            //foreach (var recordDescriptor in _shellBlueprint.Records) {
-            //    Logger.Debug("Mapping record {0}", recordDescriptor.Type.FullName);
-
-            //    entityMethod.MakeGenericMethod(recordDescriptor.Type)
-            //        .Invoke(modelBuilder, new object[0]);
-            //}
-            //_entityTypeOverrideHandler.Alter(modelBuilder);
-
-            //return modelBuilder.Model;
-
+            return new DbContext(_contextOptions.ConnectionString, _contextOptions.Model);
         }
 
         public SessionFactoryParameters GetSessionFactoryParameters()

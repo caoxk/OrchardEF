@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,30 +9,28 @@ using System.Threading.Tasks;
 using Orchard.Data.Providers.SqlProvider;
 
 namespace Orchard.Data.Providers.SqlCeProvider {
-    public class SqlServerCompactDataServicesProvider : IDataServicesProvider {
+    public class SqlServerCompactDataServicesProvider : AbstractDataServicesProvider {
         public static string ProviderName
         {
             get { return "SqlServerCe"; }
         }
 
-        public DbConfiguration BuildConfiguration()
+        public override DbConfiguration BuildConfiguration()
         {
             return new SqlCeConfiguration();
         }
 
-        public DbContextOptions GetContextOptions(SessionFactoryParameters parameters)
-        {
+        protected override string BuildConnectionString(SessionFactoryParameters parameters) {
             if (!string.IsNullOrEmpty(parameters.DataFolder))
                 Directory.CreateDirectory(parameters.DataFolder);
 
             var fileName = Path.Combine(parameters.DataFolder, "Orchard.sdf");
 
             string localConnectionString = string.Format("Data Source={0}", fileName);
-            if (!File.Exists(fileName))
-            {
+            if (!File.Exists(fileName)) {
                 CreateSqlCeDatabaseFile(localConnectionString);
             }
-            return new DbContextOptions { ConnectionString = localConnectionString };
+            return localConnectionString;
         }
 
         private void CreateSqlCeDatabaseFile(string connectionString) {
