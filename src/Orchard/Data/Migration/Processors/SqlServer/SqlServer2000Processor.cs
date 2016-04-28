@@ -101,11 +101,10 @@ namespace Orchard.Data.Migration.Processors.SqlServer
             var session = _transactionManager.GetSession();
 
             var ds = new DataSet();
-            using (var command = session.Connection.CreateCommand())
+            using (var command = CreateCommand())
             {
                 command.CommandTimeout = Options.Timeout;
                 command.CommandText = String.Format(template, args);
-                session.Transaction.Enlist(command);
                 var adapter = Factory.CreateDataAdapter(command);
                 adapter.Fill(ds);
                 return ds;
@@ -114,13 +113,10 @@ namespace Orchard.Data.Migration.Processors.SqlServer
 
         public override bool Exists(string template, params object[] args)
         {
-            var session = _transactionManager.GetSession();
-
-            using (var command = session.Connection.CreateCommand())
+            using (var command = CreateCommand())
             {
                 command.CommandTimeout = Options.Timeout;
                 command.CommandText = String.Format(template, args);
-                session.Transaction.Enlist(command);
                 using (var reader = command.ExecuteReader())
                 {
                     return reader.Read();
@@ -153,15 +149,12 @@ namespace Orchard.Data.Migration.Processors.SqlServer
 
         private void ExecuteNonQuery(string sql)
         {
-            var session = _transactionManager.GetSession();
-
-            using (var command = session.Connection.CreateCommand())
+            using (var command = CreateCommand())
             {
                 try
                 {
                     command.CommandTimeout = Options.Timeout;
                     command.CommandText = sql;
-                    session.Transaction.Enlist(command);
                     command.ExecuteNonQuery();
                 }
                 catch (Exception ex)
@@ -185,7 +178,7 @@ namespace Orchard.Data.Migration.Processors.SqlServer
 
             var session = _transactionManager.GetSession();
 
-            using (var command = session.Connection.CreateCommand())
+            using (var command = CreateCommand())
             {
                 try
                 {
@@ -196,7 +189,6 @@ namespace Orchard.Data.Migration.Processors.SqlServer
                             if (!string.IsNullOrEmpty(sqlBatch))
                             {
                                 command.CommandText = sqlBatch;
-                                session.Transaction.Enlist(command);
                                 command.ExecuteNonQuery();
                                 sqlBatch = string.Empty;
                             }
@@ -223,10 +215,10 @@ namespace Orchard.Data.Migration.Processors.SqlServer
         
         public override void Process(PerformDBOperationExpression expression)
         {
-            var session = _transactionManager.GetSession();
+            var transaction = GetTransaction();
 
             if (expression.Operation != null)
-                expression.Operation(session.Connection, null);
+                expression.Operation(transaction.Connection, transaction);
         }
     }
 }

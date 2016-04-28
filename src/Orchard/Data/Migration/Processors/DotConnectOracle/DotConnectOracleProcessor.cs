@@ -18,6 +18,7 @@
 
 using System;
 using System.Data;
+using System.Data.Common;
 using FluentMigrator;
 using FluentMigrator.Builders.Execute;
 
@@ -127,13 +128,10 @@ namespace Orchard.Data.Migration.Processors.DotConnectOracle
             if (template == null)
                 throw new ArgumentNullException("template");
 
-            var session = _transactionManager.GetSession();
-
-            using (var command = session.Connection.CreateCommand())
+            using (var command = CreateCommand())
             {
                 command.CommandTimeout = Options.Timeout;
                 command.CommandText = String.Format(template, args);
-                session.Transaction.Enlist(command);
                 command.ExecuteNonQuery();
             }
         }
@@ -143,13 +141,10 @@ namespace Orchard.Data.Migration.Processors.DotConnectOracle
             if (template == null)
                 throw new ArgumentNullException("template");
 
-            var session = _transactionManager.GetSession();
-
-            using (var command = session.Connection.CreateCommand())
+            using (var command = CreateCommand())
             {
                 command.CommandTimeout = Options.Timeout;
                 command.CommandText = String.Format(template, args);
-                session.Transaction.Enlist(command);
                 using (var reader = command.ExecuteReader())
                 {
                     return reader.Read();
@@ -173,10 +168,8 @@ namespace Orchard.Data.Migration.Processors.DotConnectOracle
             if (template == null)
                 throw new ArgumentNullException("template");
 
-            var session = _transactionManager.GetSession();
-
             var result = new DataSet();
-            using (var command = session.Connection.CreateCommand())
+            using (var command = CreateCommand())
             {
                 command.CommandTimeout = Options.Timeout;
                 command.CommandText = String.Format(template, args);
@@ -188,10 +181,10 @@ namespace Orchard.Data.Migration.Processors.DotConnectOracle
 
         public override void Process(PerformDBOperationExpression expression)
         {
-            var session = _transactionManager.GetSession();
+            var transaction = GetTransaction();
 
             if (expression.Operation != null)
-                expression.Operation(session.Connection, null);
+                expression.Operation(transaction.Connection, transaction);
         }
 
         protected override void Process(string sql)
@@ -201,13 +194,10 @@ namespace Orchard.Data.Migration.Processors.DotConnectOracle
             if (Options.PreviewOnly || string.IsNullOrEmpty(sql))
                 return;
 
-            var session = _transactionManager.GetSession();
-
-            using (var command = session.Connection.CreateCommand())
+            using (var command = CreateCommand())
             {
                 command.CommandTimeout = Options.Timeout;
                 command.CommandText = sql;
-                session.Transaction.Enlist(command);
                 command.ExecuteNonQuery();
             }
         }

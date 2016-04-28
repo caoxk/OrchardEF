@@ -17,6 +17,7 @@
 #endregion
 
 using System.Data;
+using System.Data.Common;
 using FluentMigrator;
 
 namespace Orchard.Data.Migration.Processors
@@ -43,6 +44,22 @@ namespace Orchard.Data.Migration.Processors
 
         //public IDbConnection Connection { get; protected set; }
         public IDbFactory Factory { get; protected set; }
+
+        protected DbCommand CreateCommand() {
+            var dataContext = _transactionManager.GetSession();
+            var connection = dataContext.Database.Connection;
+            var command = connection.CreateCommand();
+            if (dataContext.Database.CurrentTransaction != null) {
+                command.Transaction = dataContext.Database.CurrentTransaction.UnderlyingTransaction;
+            }
+            return command;
+        }
+
+        protected DbTransaction GetTransaction() {
+            var dataContext = _transactionManager.GetSession();
+            return dataContext.Database.CurrentTransaction?.UnderlyingTransaction;
+        }
+
         //public IDbTransaction Transaction { get; protected set; }
 
         //public virtual bool SupportsTransactions

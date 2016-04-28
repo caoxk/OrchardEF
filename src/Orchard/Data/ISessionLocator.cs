@@ -1,10 +1,10 @@
 using System;
-using NHibernate;
+using System.Data.Entity;
 
 namespace Orchard.Data {
     public interface ISessionLocator : IDependency {
 
         [Obsolete("Use ITransactionManager.GetSession() instead.")]
-        ISession For(Type entityType);
+        DbContext For(Type entityType);
     }
 }
