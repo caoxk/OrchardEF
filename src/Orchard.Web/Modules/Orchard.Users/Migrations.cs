@@ -1,5 +1,6 @@
 ﻿using System;
 using Orchard.Data.Migration;
+using Orchard.Users.Models;
 
 namespace Orchard.Users {
     public class UsersDataMigration : DataMigrationImpl {
@@ -12,11 +13,11 @@ namespace Orchard.Users {
                 .WithColumn("Email").AsString().Nullable()
                 .WithColumn("NormalizedUserName").AsString().Nullable()
                 .WithColumn("Password").AsString()
-                .WithColumn("PasswordFormat").AsString()
+                .WithColumn("PasswordFormat").AsInt32()
                 .WithColumn("HashAlgorithm").AsString()
                 .WithColumn("PasswordSalt").AsString()
-                .WithColumn("RegistrationStatus").AsString().WithDefaultValue("Approved")
-                .WithColumn("EmailStatus").AsString().WithDefaultValue("Approved")
+                .WithColumn("RegistrationStatus").AsInt32().WithDefaultValue((int)UserStatus.Approved)
+                .WithColumn("EmailStatus").AsInt32().WithDefaultValue((int)UserStatus.Approved)
                 .WithColumn("EmailChallengeToken").AsString().Nullable()
                 .WithColumn("CreatedUtc").AsDateTime()
                 .WithColumn("LastLoginUtc").AsDateTime().Nullable()
