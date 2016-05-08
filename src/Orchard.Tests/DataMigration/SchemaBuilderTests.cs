@@ -2,10 +2,8 @@
 using System.Data;
 using System.Linq;
 using Autofac;
-using NHibernate;
 using NUnit.Framework;
 using Orchard.Data;
-using Orchard.Data.Migration.Interpreters;
 using Orchard.Data.Migration.Schema;
 using Orchard.Data.Providers;
 using Orchard.Environment;
@@ -16,18 +14,19 @@ using Orchard.Tests.ContentManagement;
 using System.IO;
 using Orchard.Tests.Environment;
 using Orchard.Tests.FileSystems.AppData;
+using Orchard.Data.Providers.SqlCeProvider;
+using System.Data.Entity;
 
 namespace Orchard.Tests.DataMigration
 {
 	[TestFixture]
     public class SchemaBuilderTestsBase {
         private IContainer _container;
-        private ISessionFactory _sessionFactory;
+        private ISessionFactoryHolder _sessionFactory;
         private string _databaseFileName;
         private string _tempFolder;
         private SchemaBuilder _schemaBuilder;
-        private DefaultDataMigrationInterpreter _interpreter;
-        private ISession _session;
+        private DbContext _session;
 
         [SetUp]
         public void Setup() {
@@ -40,15 +39,11 @@ namespace Orchard.Tests.DataMigration
 
             var builder = new ContainerBuilder();
 
-            _session = _sessionFactory.OpenSession();
+            _session = _sessionFactory.Create();
             builder.RegisterInstance(appDataFolder).As<IAppDataFolder>();
-            builder.RegisterType<SqlCeDataServicesProvider>().As<IDataServicesProvider>();
+            builder.RegisterType<SqlServerCompactDataServicesProvider>().As<IDataServicesProvider>();
             builder.RegisterType<DataServicesProviderFactory>().As<IDataServicesProviderFactory>();
-            builder.RegisterType<DefaultDataMigrationInterpreter>().As<IDataMigrationInterpreter>();
-            builder.RegisterType<SqlCeCommandInterpreter>().As<ICommandInterpreter>();
-            builder.RegisterType<SessionConfigurationCache>().As<ISessionConfigurationCache>();
             builder.RegisterType<SessionFactoryHolder>().As<ISessionFactoryHolder>();
-            builder.RegisterType<DefaultDatabaseCacheConfiguration>().As<IDatabaseCacheConfiguration>();
             builder.RegisterType<StubHostEnvironment>().As<IHostEnvironment>();
             builder.RegisterInstance(new TestTransactionManager(_session)).As<ITransactionManager>();
             builder.RegisterInstance(new ShellBlueprint { Records = Enumerable.Empty<RecordBlueprint>() }).As<ShellBlueprint>();
@@ -56,75 +51,74 @@ namespace Orchard.Tests.DataMigration
             builder.RegisterModule(new DataModule());
             _container = builder.Build();
 
-            _interpreter = _container.Resolve<IDataMigrationInterpreter>() as DefaultDataMigrationInterpreter;
-            _schemaBuilder = new SchemaBuilder(_interpreter);
+            _schemaBuilder = new SchemaBuilder();
         }
 
         [Test]
         public void AllMethodsShouldBeCalledSuccessfully() {
 
             _schemaBuilder
-                .CreateTable("User", table => table
-                    .ContentPartRecord()
-                    .Column("Firstname", DbType.String, column => column.WithLength(255))
-                    .Column("Lastname", DbType.String, column => column.WithPrecision(0).WithScale(1)))
-                .CreateTable("Address", table => table
-                    .ContentPartVersionRecord()
-                    .Column("City", DbType.String)
-                    .Column("ZIP", DbType.Int32, column => column.Unique())
-                    .Column("UserId", DbType.Int32, column => column.NotNull()))
-                .CreateForeignKey("User_Address", "Address", new[] { "UserId" }, "User", new[] { "Id" })
-                .AlterTable("User", table => table
-                    .AddColumn("Age", DbType.Int32))
-                .AlterTable("User", table => table
-                    .DropColumn("Lastname"))
-                .AlterTable("User", table => table
-                    .CreateIndex("IDX_XYZ", "Firstname"))
-                .AlterTable("User", table => table
-                    .DropIndex("IDX_XYZ"))
-                .DropForeignKey("Address", "User_Address")
-                .DropTable("Address");
+                .Create.Table("User")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Firstname").AsString(255)
+                .WithColumn("Lastname").AsDecimal(12, 1);
+
+            _schemaBuilder
+               .Create.Table("Address")
+               .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+               .WithColumn("City").AsString(255)
+               .WithColumn("ZIP").AsInt32().Unique()
+               .WithColumn("UserId").AsInt32().NotNullable().ForeignKey("User_Address", "User");
+
+            _schemaBuilder.Alter.Table("User").AddColumn("Age").AsInt32();
+            _schemaBuilder.Delete.Column("Lastname").FromTable("User");
+            _schemaBuilder.Create.Index("IDX_XYZ").OnTable("User").OnColumn("Firstname");
+            _schemaBuilder.Delete.Index("IDX_XYZ").OnTable("User");
+            _schemaBuilder.Delete.ForeignKey("User_Address").OnTable("Address");
+            _schemaBuilder.Delete.Table("Address");
         }
 
         [Test]
         public void CreateCommandShouldBeHandled() {
-
             _schemaBuilder
-                .CreateTable("User", table => table
-                    .Column("Id", DbType.Int32, column => column.PrimaryKey().Identity())
-                    .Column("Firstname", DbType.String, column => column.WithLength(255))
-                    .Column("Lastname", DbType.String, column => column.WithLength(100).NotNull())
-                    .Column("SN", DbType.AnsiString, column => column.WithLength(40).Unique())
-                    .Column("Salary", DbType.Decimal, column => column.WithPrecision(9).WithScale(2))
-                    .Column("Gender", DbType.Decimal, column => column.WithDefault(""))
-                    );
+                .Create.Table("User")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Firstname").AsString(255)
+                .WithColumn("Lastname").AsString(100).NotNullable()
+                .WithColumn("SN").AsAnsiString(40).Unique()
+                .WithColumn("Salary").AsDecimal(9, 2)
+                .WithColumn("Gender").AsDecimal().WithDefaultValue("");
         }
 
         [Test]
         public void DropTableCommandShouldBeHandled() {
             _schemaBuilder
-                .CreateTable("User", table => table
-                    .Column("Id", DbType.Int32, column => column.PrimaryKey().Identity())
-                    .Column("Firstname", DbType.String, column => column.WithLength(255))
-                    .Column("Lastname", DbType.String, column => column.WithLength(100).NotNull())
-                    .Column("SN", DbType.AnsiString, column => column.WithLength(40).Unique())
-                    .Column("Salary", DbType.Decimal, column => column.WithPrecision(9).WithScale(2))
-                    .Column("Gender", DbType.Decimal, column => column.WithDefault(""))
-                    );
+                .Create.Table("User")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Firstname").AsString(255)
+                .WithColumn("Lastname").AsString(100).NotNullable()
+                .WithColumn("SN").AsAnsiString(40).Unique()
+                .WithColumn("Salary").AsDecimal(9, 2)
+                .WithColumn("Gender").AsDecimal().WithDefaultValue("");
 
-            _schemaBuilder
-                .DropTable("User");
+            _schemaBuilder.Delete.Table("User");
         }
 
         [Test]
         public void CustomSqlStatementsShouldBeHandled() {
-
-            _schemaBuilder
-                .ExecuteSql("select 1");
+            _schemaBuilder.Execute.Sql("select 1");
         }
 
         [Test]
         public void AlterTableCommandShouldBeHandled() {
+
+            _schemaBuilder
+                .Create.Table("User")
+                .WithColumn("Firstname").AsString(255)
+                .WithColumn("Lastname").AsString(100).NotNullable();
+
+            _schemaBuilder.Alter.Table("User").AddColumn("Age").AsInt32();
+            _schemaBuilder.Alter.Column("Lastname").OnTable("User").AsString().WithDefaultValue("Doe").
 
             _schemaBuilder
                 .CreateTable("User", table => table

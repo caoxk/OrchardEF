@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Autofac;
-using NHibernate;
 using NUnit.Framework;
+using Orchard.ContentManagement.FieldStorage.InfosetStorage;
+using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
 using Orchard.Environment.Configuration;
 using Orchard.Services;
@@ -18,9 +20,9 @@ namespace Orchard.Tests {
 
         protected IContainer _container;
 
-        protected ISession _session;
+        protected DbContext _session;
         protected string _databaseFilePath;
-        protected ISessionFactory _sessionFactory;
+        protected ISessionFactoryHolder _sessionFactory;
         protected StubClock _clock;
         protected ShellSettings _shellSettings;
 
@@ -37,17 +39,19 @@ namespace Orchard.Tests {
         public virtual void Init() {
             _databaseFilePath = Path.GetTempFileName();
             _sessionFactory = DataUtility.CreateSessionFactory(_databaseFilePath, DatabaseTypes.ToArray());
-            _session = _sessionFactory.OpenSession();
+            _session = _sessionFactory.Create();
+
             _clock = new StubClock();
 
             var builder = new ContainerBuilder();
             //builder.RegisterModule(new ImplicitCollectionSupportModule());
+            builder.RegisterType<InfosetHandler>().As<IContentHandler>();
             builder.RegisterInstance(new StubLocator(_session)).As<ISessionLocator>();
             builder.RegisterInstance(_clock).As<IClock>();
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
             builder.RegisterInstance(_shellSettings = new ShellSettings { Name = ShellSettings.DefaultName, DataProvider = "SqlCe" });
             builder.RegisterType<TestTransactionManager>().As<ITransactionManager>().InstancePerLifetimeScope();
-            builder.Register(context => _sessionFactory.OpenSession()).As<ISession>().InstancePerLifetimeScope();
+            builder.Register(context => _sessionFactory.Create()).As<DbContext>().InstancePerLifetimeScope();
 
             Register(builder);
             _container = builder.Build();
@@ -69,8 +73,7 @@ namespace Orchard.Tests {
 
         protected void ClearSession() {
             Trace.WriteLine("Flush and clear session");
-            _session.Flush();
-            _session.Clear();
+            _session.SaveChanges();
             Trace.WriteLine("Flushed and cleared session");
         }
     }

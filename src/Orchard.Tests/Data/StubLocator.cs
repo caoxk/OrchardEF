@@ -1,18 +1,18 @@
 using System;
-using NHibernate;
+using System.Data.Entity;
 using Orchard.Data;
 
 namespace Orchard.Tests.Data {
     public class StubLocator : ISessionLocator {
-        private readonly ISession _session;
+        private readonly DbContext _session;
 
-        public StubLocator(ISession session) {
+        public StubLocator(DbContext session) {
             _session = session;
         }
 
         #region ISessionLocator Members
 
-        public ISession For(Type entityType) {
+        public DbContext For(Type entityType) {
             return _session;
         }
 

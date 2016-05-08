@@ -1,12 +1,12 @@
-using Orchard.Data.Conventions;
+using System.ComponentModel.DataAnnotations;
 
 namespace Orchard.Tests.Records {
     public class BigRecord {
         public virtual int Id { get; set; }
-        [StringLengthMax]
+        [MaxLength]
         public virtual string Body { get; set; }
 
-        [StringLengthMax]
+        [MaxLength]
         public virtual byte[] Banner { get; set; }
     }
 }

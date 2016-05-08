@@ -4,8 +4,6 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using Autofac.Features.Metadata;
-using NHibernate;
-using NHibernate.Tool.hbm2ddl;
 using Orchard.Data.Providers;
 using Orchard.Environment.ShellBuilders.Models;
 

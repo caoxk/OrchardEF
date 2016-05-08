@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.IO;
 using System.Linq;
-using FluentNHibernate;
-using FluentNHibernate.Automapping;
-using FluentNHibernate.Cfg;
-using FluentNHibernate.Cfg.Db;
-using FluentNHibernate.Diagnostics;
-using NHibernate.Criterion;
-using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
 using Orchard.Data.Providers;
+using Orchard.Data.Providers.SqlCeProvider;
+using Orchard.Environment.ShellBuilders.Models;
 using Orchard.Tests.Records;
-using MsSqlCeConfiguration = Orchard.Data.Providers.MsSqlCeConfiguration;
 
 namespace Orchard.Tests {
     [TestFixture]
     public class FluentDbTests {
-        public class Types : ITypeSource {
+        public class Types {
             private readonly IEnumerable<Type> _types;
 
             public Types(params Type[] types) {
@@ -29,14 +25,6 @@ namespace Orchard.Tests {
                 return _types;
             }
 
-            public void LogSource(IDiagnosticLogger logger) {
-                throw new NotImplementedException();
-            }
-
-            public string GetIdentifier() {
-                throw new NotImplementedException();
-            }
-
             #endregion
         }
 
@@ -45,33 +33,33 @@ namespace Orchard.Tests {
             var types = new Types(typeof(FooRecord), typeof(BarRecord));
 
             var fileName = "temp.sdf";
-            var persistenceConfigurer = new SqlCeDataServicesProvider(fileName).GetPersistenceConfigurer(true/*createDatabase*/);
+            var parameters = new SessionFactoryParameters {
+                Provider = "SqlServerCe",
+                DataFolder = Path.GetDirectoryName(fileName),
+                RecordDescriptors = new List<RecordBlueprint>() {
+                   new RecordBlueprint { Type =  typeof(FooRecord), TableName = "FooRecord"},
+                   new RecordBlueprint { Type =  typeof(BarRecord), TableName = "BarRecord"}
+                }
+            };
+            var provider = new SqlServerCompactDataServicesProvider(fileName);
+            DbConfiguration configuration = provider.BuildConfiguration();
+            DbConfiguration.SetConfiguration(configuration);
+            //Database.SetInitializer<DbContext>(null);
+            var contextOptions = provider.GetContextOptions(parameters);
             // Uncomment to display SQL while running tests
             // ((MsSqlCeConfiguration)persistenceConfigurer).ShowSql();
 
-            var sessionFactory = Fluently.Configure()
-                .Database(persistenceConfigurer)
-                .Mappings(m => m.AutoMappings.Add(AutoMap.Source(types)))
-                .ExposeConfiguration(c => {
-                    // This is to work around what looks to be an issue in the NHibernate driver:
-                    // When inserting a row with IDENTITY column, the "SELET @@IDENTITY" statement
-                    // is issued as a separate command. By default, it is also issued in a separate
-                    // connection, which is not supported (returns NULL).
-                    c.SetProperty("connection.release_mode", "on_close");
-                    new SchemaExport(c).Create(false, true);
-                })
-                .BuildSessionFactory();
+            var session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
+            session.Set<FooRecord>().Add(new FooRecord { Name = "Hello" });
+            session.Set<BarRecord>().Add(new BarRecord { Height = 3, Width = 4.5m });
+            session.SaveChanges();
+            session.Dispose();
 
-            var session = sessionFactory.OpenSession();
-            session.Save(new FooRecord { Name = "Hello" });
-            session.Save(new BarRecord { Height = 3, Width = 4.5m });
-            session.Close();
-
-            session = sessionFactory.OpenSession();
-            var foos = session.CreateCriteria<FooRecord>().List();
+            session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
+            var foos = session.Set<FooRecord>().ToList();
             Assert.That(foos.Count, Is.EqualTo(1));
             Assert.That(foos, Has.All.Property("Name").EqualTo("Hello"));
-            session.Close();
+            session.Dispose();
         }
 
 
@@ -79,16 +67,16 @@ namespace Orchard.Tests {
         public void UsingDataUtilityToBuildSessionFactory() {
             var factory = DataUtility.CreateSessionFactory(typeof(FooRecord), typeof(BarRecord));
 
-            var session = factory.OpenSession();
+            var session = factory.Create();
             var foo1 = new FooRecord { Name = "world" };
-            session.Save(foo1);
-            session.Close();
+            session.Set<FooRecord>().Add(foo1);
+            session.SaveChanges();
+            session.Dispose();
 
-            session = factory.OpenSession();
-            var foo2 = session.CreateCriteria<FooRecord>()
-                .Add(Restrictions.Eq("Name", "world"))
-                .List<FooRecord>().Single();
-            session.Close();
+            session = factory.Create();
+            var foo2 = session.Set<FooRecord>().Where(x=>x.Name == "world")
+                .Single();
+            session.Dispose();
 
             Assert.That(foo1, Is.Not.SameAs(foo2));
             Assert.That(foo1.Id, Is.EqualTo(foo2.Id));

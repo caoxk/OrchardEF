@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Data;
-using NHibernate;
+using System.Data.Entity;
 using Orchard.Data;
 
 namespace Orchard.Tests.ContentManagement {
     public class TestTransactionManager : ITransactionManager, IDisposable {
-        private ISession _session;
-        private ITransaction _transaction;
+        private DbContext _session;
+        private DbContextTransaction _transaction;
         private bool _cancelled;
 
-        public TestTransactionManager(ISession session) {
+        public TestTransactionManager(DbContext session) {
             _session = session;
             RequireNew();
         }
@@ -36,7 +36,7 @@ namespace Orchard.Tests.ContentManagement {
                 }
             }
 
-            _transaction = _session.BeginTransaction(level);
+            _transaction = _session.Database.BeginTransaction(level);
         }
 
         public void Cancel() {
@@ -63,7 +63,6 @@ namespace Orchard.Tests.ContentManagement {
                 }
             }
 
-            _session.Close();
             _session.Dispose();
             _session = null;
         }
@@ -74,7 +73,7 @@ namespace Orchard.Tests.ContentManagement {
             }
         }
 
-        public ISession GetSession() {
+        public DbContext GetSession() {
             EnsureSession();
 
             return _session;

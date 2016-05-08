@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using NHibernate;
 using NUnit.Framework;
 using Orchard.Data;
 using Orchard.Tests.ContentManagement;
@@ -22,13 +22,13 @@ namespace Orchard.Tests.Data {
         public void Init() {
             _databaseFilePath = Path.GetTempFileName();
             _sessionFactory = DataUtility.CreateSessionFactory(_databaseFilePath, typeof(FooRecord));
-            _session = _sessionFactory.OpenSession();
+            _session = _sessionFactory.Create();
             _fooRepos = new Repository<FooRecord>(new TestTransactionManager(_session));
         }
 
         [TearDown]
         public void Term() {
-            _session.Close();
+            _session.Dispose();
         }
 
         [TestFixtureTearDown]
@@ -39,9 +39,9 @@ namespace Orchard.Tests.Data {
         #endregion
 
         private IRepository<FooRecord> _fooRepos;
-        private ISession _session;
+        private DbContext _session;
         private string _databaseFilePath;
-        private ISessionFactory _sessionFactory;
+        private ISessionFactoryHolder _sessionFactory;
 
         private void CreateThreeFoos() {
             _fooRepos.Create(new FooRecord { Name = "one" });

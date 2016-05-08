@@ -4,23 +4,19 @@ using System.Data;
 using System.Linq;
 using Autofac;
 using Moq;
-using NHibernate;
 using NUnit.Framework;
 using Orchard.Caching;
-using Orchard.ContentManagement.MetaData;
-using Orchard.ContentManagement.Records;
 using Orchard.Data;
 using Orchard.Data.Migration;
-using Orchard.Data.Migration.Interpreters;
 using Orchard.Data.Migration.Records;
 using Orchard.Environment.Configuration;
 using Orchard.Environment.Extensions;
 using Orchard.Environment.Extensions.Folders;
 using Orchard.Environment.Extensions.Models;
-using Orchard.Tests.ContentManagement;
 using Orchard.Data.Providers;
 using Orchard.Tests.DataMigration.Utilities;
 using Orchard.Tests.Stubs;
+using System.Data.Entity;
 
 namespace Orchard.Tests.DataMigration {
     [TestFixture]
@@ -30,8 +26,8 @@ namespace Orchard.Tests.DataMigration {
         private IDataMigrationManager _dataMigrationManager;
         private IRepository<DataMigrationRecord> _repository;
 
-        private ISessionFactory _sessionFactory;
-        private ISession _session;
+        private ISessionFactoryHolder _sessionFactory;
+        private DbContext _session;
         private ITransactionManager _transactionManager;
 
         [SetUp]

@@ -10,9 +10,19 @@ using Orchard.Data.Providers.SqlProvider;
 
 namespace Orchard.Data.Providers.SqlCeProvider {
     public class SqlServerCompactDataServicesProvider : AbstractDataServicesProvider {
+        private readonly string _fileName;
+
         public static string ProviderName
         {
             get { return "SqlServerCe"; }
+        }
+
+        public SqlServerCompactDataServicesProvider() {
+            _fileName = "Orchard.sdf";
+        }
+
+        public SqlServerCompactDataServicesProvider(string fileName) {
+            _fileName = fileName;
         }
 
         public override DbConfiguration BuildConfiguration()
@@ -24,7 +34,7 @@ namespace Orchard.Data.Providers.SqlCeProvider {
             if (!string.IsNullOrEmpty(parameters.DataFolder))
                 Directory.CreateDirectory(parameters.DataFolder);
 
-            var fileName = Path.Combine(parameters.DataFolder, "Orchard.sdf");
+            var fileName = Path.Combine(parameters.DataFolder, _fileName);
 
             string localConnectionString = string.Format("Data Source={0}", fileName);
             if (!File.Exists(fileName)) {
