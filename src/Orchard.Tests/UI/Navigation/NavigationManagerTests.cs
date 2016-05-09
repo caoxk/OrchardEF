@@ -4,7 +4,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
 using NUnit.Framework;
-using Orchard.ContentManagement;
 using Orchard.Core.Navigation.Services;
 using Orchard.Data;
 using Orchard.Environment.Configuration;
@@ -27,10 +26,10 @@ namespace Orchard.Tests.UI.Navigation {
         }
 
         public class StubAuth : IAuthorizationService {
-            public void CheckAccess(Permission permission, IUser user, IContent content) {
+            public void CheckAccess(Permission permission, IUser user, object content) {
             }
 
-            public bool TryCheckAccess(Permission permission, IUser user, IContent content) {
+            public bool TryCheckAccess(Permission permission, IUser user, object content) {
                 return true;
             }
         }
@@ -120,10 +119,6 @@ namespace Orchard.Tests.UI.Navigation {
 
         public StubOrchardServices(ILifetimeScope lifetimeScope) {
             _lifetimeScope = lifetimeScope;
-        }
-
-        public IContentManager ContentManager {
-            get { throw new NotImplementedException(); }
         }
 
         public ITransactionManager TransactionManager {

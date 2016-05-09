@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Globalization;
 using System.IO;
 using Autofac;
 using Moq;
-using NHibernate;
 using NUnit.Framework;
 using Orchard.Caching;
-using Orchard.ContentManagement;
-using Orchard.ContentManagement.MetaData;
 using Orchard.Data;
 using Orchard.DisplayManagement;
 using Orchard.DisplayManagement.Descriptors;
@@ -26,8 +24,8 @@ namespace Orchard.Tests.Localization {
     public class CultureManagerTests {
         private IContainer _container;
         private ICultureManager _cultureManager;
-        private ISessionFactory _sessionFactory;
-        private ISession _session;
+        private ISessionFactoryHolder _sessionFactory;
+        private DbContext _session;
         private string _databaseFileName;
         private StubWorkContext _stubWorkContext;
 
@@ -45,20 +43,16 @@ namespace Orchard.Tests.Localization {
             _stubWorkContext = new StubWorkContext();
             builder.RegisterType<DefaultShapeTableManager>().As<IShapeTableManager>();
             builder.RegisterType<DefaultShapeFactory>().As<IShapeFactory>();
-            builder.RegisterInstance(new Mock<IContentDefinitionManager>().Object);
             builder.RegisterInstance(new Mock<IAuthorizer>().Object);
             builder.RegisterInstance(new Mock<INotifier>().Object);
-            builder.RegisterInstance(new Mock<IContentDisplay>().Object);
             builder.RegisterInstance(_stubWorkContext);
             builder.RegisterInstance(new StubWorkContextAccessor(_stubWorkContext)).As<IWorkContextAccessor>();
-            builder.RegisterType<DefaultContentManager>().As<IContentManager>();
-            builder.RegisterType<DefaultContentManagerSession>().As<IContentManagerSession>();
             builder.RegisterType<OrchardServices>().As<IOrchardServices>();
             builder.RegisterType<DefaultCultureManager>().As<ICultureManager>();
             builder.RegisterType<Signals>().As<ISignals>();
             builder.RegisterType<StubCacheManager>().As<ICacheManager>();
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>));
-            _session = _sessionFactory.OpenSession();
+            _session = _sessionFactory.Create();
             builder.RegisterInstance(new TestTransactionManager(_session)).As<ITransactionManager>();
             _container = builder.Build();
             _cultureManager = _container.Resolve<ICultureManager>();
@@ -66,7 +60,7 @@ namespace Orchard.Tests.Localization {
 
         [TearDown]
         public void Term() {
-            _session.Close();
+            _session.Dispose();
         }
 
         [TestFixtureTearDown]

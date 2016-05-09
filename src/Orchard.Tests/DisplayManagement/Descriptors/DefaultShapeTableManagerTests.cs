@@ -5,7 +5,6 @@ using Autofac;
 using Moq;
 using NUnit.Framework;
 using Orchard.Caching;
-using Orchard.ContentManagement;
 using Orchard.DisplayManagement.Descriptors;
 using Orchard.DisplayManagement.Descriptors.ShapePlacementStrategy;
 using Orchard.DisplayManagement.Implementation;
@@ -61,7 +60,6 @@ namespace Orchard.Tests.DisplayManagement.Descriptors {
                 .InstancePerLifetimeScope();
 
             builder.RegisterInstance(new Mock<IPageClassBuilder>().Object); 
-            builder.RegisterType<DefaultContentDisplay>().As<IContentDisplay>();
         }
 
         static Feature Feature(FeatureDescriptor descriptor) {

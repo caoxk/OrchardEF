@@ -14,9 +14,11 @@ using Orchard.Environment.Extensions;
 using Orchard.Environment.Extensions.Folders;
 using Orchard.Environment.Extensions.Models;
 using Orchard.Data.Providers;
-using Orchard.Tests.DataMigration.Utilities;
 using Orchard.Tests.Stubs;
 using System.Data.Entity;
+using Orchard.Data.Providers.SqlProvider;
+using Orchard.Tests.ContentManagement;
+using Orchard.Data.Migration.Schema;
 
 namespace Orchard.Tests.DataMigration {
     [TestFixture]
@@ -35,10 +37,7 @@ namespace Orchard.Tests.DataMigration {
             var databaseFileName = System.IO.Path.GetTempFileName();
             _sessionFactory = DataUtility.CreateSessionFactory(
                 databaseFileName,
-                typeof(DataMigrationRecord),
-                typeof(ContentItemVersionRecord),
-                typeof(ContentItemRecord),
-                typeof(ContentTypeRecord));
+                typeof(DataMigrationRecord));
         }
 
         public void InitDb() {
@@ -59,22 +58,19 @@ namespace Orchard.Tests.DataMigration {
                       
             var builder = new ContainerBuilder();
             _folders = new StubFolders();
-            var contentDefinitionManager = new Mock<IContentDefinitionManager>().Object;
             
             builder.RegisterInstance(new ShellSettings { DataTablePrefix = "TEST_"});
             
             builder.RegisterType<SqlServerDataServicesProvider>().As<IDataServicesProvider>();
             builder.RegisterType<DataServicesProviderFactory>().As<IDataServicesProviderFactory>();
-            builder.RegisterType<NullInterpreter>().As<IDataMigrationInterpreter>();
             builder.RegisterInstance(_folders).As<IExtensionFolders>();
-            builder.RegisterInstance(contentDefinitionManager).As<IContentDefinitionManager>();
             builder.RegisterType<ExtensionManager>().As<IExtensionManager>();
             builder.RegisterType<DataMigrationManager>().As<IDataMigrationManager>();
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>));
             builder.RegisterType<StubCacheManager>().As<ICacheManager>();
             builder.RegisterType<StubParallelCacheContext>().As<IParallelCacheContext>();
             builder.RegisterType<StubAsyncTokenProvider>().As<IAsyncTokenProvider>();
-            _session = _sessionFactory.OpenSession();
+            _session = _sessionFactory.Create();
             builder.RegisterInstance(new TestTransactionManager(_session)).As<ITransactionManager>();
             foreach(var type in dataMigrations) {
                 builder.RegisterType(type).As<IDataMigration>();
@@ -106,11 +102,20 @@ namespace Orchard.Tests.DataMigration {
             public Feature Feature {
                 get { return new Feature() {Descriptor = new FeatureDescriptor() {Id = "Feature1"}}; }
             }
+
+            public SchemaBuilder SchemaBuilder
+            {
+                get;set;
+            }
         }
 
         public class DataMigration11 : IDataMigration {
             public Feature Feature {
                 get { return new Feature() {Descriptor = new FeatureDescriptor() {Id = "Feature1"}}; }
+            }
+            public SchemaBuilder SchemaBuilder
+            {
+                get; set;
             }
         }
 
@@ -122,11 +127,19 @@ namespace Orchard.Tests.DataMigration {
             public int Create() {
                 return 999;
             }
+            public SchemaBuilder SchemaBuilder
+            {
+                get; set;
+            }
         }
 
         public class DataMigrationCreateCanBeFollowedByUpdates : IDataMigration {
             public Feature Feature {
                 get { return new Feature() { Descriptor = new FeatureDescriptor() { Id = "Feature1" } }; }
+            }
+            public SchemaBuilder SchemaBuilder
+            {
+                get; set;
             }
 
             public int Create() {
@@ -142,7 +155,10 @@ namespace Orchard.Tests.DataMigration {
             public Feature Feature {
                 get { return new Feature() { Descriptor = new FeatureDescriptor() { Id = "Feature1" } }; }
             }
-
+            public SchemaBuilder SchemaBuilder
+            {
+                get; set;
+            }
             public int Create() {
                 return 999;
             }
@@ -160,6 +176,10 @@ namespace Orchard.Tests.DataMigration {
             public Feature Feature {
                 get { return new Feature() {Descriptor = new FeatureDescriptor() {Id = "Feature1"}}; }
             }
+            public SchemaBuilder SchemaBuilder
+            {
+                get; set;
+            }
 
             public int Create() {
                 return 999;
@@ -170,7 +190,10 @@ namespace Orchard.Tests.DataMigration {
             public Feature Feature {
                 get { return new Feature() { Descriptor = new FeatureDescriptor() { Id = "Feature2" } }; }
             }
-
+            public SchemaBuilder SchemaBuilder
+            {
+                get; set;
+            }
             public int Create() {
                 return 999;
             }
@@ -191,11 +214,19 @@ namespace Orchard.Tests.DataMigration {
             public Feature Feature {
                 get { return new Feature() { Descriptor = new FeatureDescriptor { Id = "Feature1", Extension = new ExtensionDescriptor { Id = "Module1" } } }; }
             }
+            public SchemaBuilder SchemaBuilder
+            {
+                get; set;
+            }
         }
 
         public class DataMigrationFeatureNeedUpdate2 : IDataMigration {
             public Feature Feature {
                 get { return new Feature() { Descriptor = new FeatureDescriptor { Id = "Feature2", Extension = new ExtensionDescriptor { Id = "Module2" } } }; }
+            }
+            public SchemaBuilder SchemaBuilder
+            {
+                get; set;
             }
 
             public int Create() {
@@ -206,6 +237,10 @@ namespace Orchard.Tests.DataMigration {
         public class DataMigrationFeatureNeedUpdate3 : IDataMigration {
             public Feature Feature {
                 get { return new Feature() { Descriptor = new FeatureDescriptor { Id = "Feature3", Extension = new ExtensionDescriptor { Id = "Module3" } } }; }
+            }
+            public SchemaBuilder SchemaBuilder
+            {
+                get; set;
             }
 
             public int Create() {
@@ -224,9 +259,7 @@ namespace Orchard.Tests.DataMigration {
             }
 
             public int Create() {
-                SchemaBuilder.CreateTable("FOO", table =>
-                    table.Column("Id", DbType.Int32, column =>
-                        column.PrimaryKey().Identity()));
+                SchemaBuilder.Create.Table("FOO").WithColumn("Id").AsInt32().PrimaryKey().Identity();
 
                 return 1;
             }
@@ -246,9 +279,7 @@ namespace Orchard.Tests.DataMigration {
             }
 
             public int Create() {
-                SchemaBuilder.CreateTable("FOO", table =>
-                    table.Column("Id", DbType.Int32, column =>
-                        column.PrimaryKey().Identity()));
+                SchemaBuilder.Create.Table("FOO").WithColumn("Id").AsInt32().PrimaryKey().Identity();
 
                 return 1;
             }
@@ -264,9 +295,8 @@ namespace Orchard.Tests.DataMigration {
             }
 
             public int Create() {
-                SchemaBuilder.CreateTable("UserPartRecord", table => 
-                    table.Column("Id", DbType.Int32, column => 
-                        column.PrimaryKey().Identity()));
+                SchemaBuilder.Create.Table("UserPartRecord")
+                    .WithColumn("Id").AsInt32().PrimaryKey().Identity();
 
                 return 1;
             }

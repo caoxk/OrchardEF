@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Orchard.Messaging.Services;
-using Orchard.Messaging.Models;
 
 namespace Orchard.Tests.Messaging {
     public class MessagingChannelStub : IMessageChannel {

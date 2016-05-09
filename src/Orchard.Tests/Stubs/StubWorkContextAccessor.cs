@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Web;
 using Autofac;
-using Orchard.ContentManagement;
 using Orchard.Security;
 using Orchard.Settings;
 
@@ -27,9 +26,7 @@ namespace Orchard.Tests.Stubs {
             public WorkContextImpl(ILifetimeScope lifetimeScope) {
                 _contextDictonary = new Dictionary<string, object>();
                 CurrentUser = new StubUser();
-                var ci = new ContentItem();
-                ci.Weld(new StubSite());
-                CurrentSite = ci.As<ISite>();
+                CurrentSite = new StubSite();
                 _lifetimeScope = lifetimeScope;
 
                 if (_initMethod != null) {
@@ -37,23 +34,17 @@ namespace Orchard.Tests.Stubs {
                 }
             }
 
-            public class StubSite : ContentPart, ISite {
+            public class StubSite : ISite {
                 public static string DefaultSuperUser;
 
                 public string PageTitleSeparator {
                     get { throw new NotImplementedException(); }
                 }
 
-                public string SiteName {
-                    get { throw new NotImplementedException(); }
-                }
-
-                public string SiteSalt {
-                    get { throw new NotImplementedException(); }
-                }
 
                 public string SuperUser {
                     get { return DefaultSuperUser; }
+                    set { }
                 }
 
                 public string HomePage {
@@ -99,12 +90,35 @@ namespace Orchard.Tests.Stubs {
                 public string BaseUrl { get; set;}
 
                 public string SiteTimeZone { get; set; }
+
+                public string SiteName
+                {
+                    get
+                    {
+                        throw new NotImplementedException();
+                    }
+
+                    set
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+
+                public string SiteSalt
+                {
+                    get
+                    {
+                        throw new NotImplementedException();
+                    }
+
+                    set
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
             }
 
             public class StubUser : IUser {
-                public ContentItem ContentItem {
-                    get { throw new NotImplementedException(); }
-                }
 
                 public int Id {
                     get { return 5; }

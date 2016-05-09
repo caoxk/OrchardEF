@@ -4,7 +4,7 @@ using Autofac.Features.Metadata;
 
 namespace Orchard.Data.Providers {
 
-    public delegate IDataServicesProvider CreateDataServicesProvider(string dataFolder, string connectionString);
+    public delegate IDataServicesProvider CreateDataServicesProvider();
 
     public class DataServicesProviderFactory : IDataServicesProviderFactory {
         private readonly IEnumerable<Meta<CreateDataServicesProvider>> _providers;
@@ -16,7 +16,7 @@ namespace Orchard.Data.Providers {
         public IDataServicesProvider CreateProvider(DataServiceParameters parameters) {
             var factory = GetProviderFactory(parameters.Provider) ?? GetProviderFactory("SqlServer");
 
-            return factory != null ? factory(parameters.DataFolder, parameters.ConnectionString) : null;
+            return factory != null ? factory() : null;
         }
 
         CreateDataServicesProvider GetProviderFactory(string providerName) {

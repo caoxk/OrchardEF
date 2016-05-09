@@ -4,13 +4,15 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using Autofac.Features.Metadata;
+using Orchard.Data;
 using Orchard.Data.Providers;
+using Orchard.Data.Providers.SqlProvider;
 using Orchard.Environment.ShellBuilders.Models;
 
 namespace Orchard.Tests.Data {
     public class ProviderUtilities {
 
-        public static void RunWithSqlServer(IEnumerable<RecordBlueprint> recordDescriptors, Action<ISessionFactory> action) {
+        public static void RunWithSqlServer(IEnumerable<RecordBlueprint> recordDescriptors, Action<ISessionFactoryHolder> action) {
             var temporaryPath = Path.GetTempFileName();
             if (File.Exists(temporaryPath))
                 File.Delete(temporaryPath);
@@ -22,8 +24,8 @@ namespace Orchard.Tests.Data {
                 if (!TryCreateSqlServerDatabase(databasePath, databaseName))
                     return;
 
-                var meta = new Meta<CreateDataServicesProvider>((dataFolder, connectionString) =>
-                    new SqlServerDataServicesProvider(dataFolder, connectionString),
+                var meta = new Meta<CreateDataServicesProvider>(() =>
+                    new SqlServerDataServicesProvider(),
                     new Dictionary<string, object> { { "ProviderName", "SqlServer" } });
 
                 var manager = (IDataServicesProviderFactory)new DataServicesProviderFactory(new[] { meta });

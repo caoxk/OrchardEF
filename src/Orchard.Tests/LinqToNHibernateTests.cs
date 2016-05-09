@@ -1,6 +1,5 @@
-﻿using System.Linq;
-using NHibernate;
-using NHibernate.Linq;
+﻿using System.Data.Entity;
+using System.Linq;
 using NUnit.Framework;
 using Orchard.Tests.Records;
 
@@ -12,26 +11,27 @@ namespace Orchard.Tests {
         [SetUp]
         public void Init() {
             var sessionFactory = DataUtility.CreateSessionFactory(typeof (FooRecord));
-            using (var session = sessionFactory.OpenSession()) {
-                session.Save(new FooRecord {Name = "one"});
-                session.Save(new FooRecord {Name = "two"});
-                session.Save(new FooRecord {Name = "three"});
+            using (var session = sessionFactory.Create()) {
+                session.Set<FooRecord>().Add(new FooRecord {Name = "one"});
+                session.Set<FooRecord>().Add(new FooRecord {Name = "two"});
+                session.Set<FooRecord>().Add(new FooRecord {Name = "three"});
+                session.SaveChanges();
             }
-            _session = sessionFactory.OpenSession();
+            _session = sessionFactory.Create();
         }
 
         [TearDown]
         public void Term() {
-            _session.Close();
+            _session.Dispose();
         }
 
         #endregion
 
-        private ISession _session;
+        private DbContext _session;
 
         [Test]
         public void WhereClauseShouldLimitResults() {
-            var foos = from f in _session.Query<FooRecord>() where f.Name == "two" || f.Name == "one" select f;
+            var foos = from f in _session.Set<FooRecord>() where f.Name == "two" || f.Name == "one" select f;
 
             Assert.That(foos.Count(), Is.EqualTo(2));
             Assert.That(foos, Has.Some.Property("Name").EqualTo("one"));

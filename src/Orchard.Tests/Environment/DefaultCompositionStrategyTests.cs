@@ -7,7 +7,6 @@ using Autofac;
 using Autofac.Core;
 using Moq;
 using NUnit.Framework;
-using Orchard.ContentManagement.Records;
 using Orchard.Environment.Configuration;
 using Orchard.Environment.Extensions;
 using Orchard.Environment.Extensions.Models;
@@ -240,27 +239,6 @@ namespace Orchard.Tests.Environment {
 
             Assert.That(bar.Feature.Descriptor.Id, Is.EqualTo("Bar"));
             Assert.That(bar.TableName, Is.EqualTo("Bar_BarRecord"));
-        }
-
-        [Test]
-        public void CoreRecordsAreAddedAutomatically() {
-            var descriptor = Build.ShellDescriptor().WithFeatures("Orchard.Framework");
-
-            var compositionStrategy = _container.Resolve<ICompositionStrategy>();
-            var blueprint = compositionStrategy.Compose(BuildDefaultSettings(), descriptor);
-
-            var ct = blueprint.Records.Single(x => x.Type == typeof(ContentTypeRecord));
-            var ci = blueprint.Records.Single(x => x.Type == typeof(ContentItemRecord));
-            var civ = blueprint.Records.Single(x => x.Type == typeof(ContentItemVersionRecord));
-
-            Assert.That(ct.Feature.Descriptor.Id, Is.EqualTo("Orchard.Framework"));
-            Assert.That(ct.TableName, Is.EqualTo("Orchard_Framework_ContentTypeRecord"));
-
-            Assert.That(ci.Feature.Descriptor.Id, Is.EqualTo("Orchard.Framework"));
-            Assert.That(ci.TableName, Is.EqualTo("Orchard_Framework_ContentItemRecord"));
-
-            Assert.That(civ.Feature.Descriptor.Id, Is.EqualTo("Orchard.Framework"));
-            Assert.That(civ.TableName, Is.EqualTo("Orchard_Framework_ContentItemVersionRecord"));
         }
 
         [Test]
