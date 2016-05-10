@@ -14,11 +14,11 @@ namespace Orchard.Tests.Data.Builders {
 
             ProviderUtilities.RunWithSqlCe(recordDescriptors,
                 sessionFactory => {
-                    var session = sessionFactory.OpenSession();
+                    var session = sessionFactory.Create();
                     var foo = new FooRecord { Name = "hi there" };
-                    session.Save(foo);
-                    session.Flush();
-                    session.Close();
+                    session.Set<FooRecord>().Add(foo);
+                    session.SaveChanges();
+                    session.Dispose();
 
                     Assert.That(foo, Is.Not.EqualTo(0));
 
@@ -34,11 +34,11 @@ namespace Orchard.Tests.Data.Builders {
 
             ProviderUtilities.RunWithSqlServer(recordDescriptors,
                 sessionFactory => {
-                    var session = sessionFactory.OpenSession();
+                    var session = sessionFactory.Create();
                     var foo = new FooRecord { Name = "hi there" };
-                    session.Save(foo);
-                    session.Flush();
-                    session.Close();
+                    session.Set<FooRecord>().Add(foo);
+                    session.SaveChanges();
+                    session.Dispose();
 
                     Assert.That(foo, Is.Not.EqualTo(0));
 

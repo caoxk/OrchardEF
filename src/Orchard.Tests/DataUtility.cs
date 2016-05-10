@@ -7,6 +7,7 @@ using Orchard.Data;
 using Orchard.Data.Providers;
 using Orchard.Data.Providers.SqlCeProvider;
 using Orchard.Environment.ShellBuilders.Models;
+using Orchard.Tests.Stubs;
 
 namespace Orchard.Tests {
     public static class DataUtility {
@@ -24,33 +25,19 @@ namespace Orchard.Tests {
             // Uncomment to display SQL while running tests
             // ((MsSqlCeConfiguration)persistenceConfigurer).ShowSql();
 
-            var session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
-
-            var persistenceModel = AbstractDataServicesProvider.CreatePersistenceModel(types.Select(t => new RecordBlueprint { TableName = "Test_" + t.Name, Type = t }).ToList());
-            var persistenceConfigurer = new SqlServerCompactDataServicesProvider(fileName).GetPersistenceConfigurer(true/*createDatabase*/);
-            // Uncomment to display SQL while running tests
-            // ((MsSqlCeConfiguration)persistenceConfigurer).ShowSql();
-
-            return Fluently.Configure()
-                .Database(persistenceConfigurer)
-                .Mappings(m => m.AutoMappings.Add(persistenceModel))
-                .ExposeConfiguration(c => {
-                    // This is to work around what looks to be an issue in the NHibernate driver:
-                    // When inserting a row with IDENTITY column, the "SELET @@IDENTITY" statement
-                    // is issued as a separate command. By default, it is also issued in a separate
-                    // connection, which is not supported (returns NULL).
-                    c.SetProperty("connection.release_mode", "on_close");
-                    new SchemaExport(c).Create(false /*script*/, true /*export*/);
-                })
-                .BuildSessionFactory();
+            var sessionFactory = new Stubs.StubSessionFactoryHolder(() => {
+                var session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
+                return session;
+            });
+            return sessionFactory;
         }
 
-        private static void AddAlterations(AutoMappingAlterationCollection alterations, IEnumerable<Type> types) {
-            foreach (var assembly in types.Select(t => t.Assembly).Distinct()) {
-                alterations.AddFromAssembly(assembly);
-            }
-            alterations.AddFromAssemblyOf<DataModule>();
-        }
+        //private static void AddAlterations(AutoMappingAlterationCollection alterations, IEnumerable<Type> types) {
+        //    foreach (var assembly in types.Select(t => t.Assembly).Distinct()) {
+        //        alterations.AddFromAssembly(assembly);
+        //    }
+        //    alterations.AddFromAssemblyOf<DataModule>();
+        //}
 
         public static ISessionFactoryHolder CreateSessionFactory(params Type[] types) {
             return CreateSessionFactory(

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
+using Orchard.Environment;
 
 namespace Orchard.Tests.ContentManagement {
     [TestFixture]

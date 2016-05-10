@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
@@ -37,15 +38,19 @@ namespace Orchard.Tests.Data {
                     RecordDescriptors = recordDescriptors,
                 };
 
-                var configuration = manager
-                    .CreateProvider(parameters)
-                    .BuildConfiguration(parameters);
+                var provider = manager
+                    .CreateProvider(parameters);
+                var configuration = provider
+                    .BuildConfiguration();
+                DbConfiguration.SetConfiguration(configuration);
+                var contextOptions = provider.GetContextOptions(parameters);
 
-                new SchemaExport(configuration).Execute(false, true, false);
+                var sessionFactory = new Stubs.StubSessionFactoryHolder(() => {
+                    var session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
+                    return session;
+                });
 
-                using (var sessionFactory = configuration.BuildSessionFactory()) {
-                    action(sessionFactory);
-                }
+                action(sessionFactory);
             }
             finally {
                 try {
@@ -88,7 +93,7 @@ namespace Orchard.Tests.Data {
             }
         }
 
-        public static void RunWithSqlCe(IEnumerable<RecordBlueprint> recordDescriptors, Action<ISessionFactory> action) {
+        public static void RunWithSqlCe(IEnumerable<RecordBlueprint> recordDescriptors, Action<ISessionFactoryHolder> action) {
             var temporaryPath = Path.GetTempFileName();
             if (File.Exists(temporaryPath))
                 File.Delete(temporaryPath);
@@ -96,29 +101,28 @@ namespace Orchard.Tests.Data {
             var databasePath = Path.Combine(temporaryPath, "Orchard.mdf");
             var databaseName = Path.GetFileNameWithoutExtension(databasePath);
             var parameters = new SessionFactoryParameters {
-                Provider = "SqlCe",
+                Provider = "SqlServerCe",
                 DataFolder = temporaryPath,
                 RecordDescriptors = recordDescriptors
             };
             try {
                 var manager = (IDataServicesProviderFactory)new DataServicesProviderFactory(new[] {
                 new Meta<CreateDataServicesProvider>(
-                    (dataFolder, connectionString) => new SqlCeDataServicesProvider(dataFolder, connectionString),
-                    new Dictionary<string, object> {{"ProviderName", "SqlCe"}})
+                    () => new Orchard.Data.Providers.SqlCeProvider.SqlServerCompactDataServicesProvider(databasePath),
+                    new Dictionary<string, object> {{"ProviderName", "SqlServerCe" } })
             });
+                var provider = manager
+                    .CreateProvider(parameters);
+                var configuration = provider
+                    .BuildConfiguration();
+                DbConfiguration.SetConfiguration(configuration);
+                var contextOptions = provider.GetContextOptions(parameters);
 
-                var configuration = manager
-                    .CreateProvider(parameters)
-                    .BuildConfiguration(parameters);
-
-                configuration.SetProperty("connection.release_mode", "on_close");
-
-                new SchemaExport(configuration).Execute(false, true, false);
-
-                using (var sessionFactory = configuration.BuildSessionFactory()) {
-                    action(sessionFactory);
-                }
-
+                var sessionFactory = new Stubs.StubSessionFactoryHolder(() => {
+                    var session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
+                    return session;
+                });
+                action(sessionFactory);
             }
             finally {
                 try {
