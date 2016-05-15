@@ -130,6 +130,7 @@ namespace Orchard.Data.Migration.Schema {
     //}
     public class SchemaBuilder
     {
+        //internal SchemaBuilder() { }
         internal IMigrationContext _context;
 
         public IAlterExpressionRoot Alter

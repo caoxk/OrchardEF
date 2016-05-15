@@ -19,6 +19,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using FluentMigrator.Exceptions;
 using FluentMigrator.Expressions;
 
@@ -93,12 +94,25 @@ namespace Orchard.Data.Migration.Generators.SqlServer
 
         public override string Generate(AlterDefaultConstraintExpression expression)
         {
-            throw new DatabaseOperationNotSupportedException();
+            var builder = new StringBuilder();
+
+            builder.Append(String.Format("ALTER TABLE {0} ALTER COLUMN {1} SET DEFAULT {2}",
+                Quoter.QuoteTableName(expression.TableName),
+                Quoter.QuoteColumnName(expression.ColumnName),
+                Quoter.QuoteValue(expression.DefaultValue)));
+
+            return builder.ToString();
         }
 
         public override string Generate(DeleteDefaultConstraintExpression expression)
         {
-            throw new DatabaseOperationNotSupportedException();
+            var builder = new StringBuilder();
+            builder.AppendLine();
+            builder.Append(String.Format("ALTER TABLE {0} ALTER COLUMN {1} DROP DEFAULT",
+                Quoter.QuoteTableName(expression.TableName),
+                Quoter.QuoteColumnName(expression.ColumnName)));
+
+            return builder.ToString();
         }
 
         public override string Generate(InsertDataExpression expression)

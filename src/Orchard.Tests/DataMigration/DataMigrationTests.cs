@@ -19,6 +19,8 @@ using System.Data.Entity;
 using Orchard.Data.Providers.SqlProvider;
 using Orchard.Tests.ContentManagement;
 using Orchard.Data.Migration.Schema;
+using Orchard.Data.Migration.Processors;
+using Orchard.Data.Migration.Processors.SqlServer;
 
 namespace Orchard.Tests.DataMigration {
     [TestFixture]
@@ -59,12 +61,15 @@ namespace Orchard.Tests.DataMigration {
             var builder = new ContainerBuilder();
             _folders = new StubFolders();
             
-            builder.RegisterInstance(new ShellSettings { DataTablePrefix = "TEST_"});
+            builder.RegisterInstance(new ShellSettings { DataTablePrefix = "TEST_", DataProvider = "SqlServerCe" });
             
             builder.RegisterType<SqlServerDataServicesProvider>().As<IDataServicesProvider>();
             builder.RegisterType<DataServicesProviderFactory>().As<IDataServicesProviderFactory>();
             builder.RegisterInstance(_folders).As<IExtensionFolders>();
             builder.RegisterType<ExtensionManager>().As<IExtensionManager>();
+            builder.RegisterType<DefaultMigrationExecutor>().As<IMigrationExecutor>();
+            builder.RegisterType<MigrationProcessorFactoryProvider>().As<IMigrationProcessorFactoryProvider>();
+            builder.RegisterType<SqlServerCeProcessorFactory>().As<IMigrationProcessorFactory>();
             builder.RegisterType<DataMigrationManager>().As<IDataMigrationManager>();
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>));
             builder.RegisterType<StubCacheManager>().As<ICacheManager>();
@@ -105,7 +110,7 @@ namespace Orchard.Tests.DataMigration {
 
             public SchemaBuilder SchemaBuilder
             {
-                get;set;
+                get { return new SchemaBuilder(); }
             }
         }
 
@@ -115,7 +120,7 @@ namespace Orchard.Tests.DataMigration {
             }
             public SchemaBuilder SchemaBuilder
             {
-                get; set;
+                get { return new SchemaBuilder(); }
             }
         }
 
@@ -129,7 +134,7 @@ namespace Orchard.Tests.DataMigration {
             }
             public SchemaBuilder SchemaBuilder
             {
-                get; set;
+                get { return new SchemaBuilder(); }
             }
         }
 
@@ -139,7 +144,7 @@ namespace Orchard.Tests.DataMigration {
             }
             public SchemaBuilder SchemaBuilder
             {
-                get; set;
+                get { return new SchemaBuilder(); }
             }
 
             public int Create() {
@@ -157,7 +162,7 @@ namespace Orchard.Tests.DataMigration {
             }
             public SchemaBuilder SchemaBuilder
             {
-                get; set;
+                get { return new SchemaBuilder(); }
             }
             public int Create() {
                 return 999;
@@ -178,7 +183,7 @@ namespace Orchard.Tests.DataMigration {
             }
             public SchemaBuilder SchemaBuilder
             {
-                get; set;
+                get { return new SchemaBuilder(); }
             }
 
             public int Create() {
@@ -192,7 +197,7 @@ namespace Orchard.Tests.DataMigration {
             }
             public SchemaBuilder SchemaBuilder
             {
-                get; set;
+                get { return new SchemaBuilder(); }
             }
             public int Create() {
                 return 999;
@@ -216,7 +221,7 @@ namespace Orchard.Tests.DataMigration {
             }
             public SchemaBuilder SchemaBuilder
             {
-                get; set;
+                get { return new SchemaBuilder(); }
             }
         }
 
@@ -226,7 +231,7 @@ namespace Orchard.Tests.DataMigration {
             }
             public SchemaBuilder SchemaBuilder
             {
-                get; set;
+                get { return new SchemaBuilder(); }
             }
 
             public int Create() {
@@ -240,7 +245,7 @@ namespace Orchard.Tests.DataMigration {
             }
             public SchemaBuilder SchemaBuilder
             {
-                get; set;
+                get { return new SchemaBuilder(); }
             }
 
             public int Create() {

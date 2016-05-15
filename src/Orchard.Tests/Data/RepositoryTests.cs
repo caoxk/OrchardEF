@@ -112,8 +112,8 @@ namespace Orchard.Tests.Data {
                 o => o.Asc(f => f.Name, f => f.Id));
 
             Assert.That(foos.Count(), Is.EqualTo(2));
-            Assert.That(foos.First().Name, Is.EqualTo("three"));
-            Assert.That(foos.Skip(1).First().Name, Is.EqualTo("two"));
+            Assert.That(foos.First().Name, Is.EqualTo("two"));
+            Assert.That(foos.Skip(1).First().Name, Is.EqualTo("three"));
         }
 
         [Test]

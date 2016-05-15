@@ -91,6 +91,7 @@ namespace Orchard.Data {
         public virtual void Create(T entity) {
             Logger.Debug("Create {0}", entity);
             Table.Add(entity);
+            Flush();
         }
 
         public virtual void Update(T entity) {
@@ -101,7 +102,8 @@ namespace Orchard.Data {
 
         public virtual void Delete(T entity) {
             Logger.Debug("Delete {0}", entity);
-            Table.Remove(entity);           
+            Table.Remove(entity);
+            Flush();          
         }
 
         public virtual void Copy(T source, T target) {

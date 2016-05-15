@@ -33,10 +33,10 @@ namespace Orchard.Data.Migration.Generators.SqlServer
 
         protected override void SetupTypeMaps()
         {
-            SetTypeMap(DbType.AnsiStringFixedLength, "CHAR(255)");
-            SetTypeMap(DbType.AnsiStringFixedLength, "CHAR($size)", AnsiStringCapacity);
-            SetTypeMap(DbType.AnsiString, "VARCHAR(255)");
-            SetTypeMap(DbType.AnsiString, "VARCHAR($size)", AnsiStringCapacity);
+            SetTypeMap(DbType.AnsiStringFixedLength, "NCHAR(255)");
+            SetTypeMap(DbType.AnsiStringFixedLength, "NCHAR($size)", AnsiStringCapacity);
+            SetTypeMap(DbType.AnsiString, "NVARCHAR(255)");
+            SetTypeMap(DbType.AnsiString, "NVARCHAR($size)", AnsiStringCapacity);
             SetTypeMap(DbType.AnsiString, "TEXT", AnsiTextCapacity);
             SetTypeMap(DbType.Binary, "VARBINARY(8000)");
             SetTypeMap(DbType.Binary, "VARBINARY($size)", AnsiStringCapacity);
