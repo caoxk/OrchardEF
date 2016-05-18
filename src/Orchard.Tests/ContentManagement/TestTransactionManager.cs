@@ -5,11 +5,11 @@ using Orchard.Data;
 
 namespace Orchard.Tests.ContentManagement {
     public class TestTransactionManager : ITransactionManager, IDisposable {
-        private DbContext _session;
+        private DataContext _session;
         private DbContextTransaction _transaction;
         private bool _cancelled;
 
-        public TestTransactionManager(DbContext session) {
+        public TestTransactionManager(DataContext session) {
             _session = session;
             RequireNew();
         }
@@ -73,7 +73,7 @@ namespace Orchard.Tests.ContentManagement {
             }
         }
 
-        public DbContext GetSession() {
+        public DataContext GetSession() {
             EnsureSession();
 
             return _session;

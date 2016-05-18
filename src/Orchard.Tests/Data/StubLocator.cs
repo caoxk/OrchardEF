@@ -4,15 +4,15 @@ using Orchard.Data;
 
 namespace Orchard.Tests.Data {
     public class StubLocator : ISessionLocator {
-        private readonly DbContext _session;
+        private readonly DataContext _session;
 
-        public StubLocator(DbContext session) {
+        public StubLocator(DataContext session) {
             _session = session;
         }
 
         #region ISessionLocator Members
 
-        public DbContext For(Type entityType) {
+        public DataContext For(Type entityType) {
             return _session;
         }
 

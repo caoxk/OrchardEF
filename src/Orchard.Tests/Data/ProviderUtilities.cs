@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using Autofac.Features.Metadata;
+using Moq;
 using Orchard.Data;
 using Orchard.Data.Providers;
 using Orchard.Data.Providers.SqlProvider;
@@ -46,7 +47,7 @@ namespace Orchard.Tests.Data {
                 var contextOptions = provider.GetContextOptions(parameters);
 
                 var sessionFactory = new Stubs.StubSessionFactoryHolder(() => {
-                    var session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
+                    var session = new DataContext(new Mock<IDataStoreEventHandler>().Object,contextOptions.ConnectionString, contextOptions.Model);
                     return session;
                 });
 
@@ -119,7 +120,7 @@ namespace Orchard.Tests.Data {
                 var contextOptions = provider.GetContextOptions(parameters);
 
                 var sessionFactory = new Stubs.StubSessionFactoryHolder(() => {
-                    var session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
+                    var session = new DataContext(new Mock<IDataStoreEventHandler>().Object, contextOptions.ConnectionString, contextOptions.Model);
                     return session;
                 });
                 action(sessionFactory);

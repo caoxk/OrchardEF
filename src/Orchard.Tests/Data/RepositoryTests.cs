@@ -39,7 +39,7 @@ namespace Orchard.Tests.Data {
         #endregion
 
         private IRepository<FooRecord> _fooRepos;
-        private DbContext _session;
+        private DataContext _session;
         private string _databaseFilePath;
         private ISessionFactoryHolder _sessionFactory;
 

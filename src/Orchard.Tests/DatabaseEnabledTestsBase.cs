@@ -18,7 +18,7 @@ namespace Orchard.Tests {
 
         protected IContainer _container;
 
-        protected DbContext _session;
+        protected DataContext _session;
         protected string _databaseFilePath;
         protected ISessionFactoryHolder _sessionFactory;
         protected StubClock _clock;
@@ -48,7 +48,7 @@ namespace Orchard.Tests {
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
             builder.RegisterInstance(_shellSettings = new ShellSettings { Name = ShellSettings.DefaultName, DataProvider = "SqlServerCe" });
             builder.RegisterType<TestTransactionManager>().As<ITransactionManager>().InstancePerLifetimeScope();
-            builder.Register(context => _sessionFactory.Create()).As<DbContext>().InstancePerLifetimeScope();
+            builder.Register(context => _sessionFactory.Create()).As<DataContext>().InstancePerLifetimeScope();
 
             Register(builder);
             _container = builder.Build();

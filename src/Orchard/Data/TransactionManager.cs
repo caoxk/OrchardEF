@@ -10,7 +10,7 @@ namespace Orchard.Data {
         void RequireNew(IsolationLevel level);
         void Cancel();
 
-        DbContext GetSession();
+        DataContext GetSession();
     }
 
     public class TransactionFilter : FilterProvider, IExceptionFilter {

@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
 using System.Linq;
 using NUnit.Framework;
+using Orchard.Data;
 using Orchard.Tests.Records;
 
 namespace Orchard.Tests {
@@ -27,7 +28,7 @@ namespace Orchard.Tests {
 
         #endregion
 
-        private DbContext _session;
+        private DataContext _session;
 
         [Test]
         public void WhereClauseShouldLimitResults() {

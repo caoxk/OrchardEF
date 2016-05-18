@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using Moq;
 using Orchard.Data;
 using Orchard.Data.Providers;
 using Orchard.Data.Providers.SqlCeProvider;
@@ -20,13 +21,13 @@ namespace Orchard.Tests {
             var provider = new SqlServerCompactDataServicesProvider(fileName);
             DbConfiguration configuration = provider.BuildConfiguration();
             DbConfiguration.SetConfiguration(configuration);
-            Database.SetInitializer(new DropCreateDatabaseAlways<DbContext>());
+            Database.SetInitializer(new DropCreateDatabaseAlways<DataContext>());
             var contextOptions = provider.GetContextOptions(parameters);
             // Uncomment to display SQL while running tests
             // ((MsSqlCeConfiguration)persistenceConfigurer).ShowSql();
 
             var sessionFactory = new Stubs.StubSessionFactoryHolder(() => {
-                var session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
+                var session = new DataContext(new Mock<IDataStoreEventHandler>().Object,contextOptions.ConnectionString, contextOptions.Model);
                 return session;
             });
             return sessionFactory;

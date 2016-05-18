@@ -20,14 +20,14 @@ namespace Orchard.Data {
 
         public ILogger Logger { get; set; }
 
-        public DbContext For(Type entityType) {
+        public DataContext For(Type entityType) {
             Logger.Debug("Acquiring session for {0}", entityType);
             return _transactionManager.GetSession();
         }
     }
 
     public class TransactionManager : ITransactionManager, IDisposable {
-        private DbContext _dataContext;
+        private DataContext _dataContext;
         private ISessionFactoryHolder _sessionFactoryHolder;
         //private Func<DataContext> _dataContextFactory;
 
@@ -45,7 +45,7 @@ namespace Orchard.Data {
         public ILogger Logger { get; set; }
         public IsolationLevel IsolationLevel { get; set; }
 
-        public DbContext GetSession() {
+        public DataContext GetSession() {
             Demand();
             return _dataContext;
         }

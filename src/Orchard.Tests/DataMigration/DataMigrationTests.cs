@@ -31,7 +31,7 @@ namespace Orchard.Tests.DataMigration {
         private IRepository<DataMigrationRecord> _repository;
 
         private ISessionFactoryHolder _sessionFactory;
-        private DbContext _session;
+        private DataContext _session;
         private ITransactionManager _transactionManager;
 
         [SetUp]

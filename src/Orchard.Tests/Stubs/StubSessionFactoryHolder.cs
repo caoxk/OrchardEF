@@ -8,12 +8,12 @@ using Orchard.Data;
 
 namespace Orchard.Tests.Stubs {
     public class StubSessionFactoryHolder : ISessionFactoryHolder {
-        private readonly Func<DbContext> _action;
-        public StubSessionFactoryHolder(Func<DbContext> action) {
+        private readonly Func<DataContext> _action;
+        public StubSessionFactoryHolder(Func<DataContext> action) {
             _action = action;
         }
 
-        public DbContext Create() {
+        public DataContext Create() {
             return _action();
         }
     }

@@ -25,7 +25,7 @@ namespace Orchard.Tests.Localization {
         private IContainer _container;
         private ICultureManager _cultureManager;
         private ISessionFactoryHolder _sessionFactory;
-        private DbContext _session;
+        private DataContext _session;
         private string _databaseFileName;
         private StubWorkContext _stubWorkContext;
 

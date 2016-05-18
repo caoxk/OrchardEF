@@ -193,8 +193,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\DataContext.cs" />
     <Compile Include="Data\DbContextFactoryHolder.cs" />
     <Compile Include="Data\DbContextOptions.cs" />
+    <Compile Include="Data\IDataStoreEventHandler.cs" />
     <Compile Include="Data\Migration\Announcers\Announcer.cs" />
     <Compile Include="Data\Migration\Announcers\CompositeAnnouncer.cs" />
     <Compile Include="Data\Migration\Announcers\ConsoleAnnouncer.cs" />

@@ -22,7 +22,7 @@ using MySql.Data.Entity;
 namespace Orchard.Data
 {
     public interface ISessionFactoryHolder : ISingletonDependency {
-        DbContext Create();
+        DataContext Create();
         //ISessionFactory GetSessionFactory();
         //DbContextOptions<TContext> GetConfiguration<TContext>() where TContext:DbContext;
         //SessionFactoryParameters GetSessionFactoryParameters();
@@ -34,7 +34,7 @@ namespace Orchard.Data
         private readonly ShellBlueprint _shellBlueprint;
         private readonly IAppDataFolder _appDataFolder;
         private readonly IDataServicesProviderFactory _dataServicesProviderFactory;
-        //private readonly IEntityTypeOverrideHandler _entityTypeOverrideHandler;
+        private readonly IDataStoreEventHandler _dataStoreEvents;
 
         private DbContextOptions _contextOptions;
 
@@ -42,13 +42,14 @@ namespace Orchard.Data
             ShellSettings shellSettings,
             ShellBlueprint shellBlueprint,
             IAppDataFolder appDataFolder, 
-            IDataServicesProviderFactory dataServicesProviderFactory)
+            IDataServicesProviderFactory dataServicesProviderFactory, 
+            IDataStoreEventHandler dataStoreEvents)
         {
             _shellSettings = shellSettings;
             _shellBlueprint = shellBlueprint;
             _appDataFolder = appDataFolder;
             _dataServicesProviderFactory = dataServicesProviderFactory;
-            //_entityTypeOverrideHandler = entityTypeOverrideHandler;
+            _dataStoreEvents = dataStoreEvents;
 
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
@@ -57,16 +58,16 @@ namespace Orchard.Data
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public DbContext Create() {
+        public DataContext Create() {
             if (_contextOptions == null) {
                 var parameters = GetSessionFactoryParameters();
                 var provider = _dataServicesProviderFactory.CreateProvider(parameters);
                 DbConfiguration configuration = provider.BuildConfiguration();
                 DbConfiguration.SetConfiguration(configuration);
-                Database.SetInitializer<DbContext>(null);
+                Database.SetInitializer<DataContext>(null);
                 _contextOptions = provider.GetContextOptions(parameters);
             }
-            return new DbContext(_contextOptions.ConnectionString, _contextOptions.Model);
+            return new DataContext(_dataStoreEvents, _contextOptions.ConnectionString, _contextOptions.Model);
         }
 
         public SessionFactoryParameters GetSessionFactoryParameters()

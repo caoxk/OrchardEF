@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using Moq;
 using NUnit.Framework;
+using Orchard.Data;
 using Orchard.Data.Providers;
 using Orchard.Data.Providers.SqlCeProvider;
 using Orchard.Environment.ShellBuilders.Models;
@@ -44,18 +46,18 @@ namespace Orchard.Tests {
             var provider = new SqlServerCompactDataServicesProvider(fileName);
             DbConfiguration configuration = provider.BuildConfiguration();
             DbConfiguration.SetConfiguration(configuration);
-            Database.SetInitializer(new DropCreateDatabaseAlways<DbContext>());
+            Database.SetInitializer(new DropCreateDatabaseAlways<DataContext>());
             var contextOptions = provider.GetContextOptions(parameters);
             // Uncomment to display SQL while running tests
             // ((MsSqlCeConfiguration)persistenceConfigurer).ShowSql();
 
-            var session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
+            var session = new DataContext(new Mock<IDataStoreEventHandler>().Object, contextOptions.ConnectionString, contextOptions.Model);
             session.Set<FooRecord>().Add(new FooRecord { Name = "Hello" });
             session.Set<BarRecord>().Add(new BarRecord { Height = 3, Width = 4.5m });
             session.SaveChanges();
             session.Dispose();
 
-            session = new DbContext(contextOptions.ConnectionString, contextOptions.Model);
+            session = new DataContext(new Mock<IDataStoreEventHandler>().Object, contextOptions.ConnectionString, contextOptions.Model);
             var foos = session.Set<FooRecord>().ToList();
             Assert.That(foos.Count, Is.EqualTo(1));
             Assert.That(foos, Has.All.Property("Name").EqualTo("Hello"));

@@ -29,7 +29,7 @@ namespace Orchard.Tests.DataMigration
         private string _databaseFileName;
         private string _tempFolder;
         private IMigrationExecutor _migrationExecutor;
-        private DbContext _session;
+        private DataContext _session;
 
         [SetUp]
         public void Setup() {
