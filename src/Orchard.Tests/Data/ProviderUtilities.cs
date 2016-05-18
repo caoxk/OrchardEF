@@ -39,11 +39,9 @@ namespace Orchard.Tests.Data {
                     RecordDescriptors = recordDescriptors,
                 };
 
-                var provider = manager
-                    .CreateProvider(parameters);
-                var configuration = provider
-                    .BuildConfiguration();
-                DbConfiguration.SetConfiguration(configuration);
+                var provider = manager.CreateProvider(parameters);
+                provider.BuildConfiguration();
+
                 var contextOptions = provider.GetContextOptions(parameters);
 
                 var sessionFactory = new Stubs.StubSessionFactoryHolder(() => {
@@ -112,11 +110,9 @@ namespace Orchard.Tests.Data {
                     () => new Orchard.Data.Providers.SqlCeProvider.SqlServerCompactDataServicesProvider(databasePath),
                     new Dictionary<string, object> {{"ProviderName", "SqlServerCe" } })
             });
-                var provider = manager
-                    .CreateProvider(parameters);
-                var configuration = provider
-                    .BuildConfiguration();
-                DbConfiguration.SetConfiguration(configuration);
+                var provider = manager.CreateProvider(parameters);
+                provider.BuildConfiguration();
+
                 var contextOptions = provider.GetContextOptions(parameters);
 
                 var sessionFactory = new Stubs.StubSessionFactoryHolder(() => {

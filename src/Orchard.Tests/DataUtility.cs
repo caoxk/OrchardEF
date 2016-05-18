@@ -19,8 +19,7 @@ namespace Orchard.Tests {
                 RecordDescriptors = types.Select(t => new RecordBlueprint { TableName = "Test_" + t.Name, Type = t }).ToList()
             };
             var provider = new SqlServerCompactDataServicesProvider(fileName);
-            DbConfiguration configuration = provider.BuildConfiguration();
-            DbConfiguration.SetConfiguration(configuration);
+            provider.BuildConfiguration();
             Database.SetInitializer(new DropCreateDatabaseAlways<DataContext>());
             var contextOptions = provider.GetContextOptions(parameters);
             // Uncomment to display SQL while running tests

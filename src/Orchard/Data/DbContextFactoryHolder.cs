@@ -62,8 +62,8 @@ namespace Orchard.Data
             if (_contextOptions == null) {
                 var parameters = GetSessionFactoryParameters();
                 var provider = _dataServicesProviderFactory.CreateProvider(parameters);
-                DbConfiguration configuration = provider.BuildConfiguration();
-                DbConfiguration.SetConfiguration(configuration);
+                provider.BuildConfiguration();
+                
                 Database.SetInitializer<DataContext>(null);
                 _contextOptions = provider.GetContextOptions(parameters);
             }

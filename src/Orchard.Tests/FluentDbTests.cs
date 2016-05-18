@@ -44,8 +44,8 @@ namespace Orchard.Tests {
                 }
             };
             var provider = new SqlServerCompactDataServicesProvider(fileName);
-            DbConfiguration configuration = provider.BuildConfiguration();
-            DbConfiguration.SetConfiguration(configuration);
+            provider.BuildConfiguration();
+
             Database.SetInitializer(new DropCreateDatabaseAlways<DataContext>());
             var contextOptions = provider.GetContextOptions(parameters);
             // Uncomment to display SQL while running tests

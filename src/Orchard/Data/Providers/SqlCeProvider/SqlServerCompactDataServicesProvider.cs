@@ -25,7 +25,7 @@ namespace Orchard.Data.Providers.SqlCeProvider {
             _fileName = fileName;
         }
 
-        public override DbConfiguration BuildConfiguration()
+        protected override DbConfiguration GetConfiguration()
         {
             return new SqlCeConfiguration();
         }

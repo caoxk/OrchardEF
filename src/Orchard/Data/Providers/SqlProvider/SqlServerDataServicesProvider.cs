@@ -7,7 +7,7 @@ namespace Orchard.Data.Providers.SqlProvider {
             get { return "SqlServer"; }
         }
 
-        public override DbConfiguration BuildConfiguration()
+        protected override DbConfiguration GetConfiguration()
         {
             return new SqlServerConfiguration();
         }

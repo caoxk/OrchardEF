@@ -4,7 +4,7 @@ using Autofac.Core;
 
 namespace Orchard.Data.Providers {
     public interface IDataServicesProvider : ITransientDependency {
-        DbConfiguration BuildConfiguration();
+        void BuildConfiguration();
         DbContextOptions GetContextOptions(SessionFactoryParameters parameters);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -7,11 +8,28 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.Infrastructure.DependencyResolution;
 using Orchard.Environment.ShellBuilders.Models;
+using System.Reflection;
 
 namespace Orchard.Data.Providers {
     public abstract class AbstractDataServicesProvider : IDataServicesProvider {
 
-        public abstract DbConfiguration BuildConfiguration();
+        public void BuildConfiguration()
+        {
+            var type = "System.Data.Entity.Infrastructure.DependencyResolution.DbConfigurationManager";
+            var configurationManagerType = typeof(DbContext).Assembly.GetType(type);
+            var instanceProperty = configurationManagerType.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public);
+            var knownAssembliesProperty = configurationManagerType.GetField("_knownAssemblies", BindingFlags.NonPublic | BindingFlags.Instance);
+            var instance = instanceProperty.GetValue(null);
+            if (knownAssembliesProperty != null)
+            {
+                var knownAssemblies = (ConcurrentDictionary<Assembly, object>)knownAssembliesProperty.GetValue(instance);
+                knownAssemblies.TryAdd(typeof(DataContext).Assembly, null);
+            }
+            var configuration = GetConfiguration();
+            DbConfiguration.SetConfiguration(configuration);
+        }
+
+        protected abstract DbConfiguration GetConfiguration();
         protected abstract string BuildConnectionString(SessionFactoryParameters parameters);
 
         public DbContextOptions GetContextOptions(SessionFactoryParameters parameters) {
