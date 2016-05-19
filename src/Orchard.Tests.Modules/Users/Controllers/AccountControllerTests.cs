@@ -53,11 +53,7 @@ namespace Orchard.Tests.Modules.Users.Controllers {
 
             builder.RegisterType<AccountController>().SingleInstance();
             builder.RegisterType<SiteService>().As<ISiteService>();
-            builder.RegisterType<DefaultContentManager>().As<IContentManager>();
             builder.RegisterType(typeof(SettingsFormatter)).As<ISettingsFormatter>();
-            builder.RegisterType<ContentDefinitionManager>().As<IContentDefinitionManager>();
-            builder.RegisterType<DefaultContentManagerSession>().As<IContentManagerSession>();
-            builder.RegisterType<DefaultContentQuery>().As<IContentQuery>().InstancePerDependency();
 
             builder.RegisterInstance(new Mock<IAuthenticationService>().Object);
             builder.RegisterInstance(new Mock<IUserEventHandler>().Object);
@@ -68,19 +64,15 @@ namespace Orchard.Tests.Modules.Users.Controllers {
             builder.RegisterType<MessageChannelManager>().As<IMessageChannelManager>();
             builder.RegisterType<ShapeDisplayStub>().As<IShapeDisplay>();
             builder.RegisterType<UserService>().As<IUserService>();
-            builder.RegisterType<UserPartHandler>().As<IContentHandler>();
             builder.RegisterType<OrchardServices>().As<IOrchardServices>();
 
             builder.RegisterInstance(new Work<IEnumerable<IShapeTableEventHandler>>(resolve => _container.Resolve<IEnumerable<IShapeTableEventHandler>>())).AsSelf();
             builder.RegisterType<DefaultShapeTableManager>().As<IShapeTableManager>();
             builder.RegisterType<DefaultShapeFactory>().As<IShapeFactory>();
             builder.RegisterType<StubExtensionManager>().As<IExtensionManager>();
-            builder.RegisterType<SiteSettingsPartHandler>().As<IContentHandler>();
-            builder.RegisterType<RegistrationSettingsPartHandler>().As<IContentHandler>();
             builder.RegisterType<ShapeTableLocator>().As<IShapeTableLocator>();
 
             builder.RegisterInstance(new Mock<INotifier>().Object);
-            builder.RegisterInstance(new Mock<IContentDisplay>().Object);
             builder.RegisterType<StubCacheManager>().As<ICacheManager>();
             builder.RegisterType<StubParallelCacheContext>().As<IParallelCacheContext>();
             builder.RegisterType<Signals>().As<ISignals>();
@@ -104,10 +96,7 @@ namespace Orchard.Tests.Modules.Users.Controllers {
 
         protected override IEnumerable<Type> DatabaseTypes {
             get {
-                return new[] { typeof(UserPartRecord),
-                    typeof(ContentTypeRecord),
-                    typeof(ContentItemRecord),
-                    typeof(ContentItemVersionRecord), 
+                return new[] { typeof(UserPartRecord)
                 };
             }
         }
