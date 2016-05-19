@@ -7,9 +7,8 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Orchard.AuditTrail.Services;
 
-namespace Z.EntityFramework.Plus
+namespace Orchard.AuditTrail.Services
 {
     /// <summary>An audit entry property.</summary>
     public class AuditEntryProperty
@@ -51,12 +50,12 @@ namespace Z.EntityFramework.Plus
         /// <summary>Gets or sets the identifier of the audit entry property.</summary>
         /// <value>The identifier of the audit entry property.</value>
         [Column(Order = 0)]
-        public int AuditEntryPropertyID { get; set; }
+        public int AuditEntryPropertyId { get; set; }
 
         /// <summary>Gets or sets the identifier of the audit entry.</summary>
         /// <value>The identifier of the audit entry.</value>
         [Column(Order = 1)]
-        public int AuditEntryID { get; set; }
+        public int AuditEntryId { get; set; }
 
         /// <summary>Gets or sets the parent.</summary>
         /// <value>The parent.</value>

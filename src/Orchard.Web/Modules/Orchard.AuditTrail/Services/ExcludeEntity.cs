@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Orchard.AuditTrail.Services.AuditConfiguration
+namespace Orchard.AuditTrail.Services
 {
     public partial class AuditConfiguration
     {

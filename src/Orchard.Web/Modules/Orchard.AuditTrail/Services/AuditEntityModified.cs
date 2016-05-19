@@ -9,16 +9,15 @@
 using System.Data.Common;
 using System.Data.Entity.Core.Objects;
 using System.Linq;
-using Z.EntityFramework.Plus;
 
-namespace Orchard.AuditTrail.Services.Audit
+namespace Orchard.AuditTrail.Services
 {
     public partial class Audit
     {
         /// <summary>Audit entity modified.</summary>
         /// <param name="audit">The audit to use to add changes made to the context.</param>
         /// <param name="objectStateEntry">The object state entry.</param>
-        public static void AuditEntityModified(Orchard.AuditTrail.Services.Audit.Audit audit, ObjectStateEntry objectStateEntry, AuditEntryState state)
+        public static void AuditEntityModified(Audit audit, ObjectStateEntry objectStateEntry, AuditEntryState state)
         {
             var entry = new AuditEntry(audit, objectStateEntry)
             {
@@ -36,7 +35,7 @@ namespace Orchard.AuditTrail.Services.Audit
         /// <param name="orginalRecord">The orginal record.</param>
         /// <param name="currentRecord">The current record.</param>
         /// <param name="prefix">The prefix.</param>
-        public static void AuditEntityModified(Orchard.AuditTrail.Services.Audit.Audit audit, AuditEntry entry, ObjectStateEntry objectStateEntry, DbDataRecord orginalRecord, DbUpdatableDataRecord currentRecord, string prefix = "")
+        public static void AuditEntityModified(Audit audit, AuditEntry entry, ObjectStateEntry objectStateEntry, DbDataRecord orginalRecord, DbUpdatableDataRecord currentRecord, string prefix = "")
         {
             for (var i = 0; i < orginalRecord.FieldCount; i++)
             {

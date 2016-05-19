@@ -5,10 +5,7 @@
 // More projects: http://www.zzzprojects.com/
 // Copyright © ZZZ Projects Inc. 2014 - 2016. All rights reserved.
 
-using System.Data.Entity;
-
-
-namespace Z.EntityFramework.Plus
+namespace Orchard.AuditTrail.Services.Extensions.DbContext
 {
     public static partial class AuditExtensions
     {
@@ -16,7 +13,7 @@ namespace Z.EntityFramework.Plus
         /// <param name="context">The context used to audits and saves all changes made.</param>
         /// <param name="audit">The audit to use to add changes made to the context.</param>
         /// <returns>The number of objects written to the underlying database.</returns>
-        public static int SaveChanges(this DbContext context, Orchard.AuditTrail.Services.Audit.Audit audit)
+        public static int SaveChanges(this System.Data.Entity.DbContext context, Audit audit)
         {
             audit.PreSaveChanges(context);
             var rowAffecteds = context.SaveChanges();

@@ -8,9 +8,8 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using System.Data.Entity;
 
-namespace Z.EntityFramework.Plus
+namespace Orchard.AuditTrail.Services.Extensions.DbContext
 {
     public static partial class AuditExtensions
     {
@@ -21,7 +20,7 @@ namespace Z.EntityFramework.Plus
         ///     A task that represents the asynchronous save operation. The task result contains the number of objects written
         ///     to the underlying database
         /// </returns>
-        public static Task<int> SaveChangesAsync(this DbContext context, Orchard.AuditTrail.Services.Audit.Audit audit)
+        public static Task<int> SaveChangesAsync(this System.Data.Entity.DbContext context, Audit audit)
         {
             return context.SaveChangesAsync(audit, CancellationToken.None);
         }
@@ -34,7 +33,7 @@ namespace Z.EntityFramework.Plus
         ///     A task that represents the asynchronous save operation. The task result contains the number of objects written
         ///     to the underlying database
         /// </returns>
-        public static async Task<int> SaveChangesAsync(this DbContext context, Orchard.AuditTrail.Services.Audit.Audit audit, CancellationToken cancellationToken)
+        public static async Task<int> SaveChangesAsync(this System.Data.Entity.DbContext context, Audit audit, CancellationToken cancellationToken)
         {
             audit.PreSaveChanges(context);
             var rowAffecteds = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

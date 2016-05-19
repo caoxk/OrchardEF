@@ -7,34 +7,34 @@
 
 using System;
 
-namespace Z.EntityFramework.Plus
+namespace Orchard.AuditTrail.Services
 {
     public partial class AuditConfiguration
     {
         /// <summary>
-        ///     Change from "EntityModified' to "EntitySoftDeleted" for all entities which satisfy the predicate.
+        ///     Change from "EntityModified" to "EntitySoftAdded" for all entities which satisfy the predicate.
         /// </summary>
-        /// <param name="softDeletePredicate">The soft add predicate.</param>
+        /// <param name="softAddPredicate">The soft add predicate.</param>
         /// <returns>An AuditConfiguration.</returns>
-        public Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration SoftDeleted(Func<object, bool> softDeletePredicate)
+        public AuditConfiguration SoftAdded(Func<object, bool> softAddPredicate)
         {
-            SoftDeletedPredicates.Add(softDeletePredicate);
+            SoftAddedPredicates.Add(softAddPredicate);
             return this;
         }
 
         /// <summary>
-        ///     Change from "EntityModified" to "EntitySoftDeleted" for all entities of 'T' type or entities which the
+        ///     Change from "EntityModified" to "EntitySoftAdded" for all entities of 'T' type or entities which the
         ///     type derive from 'T' and which satisfy the predicate.
         /// </summary>
-        /// <typeparam name="T">Generic type to soft delete entity.</typeparam>
-        /// <param name="softDeletePredicate">The soft delete predicate.</param>
+        /// <typeparam name="T">Generic type to soft add entity.</typeparam>
+        /// <param name="softAddPredicate">The soft add predicate.</param>
         /// <returns>An AuditConfiguration.</returns>
-        public Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration SoftDeleted<T>(Func<T, bool> softDeletePredicate) where T : class
+        public AuditConfiguration SoftAdded<T>(Func<T, bool> softAddPredicate) where T : class
         {
-            SoftDeletedPredicates.Add(o =>
+            SoftAddedPredicates.Add(o =>
             {
                 var entity = o as T;
-                return entity != null && softDeletePredicate(entity);
+                return entity != null && softAddPredicate(entity);
             });
 
             return this;

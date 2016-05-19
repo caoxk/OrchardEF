@@ -7,9 +7,9 @@
 
 using System.Data.Entity.Core;
 using System.Data.Entity.Core.Objects;
-using Z.EntityFramework.Plus;
+using System.Linq;
 
-namespace Orchard.AuditTrail.Services.Audit
+namespace Orchard.AuditTrail.Services
 {
     public partial class Audit
     {

@@ -8,14 +8,14 @@
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 
-namespace Orchard.AuditTrail.Services.Audit
+namespace Orchard.AuditTrail.Services
 {
     public partial class Audit
     {
         /// <summary>Adds audit entries before the save changes has been executed.</summary>
         /// <param name="audit">The audit to use to add changes made to the context.</param>
         /// <param name="context">The context used to audits and saves all changes made.</param>
-        public static void PreSaveChanges(Orchard.AuditTrail.Services.Audit.Audit audit, DbContext context)
+        public static void PreSaveChanges(Audit audit, DbContext context)
         {
             var objectContext = ((IObjectContextAdapter) context).ObjectContext;
             objectContext.DetectChanges();

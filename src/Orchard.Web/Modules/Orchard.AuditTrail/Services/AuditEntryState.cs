@@ -5,7 +5,7 @@
 // More projects: http://www.zzzprojects.com/
 // Copyright © ZZZ Projects Inc. 2014 - 2016. All rights reserved.
 
-namespace Z.EntityFramework.Plus
+namespace Orchard.AuditTrail.Services
 {
     /// <summary>Values that represent audit entry states.</summary>
     public enum AuditEntryState

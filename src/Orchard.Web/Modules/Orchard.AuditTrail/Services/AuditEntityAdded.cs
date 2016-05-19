@@ -5,50 +5,56 @@
 // More projects: http://www.zzzprojects.com/
 // Copyright © ZZZ Projects Inc. 2014 - 2016. All rights reserved.
 
-using System.Data.Common;
 using System.Data.Entity.Core.Objects;
-using Z.EntityFramework.Plus;
 
-namespace Orchard.AuditTrail.Services.Audit
+namespace Orchard.AuditTrail.Services
 {
     public partial class Audit
     {
-        /// <summary>Audit entity deleted.</summary>
+        /// <summary>Audit entity added.</summary>
         /// <param name="audit">The audit to use to add changes made to the context.</param>
         /// <param name="objectStateEntry">The object state entry.</param>
-        public static void AuditEntityDeleted(Audit audit, ObjectStateEntry objectStateEntry)
+        public static void AuditEntityAdded(Audit audit, ObjectStateEntry objectStateEntry)
         {
             var entry = new AuditEntry(audit, objectStateEntry)
             {
-                State = AuditEntryState.EntityDeleted
+                State = AuditEntryState.EntityAdded
             };
 
-            AuditEntityDeleted(entry, objectStateEntry.OriginalValues);
+
+            // CHECK if the key should be resolved in POST Action
+            if (objectStateEntry.EntityKey.IsTemporary)
+            {
+                entry.DelayedKey = objectStateEntry;
+            }
+            AuditEntityAdded(entry, objectStateEntry.CurrentValues);
+
             audit.Entries.Add(entry);
         }
 
-        /// <summary>Audit entity deleted.</summary>
-        /// <param name="entry">The entry.</param>
+        /// <summary>Audit entity added.</summary>
+        /// <param name="auditEntry">The audit entry.</param>
         /// <param name="record">The record.</param>
         /// <param name="prefix">The prefix.</param>
-        public static void AuditEntityDeleted(AuditEntry entry, DbDataRecord record, string prefix = "")
+        public static void AuditEntityAdded(AuditEntry auditEntry, DbUpdatableDataRecord record, string prefix = "")
         {
             for (var i = 0; i < record.FieldCount; i++)
             {
                 var name = record.GetName(i);
                 var value = record.GetValue(i);
 
-                var valueRecord = value as DbDataRecord;
+                var valueRecord = value as DbUpdatableDataRecord;
                 if (valueRecord != null)
                 {
                     // Complex Type
-                    AuditEntityDeleted(entry, valueRecord, string.Concat(prefix, name, "."));
+                    AuditEntityAdded(auditEntry, valueRecord, string.Concat(prefix, name, "."));
                 }
-                else if (entry.Parent.CurrentOrDefaultConfiguration.IsAuditedProperty(entry.Entry, name))
+                else if (auditEntry.Parent.CurrentOrDefaultConfiguration.IsAuditedProperty(auditEntry.Entry, name))
                 {
-                    entry.Properties.Add(new AuditEntryProperty(entry, string.Concat(prefix, name), value, null));
+                    auditEntry.Properties.Add(new AuditEntryProperty(auditEntry, string.Concat(prefix, name), null, value));
                 }
             }
         }
+
     }
 }

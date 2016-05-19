@@ -7,9 +7,8 @@
 
 
 using System.Data.Entity.Core.Objects;
-using Z.EntityFramework.Plus;
 
-namespace Orchard.AuditTrail.Services.AuditConfiguration
+namespace Orchard.AuditTrail.Services
 {
     public partial class AuditConfiguration
     {

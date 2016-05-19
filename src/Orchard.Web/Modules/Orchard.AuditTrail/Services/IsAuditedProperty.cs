@@ -5,34 +5,34 @@
 // More projects: http://www.zzzprojects.com/
 // Copyright © ZZZ Projects Inc. 2014 - 2016. All rights reserved.
 
-
 using System.Data.Entity.Core.Objects;
 
-namespace Z.EntityFramework.Plus
+namespace Orchard.AuditTrail.Services
 {
     public partial class AuditConfiguration
     {
-        /// <summary>Checks if the entity is audited.</summary>
+        /// <summary>Check if the property name is audited.</summary>
         /// <param name="entry">The entry.</param>
-        /// <returns>true if the entity is audited, false if not.</returns>
-        public bool IsAuditedEntity(ObjectStateEntry entry)
+        /// <param name="propertyName">The property name.</param>
+        /// <returns>true if the property name is audited, false if not.</returns>
+        public bool IsAuditedProperty(ObjectStateEntry entry, string propertyName)
         {
-            if (ExcludeIncludeEntityPredicates.Count == 0)
+            if (ExcludeIncludePropertyPredicates.Count == 0)
             {
                 return true;
             }
 
             var type = entry.Entity.GetType();
-            var key = type.FullName;
+            var key = string.Concat(type.FullName, ";", propertyName);
             bool value;
 
             if (!IsAuditedDictionary.TryGetValue(key, out value))
             {
                 value = true;
 
-                foreach (var excludeIncludeEntityFunc in ExcludeIncludeEntityPredicates)
+                foreach (var excludeIncludePropertyFuncs in ExcludeIncludePropertyPredicates)
                 {
-                    var maybeIncluded = excludeIncludeEntityFunc(entry.Entity);
+                    var maybeIncluded = excludeIncludePropertyFuncs(entry.Entity, propertyName);
                     if (maybeIncluded.HasValue)
                     {
                         value = maybeIncluded.Value;

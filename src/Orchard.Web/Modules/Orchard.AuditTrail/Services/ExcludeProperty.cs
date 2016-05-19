@@ -6,9 +6,10 @@
 // Copyright © ZZZ Projects Inc. 2014 - 2016. All rights reserved.
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 
-namespace Orchard.AuditTrail.Services.AuditConfiguration
+namespace Orchard.AuditTrail.Services
 {
     public partial class AuditConfiguration
     {
@@ -26,7 +27,7 @@ namespace Orchard.AuditTrail.Services.AuditConfiguration
         /// </summary>
         /// <typeparam name="T">Generic type to exclude all properties.</typeparam>
         /// <returns>An AuditConfiguration.</returns>
-        public Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration ExcludeProperty<T>()
+        public AuditConfiguration ExcludeProperty<T>()
         {
             ExcludeIncludePropertyPredicates.Add((x, s) => x is T ? (bool?) false : null);
             return this;
@@ -39,7 +40,7 @@ namespace Orchard.AuditTrail.Services.AuditConfiguration
         /// <typeparam name="T">Generic type to exclude selected properties.</typeparam>
         /// <param name="propertySelector">The property selector.</param>
         /// <returns>An AuditConfiguration.</returns>
-        public Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration ExcludeProperty<T>(Expression<Func<T, object>> propertySelector)
+        public AuditConfiguration ExcludeProperty<T>(Expression<Func<T, object>> propertySelector)
         {
             var propertyNames = propertySelector.GetPropertyOrFieldAccessors().Select(x => x.ToString()).ToList();
 

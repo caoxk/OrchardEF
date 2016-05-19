@@ -6,9 +6,10 @@
 // Copyright © ZZZ Projects Inc. 2014 - 2016. All rights reserved.
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 
-namespace Orchard.AuditTrail.Services.AuditConfiguration
+namespace Orchard.AuditTrail.Services
 {
     public partial class AuditConfiguration
     {
@@ -20,7 +21,7 @@ namespace Orchard.AuditTrail.Services.AuditConfiguration
         /// <param name="propertySelector">The property selector.</param>
         /// <param name="formatter">The formatter to use to format value.</param>
         /// <returns>An AuditConfiguration.</returns>
-        public Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration Format<T>(Expression<Func<T, object>> propertySelector, Func<object, object> formatter) where T : class
+        public AuditConfiguration Format<T>(Expression<Func<T, object>> propertySelector, Func<object, object> formatter) where T : class
         {
             var propertyNames = propertySelector.GetPropertyOrFieldAccessors().Select(x => x.ToString()).ToList();
 

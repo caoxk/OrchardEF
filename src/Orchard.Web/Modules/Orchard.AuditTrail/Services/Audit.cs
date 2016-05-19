@@ -8,20 +8,19 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using Orchard.AuditTrail.Services;
 
-namespace Z.EntityFramework.Plus
+namespace Orchard.AuditTrail.Services
 {
     /// <summary>An audit.</summary>
     public partial class Audit
     {
         /// <summary>The lazy configuration.</summary>
-        private readonly Lazy<Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration> _configuration;
+        private readonly Lazy<AuditConfiguration> _configuration;
 
         /// <summary>Default constructor.</summary>
         public Audit()
         {
-            _configuration = new Lazy<Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration>(() => AuditManager.DefaultConfiguration.Clone());
+            _configuration = new Lazy<AuditConfiguration>(() => AuditManager.DefaultConfiguration.Clone());
             Entries = new List<AuditEntry>();
         }
 
@@ -35,14 +34,14 @@ namespace Z.EntityFramework.Plus
 
         /// <summary>Gets the configuration.</summary>
         /// <value>The configuration.</value>
-        public Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration Configuration
+        public AuditConfiguration Configuration
         {
             get { return _configuration.Value; }
         }
 
         /// <summary>Gets the current or default configuration.</summary>
         /// <value>The current or default configuration.</value>
-        internal Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration CurrentOrDefaultConfiguration
+        internal AuditConfiguration CurrentOrDefaultConfiguration
         {
             get { return _configuration.IsValueCreated ? _configuration.Value : AuditManager.DefaultConfiguration; }
         }

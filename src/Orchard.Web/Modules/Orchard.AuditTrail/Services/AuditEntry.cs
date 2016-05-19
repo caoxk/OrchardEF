@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Core.Objects;
-using Z.EntityFramework.Plus;
 
 namespace Orchard.AuditTrail.Services
 {
@@ -26,7 +25,7 @@ namespace Orchard.AuditTrail.Services
         /// <summary>Constructor.</summary>
         /// <param name="parent">The audit parent.</param>
         /// <param name="entry">The object state entry.</param>
-        public AuditEntry(Audit.Audit parent, ObjectStateEntry entry)
+        public AuditEntry(Audit parent, ObjectStateEntry entry)
         {
             CreatedBy = parent.CreatedBy;
             CreatedDate = DateTime.Now;
@@ -82,7 +81,7 @@ namespace Orchard.AuditTrail.Services
         /// <summary>Gets or sets the parent.</summary>
         /// <value>The parent.</value>
         [NotMapped]
-        public Orchard.AuditTrail.Services.Audit.Audit Parent { get; set; }
+        public Audit Parent { get; set; }
 
         /// <summary>Gets or sets the properties.</summary>
         /// <value>The properties.</value>

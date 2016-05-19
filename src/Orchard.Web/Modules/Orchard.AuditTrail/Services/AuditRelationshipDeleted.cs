@@ -7,9 +7,8 @@
 
 using System.Data.Entity.Core;
 using System.Data.Entity.Core.Objects;
-using Z.EntityFramework.Plus;
 
-namespace Orchard.AuditTrail.Services.Audit
+namespace Orchard.AuditTrail.Services
 {
     public partial class Audit
     {
@@ -17,7 +16,7 @@ namespace Orchard.AuditTrail.Services.Audit
         /// <param name="audit">The audit to use to add changes made to the context.</param>
         /// <param name="objectStateEntry">The object state entry.</param>
 
-        public static void AuditRelationDeleted(Orchard.AuditTrail.Services.Audit.Audit audit, ObjectStateEntry objectStateEntry)
+        public static void AuditRelationDeleted(Audit audit, ObjectStateEntry objectStateEntry)
         {
             var entry = new AuditEntry(audit, objectStateEntry)
             {

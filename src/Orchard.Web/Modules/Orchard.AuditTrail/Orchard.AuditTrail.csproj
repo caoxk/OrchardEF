@@ -146,30 +146,71 @@
     <Compile Include="Permissions.cs" />
     <Compile Include="Services\Audit.cs" />
     <Compile Include="Services\AuditConfiguration.cs" />
-    <Compile Include="Services\AuditConfiguration\ExcludeEntity.cs" />
-    <Compile Include="Services\AuditConfiguration\ExcludeProperty.cs" />
-    <Compile Include="Services\AuditConfiguration\Format.cs" />
-    <Compile Include="Services\AuditConfiguration\FormatValue.cs" />
-    <Compile Include="Services\AuditConfiguration\GetEntityModifiedState.cs" />
-    <Compile Include="Services\AuditConfiguration\IncludeEntity.cs" />
-    <Compile Include="Services\AuditConfiguration\IncludeProperty.cs" />
-    <Compile Include="Services\AuditConfiguration\IsAuditedEntity.cs" />
-    <Compile Include="Services\AuditConfiguration\IsAuditedProperty.cs" />
-    <Compile Include="Services\AuditConfiguration\SoftAdded.cs" />
-    <Compile Include="Services\AuditConfiguration\SoftDeleted.cs" />
+    <Compile Include="Services\AuditEntityAdded.cs">
+      <DependentUpon>Audit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\AuditEntityDeleted.cs">
+      <DependentUpon>Audit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\AuditEntityModified.cs">
+      <DependentUpon>Audit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Services\AuditEntry.cs" />
     <Compile Include="Services\AuditEntryProperty.cs" />
     <Compile Include="Services\AuditEntryState.cs" />
     <Compile Include="Services\AuditManager.cs" />
-    <Compile Include="Services\Audit\AuditEntityAdded.cs" />
-    <Compile Include="Services\Audit\AuditEntityDeleted.cs" />
-    <Compile Include="Services\Audit\AuditEntityModified.cs" />
-    <Compile Include="Services\Audit\AuditRelationshipAdded.cs" />
-    <Compile Include="Services\Audit\AuditRelationshipDeleted.cs" />
-    <Compile Include="Services\Audit\PostSaveChanges.cs" />
-    <Compile Include="Services\Audit\PreSaveChanges.cs" />
+    <Compile Include="Services\AuditRelationshipAdded.cs">
+      <DependentUpon>Audit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\AuditRelationshipDeleted.cs">
+      <DependentUpon>Audit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ExcludeEntity.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Extensions\LinqExpressionExtensions\LambdaExpression\LambdaExpression.GetPropertyOrFieldAccessor.cs" />
+    <Compile Include="Services\Extensions\LinqExpressionExtensions\LambdaExpression\LambdaExpression.GetPropertyOrFieldAccessors.cs" />
+    <Compile Include="Services\Extensions\LinqExpressionExtensions\PropertyOrFieldAccessor.cs" />
+    <Compile Include="Services\Extensions\LinqExpressionExtensions\_Internal\ExpressionExtensions.cs" />
+    <Compile Include="Services\Extensions\LinqExpressionExtensions\_Internal\ExpressionExtensions.PropertyOrField.cs" />
+    <Compile Include="Services\PostSaveChanges.cs">
+      <DependentUpon>Audit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ExcludeProperty.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
     <Compile Include="Services\Extensions\DbContext\SaveChanges.cs" />
     <Compile Include="Services\Extensions\DbContext\SaveChangesAsync.cs" />
+    <Compile Include="Services\Format.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\FormatValue.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\GetEntityModifiedState.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\IncludeEntity.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\IncludeProperty.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\IsAuditedEntity.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\IsAuditedProperty.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\PreSaveChanges.cs">
+      <DependentUpon>Audit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\SoftAdded.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\SoftDeleted.cs">
+      <DependentUpon>AuditConfiguration.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 
-namespace Z.EntityFramework.Plus
+namespace Orchard.AuditTrail.Services
 {
     /// <summary>An audit configuration.</summary>
     public partial class AuditConfiguration
@@ -33,7 +33,7 @@ namespace Z.EntityFramework.Plus
 
         /// <summary>Gets or sets the automatic audit save pre action.</summary>
         /// <value>The automatic audit save pre action.</value>
-        public Action<DbContext, Orchard.AuditTrail.Services.Audit.Audit> AutoSavePreAction { get; set; }
+        public Action<DbContext, Audit> AutoSavePreAction { get; set; }
 
         /// <summary>Gets or sets a list of formatter for entity values.</summary>
         /// <value>A list of formatter for entity values.</value>
@@ -97,9 +97,9 @@ namespace Z.EntityFramework.Plus
 
         /// <summary>Makes a deep copy of this object.</summary>
         /// <returns>A copy of this object.</returns>
-        public Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration Clone()
+        public AuditConfiguration Clone()
         {
-            var audit = new Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration
+            var audit = new AuditConfiguration
             {
                 AutoSavePreAction = AutoSavePreAction,
                 IgnoreEntityAdded = IgnoreEntityAdded,

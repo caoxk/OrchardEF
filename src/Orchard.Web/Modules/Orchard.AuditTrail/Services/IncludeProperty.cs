@@ -9,13 +9,13 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Z.EntityFramework.Plus
+namespace Orchard.AuditTrail.Services
 {
     public partial class AuditConfiguration
     {
         /// <summary>Includes from the audit all properties.</summary>
         /// <returns>An AuditConfiguration.</returns>
-        public Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration IncludeProperty()
+        public AuditConfiguration IncludeProperty()
         {
             ExcludeIncludePropertyPredicates.Add((x, s) => true);
             return this;
@@ -27,7 +27,7 @@ namespace Z.EntityFramework.Plus
         /// </summary>
         /// <typeparam name="T">Generic type to include all properties.</typeparam>
         /// <returns>An AuditConfiguration.</returns>
-        public Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration IncludeProperty<T>()
+        public AuditConfiguration IncludeProperty<T>()
         {
             ExcludeIncludePropertyPredicates.Add((x, s) => x is T ? (bool?) true : null);
             return this;
@@ -40,7 +40,7 @@ namespace Z.EntityFramework.Plus
         /// <typeparam name="T">Generic type to include selected properties.</typeparam>
         /// <param name="propertySelector">The property selector.</param>
         /// <returns>An AuditConfiguration.</returns>
-        public Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration IncludeProperty<T>(Expression<Func<T, object>> propertySelector)
+        public AuditConfiguration IncludeProperty<T>(Expression<Func<T, object>> propertySelector)
         {
             var propertyNames = propertySelector.GetPropertyOrFieldAccessors().Select(x => x.ToString()).ToList();
 

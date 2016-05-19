@@ -5,7 +5,7 @@
 // More projects: http://www.zzzprojects.com/
 // Copyright © ZZZ Projects Inc. 2014 - 2016. All rights reserved.
 
-namespace Z.EntityFramework.Plus
+namespace Orchard.AuditTrail.Services
 {
     /// <summary>Manager for audits.</summary>
     public static class AuditManager
@@ -13,11 +13,11 @@ namespace Z.EntityFramework.Plus
         /// <summary>Static constructor.</summary>
         static AuditManager()
         {
-            DefaultConfiguration = new Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration();
+            DefaultConfiguration = new AuditConfiguration();
         }
 
         /// <summary>Gets or sets the default audit configuration.</summary>
         /// <value>The default audit configuration.</value>
-        public static Orchard.AuditTrail.Services.AuditConfiguration.AuditConfiguration DefaultConfiguration { get; set; }
+        public static AuditConfiguration DefaultConfiguration { get; set; }
     }
 }

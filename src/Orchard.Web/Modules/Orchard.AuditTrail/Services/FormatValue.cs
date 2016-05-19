@@ -9,7 +9,7 @@ using System;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
 
-namespace Orchard.AuditTrail.Services.AuditConfiguration
+namespace Orchard.AuditTrail.Services
 {
     public partial class AuditConfiguration
     {
