@@ -213,6 +213,9 @@
     <Compile Include="Commands\CommandHandlerDescriptorBuilderTests.cs" />
     <Compile Include="Commands\CommandHandlerTests.cs" />
     <Compile Include="Commands\CommandManagerTests.cs" />
+    <Compile Include="ContentManagement\ContentHelpers.cs" />
+    <Compile Include="ContentManagement\Handlers\ContentHandlerTests.cs" />
+    <Compile Include="ContentManagement\InfosetHelperTests.cs" />
     <Compile Include="ContentManagement\TestTransactionManager.cs" />
     <Compile Include="ContentManagement\XmlHelperTests.cs" />
     <Compile Include="DatabaseEnabledTestsBase.cs" />

@@ -251,7 +251,7 @@
         <PropertyValue name="IdentifyHelpfulExtensions">true</PropertyValue>
         <PropertyValue name="InsertAttributeValueQuotes">true</PropertyValue>
         <PropertyValue name="InsertClosingTag">true</PropertyValue>
-        <PropertyValue name="SuggestHelpfulExtensions">false</PropertyValue>
+        <PropertyValue name="SuggestHelpfulExtensions">true</PropertyValue>
         <PropertyValue name="XHtmlCodingStyle">true</PropertyValue>
       </ToolsOptionsSubCategory>
     </ToolsOptionsCategory>

@@ -6,7 +6,7 @@ namespace Orchard.Tests.ContentManagement {
     public class ContentHelpers {
         public static ContentItem PreparePart<TPart, TRecord>(TPart part, string contentType, int id = -1)
             where TPart : ContentPart<TRecord>
-            where TRecord : ContentPartRecord, new() {
+            where TRecord : new() {
 
             part.Record = new TRecord();
             return PreparePart(part, contentType, id);
@@ -16,10 +16,11 @@ namespace Orchard.Tests.ContentManagement {
             where TPart : ContentPart {
 
             var contentItem = part.ContentItem = new ContentItem {
-                VersionRecord = new ContentItemVersionRecord {
-                    ContentItemRecord = new ContentItemRecord()
-                },
-                ContentType = contentType
+                Record = new ContentItemRecord()
+                //VersionRecord = new ContentItemVersionRecord {
+                //    ContentItemRecord = new ContentItemRecord()
+                //},
+                //ContentType = contentType
             };
             contentItem.Record.Id = id;
             contentItem.Weld(part);

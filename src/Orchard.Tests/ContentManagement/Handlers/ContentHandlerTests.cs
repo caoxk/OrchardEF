@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
-using Orchard.ContentManagement.MetaData.Builders;
 
 namespace Orchard.Tests.ContentManagement.Handlers {
 
@@ -23,7 +22,7 @@ namespace Orchard.Tests.ContentManagement.Handlers {
         public void PartShouldBeAddedBasedOnSimplePredicate() {
             var modelDriver = new TestModelHandler();
 
-            var builder = new ContentItemBuilder(new ContentTypeDefinitionBuilder().Named("testing").Build());
+            var builder = new ContentItemBuilder("testing");
             ((IContentHandler)modelDriver).Activating(new ActivatingContentContext { Builder = builder, ContentType = "testing" });
             var model = builder.Build();
             Assert.That(model.Is<TestModelPart>(), Is.True);

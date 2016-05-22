@@ -2,6 +2,7 @@
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.FieldStorage.InfosetStorage;
 using Orchard.ContentManagement.Records;
+using Orchard.Environment;
 
 namespace Orchard.Tests.ContentManagement {
     public class InfosetHelperTests {
@@ -44,7 +45,7 @@ namespace Orchard.Tests.ContentManagement {
             }
         }
 
-        public class TestPartWithRecordRecord : ContentPartRecord {
+        public class TestPartWithRecordRecord {
             public virtual int Foo { get; set; }
         }
 
