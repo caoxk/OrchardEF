@@ -45,11 +45,11 @@ namespace Orchard.Settings {
         /// </summary>
         IEnumerable<ContentItem> Query(string contentType);
 
-        //ContentItemMetadata GetItemMetadata(IContent contentItem);
-        //IEnumerable<GroupInfo> GetEditorGroupInfos(IContent contentItem);
-        //IEnumerable<GroupInfo> GetDisplayGroupInfos(IContent contentItem);
-        //GroupInfo GetEditorGroupInfo(IContent contentItem, string groupInfoId);
-        //GroupInfo GetDisplayGroupInfo(IContent contentItem, string groupInfoId);
+        ContentItemMetadata GetItemMetadata(IContent contentItem);
+        IEnumerable<GroupInfo> GetEditorGroupInfos(IContent contentItem);
+        IEnumerable<GroupInfo> GetDisplayGroupInfos(IContent contentItem);
+        GroupInfo GetEditorGroupInfo(IContent contentItem, string groupInfoId);
+        GroupInfo GetDisplayGroupInfo(IContent contentItem, string groupInfoId);
 
         /// <summary>
         /// Builds the display shape of the specified content item

@@ -5,11 +5,14 @@ using Orchard.UI.Navigation;
 
 namespace Orchard.Core.Settings {
     public class AdminMenu : INavigationProvider {
+        private readonly IContentManager _contentManager;
         private readonly ISiteService _siteService;
 
-        public AdminMenu(ISiteService siteService, IOrchardServices orchardServices) {
+        public AdminMenu(ISiteService siteService, IOrchardServices orchardServices, 
+            IContentManager contentManager) {
             _siteService = siteService;
             Services = orchardServices;
+            _contentManager = contentManager;
         }
 
         public Localizer T { get; set; }
@@ -26,12 +29,12 @@ namespace Orchard.Core.Settings {
             if (site == null)
                 return;
 
-            //foreach (var groupInfo in Services.ContentManager.GetEditorGroupInfos(site.ContentItem)) {
-            //    GroupInfo info = groupInfo;
-            //    builder.Add(T("Settings"),
-            //        menu => menu.Add(info.Name, info.Position, item => item.Action("Index", "Admin", new { area = "Settings", groupInfoId = info.Id })
-            //            .Permission(Permissions.ManageSettings)));
-            //}
+            foreach (var groupInfo in _contentManager.GetEditorGroupInfos(site.ContentItem)) {
+                GroupInfo info = groupInfo;
+                builder.Add(T("Settings"),
+                    menu => menu.Add(info.Name, info.Position, item => item.Action("Index", "Admin", new { area = "Settings", groupInfoId = info.Id })
+                        .Permission(Permissions.ManageSettings)));
+            }
         }
     }
 }

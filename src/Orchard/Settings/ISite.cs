@@ -4,7 +4,7 @@ namespace Orchard.Settings {
     /// <summary>
     /// Interface provided by the "settings" model.
     /// </summary>
-    public interface ISite  {
+    public interface ISite: IContent {
         string PageTitleSeparator { get; }
         string SiteName { get; set; }
         string SiteSalt { get; set; }

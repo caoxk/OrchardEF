@@ -13,14 +13,17 @@ namespace Orchard.Core.Settings.Controllers {
     public class AdminController : Controller, IUpdateModel {
         private readonly ISiteService _siteService;
         private readonly ICultureManager _cultureManager;
+        private readonly IContentManager _contentManager;
         public IOrchardServices Services { get; private set; }
 
         public AdminController(
+            IContentManager contentManager,
             ISiteService siteService,
             IOrchardServices services,
             ICultureManager cultureManager) {
             _siteService = siteService;
             _cultureManager = cultureManager;
+            _contentManager = contentManager;
             Services = services;
             T = NullLocalizer.Instance;
         }
@@ -31,23 +34,23 @@ namespace Orchard.Core.Settings.Controllers {
             if (!Services.Authorizer.Authorize(Permissions.ManageSettings, T("Not authorized to manage settings")))
                 return new HttpUnauthorizedResult();
 
-            dynamic model = null;
-            //var site = _siteService.GetSiteSettings();
-            //if (!string.IsNullOrWhiteSpace(groupInfoId)) {
-            //    model = Services.ContentManager.BuildEditor(site, groupInfoId);
+            dynamic model;
+            var site = _siteService.GetSiteSettings();
+            if (!string.IsNullOrWhiteSpace(groupInfoId)) {
+                model = _contentManager.BuildEditor(site, groupInfoId);
 
-            //    if (model == null)
-            //        return HttpNotFound();
+                if (model == null)
+                    return HttpNotFound();
 
-            //    var groupInfo = Services.ContentManager.GetEditorGroupInfo(site, groupInfoId);
-            //    if (groupInfo == null)
-            //        return HttpNotFound();
+                var groupInfo = _contentManager.GetEditorGroupInfo(site, groupInfoId);
+                if (groupInfo == null)
+                    return HttpNotFound();
 
-            //    model.GroupInfo = groupInfo;
-            //}
-            //else {
-            //    model = Services.ContentManager.BuildEditor(site);
-            //}
+                model.GroupInfo = groupInfo;
+            }
+            else {
+                model = _contentManager.BuildEditor(site);
+            }
 
             return View(model);
         }
@@ -57,30 +60,30 @@ namespace Orchard.Core.Settings.Controllers {
             if (!Services.Authorizer.Authorize(Permissions.ManageSettings, T("Not authorized to manage settings")))
                 return new HttpUnauthorizedResult();
 
-            //var site = _siteService.GetSiteSettings();
-            //var model = Services.ContentManager.UpdateEditor(site, this, groupInfoId);
+            var site = _siteService.GetSiteSettings();
+            var model = _contentManager.UpdateEditor(site, this, groupInfoId);
 
-            //GroupInfo groupInfo = null;
+            GroupInfo groupInfo = null;
 
-            //if (!string.IsNullOrWhiteSpace(groupInfoId)) {
-            //    if (model == null) {
-            //        Services.TransactionManager.Cancel();
-            //        return HttpNotFound();
-            //    }
+            if (!string.IsNullOrWhiteSpace(groupInfoId)) {
+                if (model == null) {
+                    Services.TransactionManager.Cancel();
+                    return HttpNotFound();
+                }
 
-            //    groupInfo = Services.ContentManager.GetEditorGroupInfo(site, groupInfoId);
-            //    if (groupInfo == null) {
-            //        Services.TransactionManager.Cancel();
-            //        return HttpNotFound();
-            //    }
-            //}
+                groupInfo = _contentManager.GetEditorGroupInfo(site, groupInfoId);
+                if (groupInfo == null) {
+                    Services.TransactionManager.Cancel();
+                    return HttpNotFound();
+                }
+            }
 
-            //if (!ModelState.IsValid) {
-            //    Services.TransactionManager.Cancel();
-            //    model.GroupInfo = groupInfo;
+            if (!ModelState.IsValid) {
+                Services.TransactionManager.Cancel();
+                model.GroupInfo = groupInfo;
 
-            //    return System.Web.UI.WebControls.View(model);
-            //}
+                return View(model);
+            }
 
             Services.Notifier.Information(T("Settings updated"));
             return RedirectToAction("Index");

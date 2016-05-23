@@ -31,20 +31,6 @@ namespace Orchard.Core.Settings {
                             {"groupInfoId", ""}
                         },
                         new MvcRouteHandler())
-                },
-                new RouteDescriptor {
-                    Route = new Route(
-                        "",
-                        new RouteValueDictionary {
-                            {"area", "Settings"},
-                            {"controller", "Start"},
-                            {"action", "StartPage"}
-                        },
-                        new RouteValueDictionary(),
-                        new RouteValueDictionary {
-                            {"area", "Settings"}                            
-                        },
-                        new MvcRouteHandler())
                 }
             };
         }

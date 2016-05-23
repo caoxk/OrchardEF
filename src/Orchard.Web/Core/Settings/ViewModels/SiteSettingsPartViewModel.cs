@@ -6,14 +6,14 @@ using Orchard.Settings;
 
 namespace Orchard.Core.Settings.ViewModels {
     public class SiteSettingsPartViewModel  {
-        public SiteSettingsPartRecord Site { get; set; }
+        public SiteSettingsPart Site { get; set; }
         public IEnumerable<string> SiteCultures { get; set; }
 		public IEnumerable<string> SiteCalendars { get; set; }
         public IEnumerable<TimeZoneInfo> TimeZones { get; set; }
 
         [HiddenInput(DisplayValue = false)]
         public int Id {
-            get { return Site.Id; }
+            get { return Site.ContentItem.Id; }
         }
 
         public string PageTitleSeparator {

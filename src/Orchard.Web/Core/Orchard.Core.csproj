@@ -104,6 +104,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\Commands\SiteSettingsCommands.cs" />
     <Compile Include="Settings\Controllers\StartController.cs" />
+    <Compile Include="Settings\Models\SiteSettingsPart.cs" />
     <Compile Include="Settings\Permissions.cs" />
     <Compile Include="Settings\ResourceManifest.cs" />
     <Compile Include="Settings\Migrations.cs" />
@@ -118,7 +119,6 @@
     <Compile Include="Settings\Descriptor\ShellDescriptorManager.cs" />
     <Compile Include="Settings\AdminMenu.cs" />
     <Compile Include="Settings\Controllers\AdminController.cs" />
-    <Compile Include="Settings\Models\SiteSettingsPartRecord.cs" />
     <Compile Include="Settings\Services\SiteService.cs" />
     <Compile Include="Settings\ViewModels\SiteSettingsPartViewModel.cs" />
     <Compile Include="Shapes\ResourceManifest.cs" />
@@ -259,7 +259,7 @@
           <IISUrl>
           </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
-          <UseCustomServer>True</UseCustomServer>
+          <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>http://orchard.codeplex.com</CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
