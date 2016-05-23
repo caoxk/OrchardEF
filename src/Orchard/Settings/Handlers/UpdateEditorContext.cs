@@ -2,7 +2,7 @@ using Orchard.DisplayManagement;
 using Orchard.DisplayManagement.Descriptors;
 using Orchard.Mvc;
 
-namespace Orchard.ContentManagement.Handlers {
+namespace Orchard.Settings.Handlers {
     public class UpdateEditorContext : BuildEditorContext {
 
         public UpdateEditorContext(IShape model, IContent content, IUpdateModel updater, string groupInfoId, IShapeFactory shapeFactory, ShapeTable shapeTable, string path)

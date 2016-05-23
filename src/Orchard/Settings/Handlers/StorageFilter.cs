@@ -1,14 +1,10 @@
 using System;
-using Orchard.ContentManagement.Records;
 using Orchard.Data;
+using Orchard.Settings.Records;
 
-namespace Orchard.ContentManagement.Handlers {
+namespace Orchard.Settings.Handlers {
     public static class StorageFilter {
         public static StorageFilter<TRecord> For<TRecord>(IRepository<TRecord> repository) where TRecord : ContentPartRecord, new() {
-            if (typeof(TRecord).IsSubclassOf(typeof(ContentPartVersionRecord))) {
-                var filterType = typeof(StorageVersionFilter<>).MakeGenericType(typeof(TRecord));
-                return (StorageFilter<TRecord>)Activator.CreateInstance(filterType, repository);
-            }
             return new StorageFilter<TRecord>(repository);
         }
     }
@@ -17,24 +13,18 @@ namespace Orchard.ContentManagement.Handlers {
         protected readonly IRepository<TRecord> _repository;
 
         public StorageFilter(IRepository<TRecord> repository) {
-            if (this.GetType() == typeof(StorageFilter<TRecord>) && typeof(TRecord).IsSubclassOf(typeof(ContentPartVersionRecord))) {
-                throw new ArgumentException(
-                    string.Format("Use {0} (or {1}.For<TRecord>()) for versionable record types", typeof(StorageVersionFilter<>).Name, typeof(StorageFilter).Name),
-                    "repository");
-            }
-
             _repository = repository;
         }
 
-        protected virtual TRecord GetRecordCore(ContentItemVersionRecord versionRecord) {
-            return _repository.Get(versionRecord.ContentItemRecord.Id);
+        protected virtual TRecord GetRecordCore(ContentItemRecord versionRecord) {
+            return _repository.Get(versionRecord.Id);
         }
 
-        protected virtual TRecord CreateRecordCore(ContentItemVersionRecord versionRecord, TRecord record = null) {
+        protected virtual TRecord CreateRecordCore(ContentItemRecord versionRecord, TRecord record = null) {
             if (record == null) {
                 record = new TRecord();
             }
-            record.ContentItemRecord = versionRecord.ContentItemRecord;
+            record.ContentItemRecord = versionRecord;
             _repository.Create(record);
             return record;
         }
@@ -49,16 +39,12 @@ namespace Orchard.ContentManagement.Handlers {
         }
 
         protected override void Creating(CreateContentContext context, ContentPart<TRecord> instance) {
-            CreateRecordCore(context.ContentItemVersionRecord, instance.Record);
+            CreateRecordCore(context.ContentItemRecord, instance.Record);
         }
 
         protected override void Loading(LoadContentContext context, ContentPart<TRecord> instance) {
-            var versionRecord = context.ContentItemVersionRecord;
+            var versionRecord = context.ContentItemRecord;
             instance._record.Loader(() => GetRecordCore(versionRecord) ?? CreateRecordCore(versionRecord));
-        }
-
-        protected override void Versioning(VersionContentContext context, ContentPart<TRecord> existing, ContentPart<TRecord> building) {
-            building.Record = existing.Record;
         }
 
         protected override void Destroying(DestroyContentContext context, ContentPart<TRecord> instance) {

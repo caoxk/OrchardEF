@@ -1,6 +1,6 @@
-﻿using Orchard.ContentManagement.Handlers;
+﻿using Orchard.Settings.Handlers;
 
-namespace Orchard.ContentManagement.FieldStorage.InfosetStorage {
+namespace Orchard.Settings.FieldStorage.InfosetStorage {
     public class InfosetHandler : ContentHandlerBase {
         public override void Activating(ActivatingContentContext context) {
             context.Builder.Weld<InfosetPart>();

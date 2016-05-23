@@ -1,9 +1,11 @@
-using Orchard.Data.Conventions;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Orchard.ContentManagement.Records {
+namespace Orchard.Settings.Records {
     public abstract class ContentPartRecord {
+        [Key,ForeignKey("ContentItemRecord")]
         public virtual int Id { get; set; }
-        [CascadeAllDeleteOrphan]
+        [Required]
         public virtual ContentItemRecord ContentItemRecord { get; set; }
     }
 }

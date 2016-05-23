@@ -1,4 +1,4 @@
-﻿namespace Orchard.ContentManagement.Handlers {
+﻿namespace Orchard.Settings.Handlers {
     public class ContentHandlerBase : IContentHandler {
         public virtual void Activating(ActivatingContentContext context) {}
         public virtual void Activated(ActivatedContentContext context) {}

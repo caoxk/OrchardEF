@@ -1,4 +1,4 @@
-﻿namespace Orchard.ContentManagement {
+﻿namespace Orchard.Settings {
     public interface IContent {
         ContentItem ContentItem { get; }
 

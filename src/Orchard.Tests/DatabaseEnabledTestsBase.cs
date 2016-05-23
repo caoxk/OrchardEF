@@ -9,8 +9,8 @@ using NUnit.Framework;
 using Orchard.Data;
 using Orchard.Environment.Configuration;
 using Orchard.Services;
-using Orchard.Tests.ContentManagement;
 using Orchard.Tests.Data;
+using Orchard.Tests.Settings;
 using Orchard.Tests.Stubs;
 
 namespace Orchard.Tests {

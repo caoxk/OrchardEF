@@ -6,8 +6,8 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Orchard.Data;
-using Orchard.Tests.ContentManagement;
 using Orchard.Tests.Records;
+using Orchard.Tests.Settings;
 
 namespace Orchard.Tests.Data {
     [TestFixture]

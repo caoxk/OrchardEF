@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.Routing;
 
-namespace Orchard.ContentManagement {
+namespace Orchard.Settings {
     public class ContentItemMetadata {
         private RouteValueDictionary _adminRouteValues;
 

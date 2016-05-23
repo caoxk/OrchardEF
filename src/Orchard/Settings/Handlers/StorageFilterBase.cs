@@ -1,4 +1,4 @@
-namespace Orchard.ContentManagement.Handlers {
+namespace Orchard.Settings.Handlers {
     public abstract class StorageFilterBase<TPart> : IContentStorageFilter where TPart : class, IContent {
 
         protected virtual void Activated(ActivatedContentContext context, TPart instance) { }
@@ -11,9 +11,9 @@ namespace Orchard.ContentManagement.Handlers {
         protected virtual void Loaded(LoadContentContext context, TPart instance) { }
         protected virtual void Updating(UpdateContentContext context, TPart instance) { }
         protected virtual void Updated(UpdateContentContext context, TPart instance) { }
-        
-        protected virtual void Removing(RemoveContentContext context, TPart instance) { }
-        protected virtual void Removed(RemoveContentContext context, TPart instance) { }
+        protected virtual void Destroying(DestroyContentContext context, TPart instance) { }
+        protected virtual void Destroyed(DestroyContentContext context, TPart instance) { }
+
 
         void IContentStorageFilter.Activated(ActivatedContentContext context) {
             if (context.ContentItem.Is<TPart>())
@@ -60,15 +60,16 @@ namespace Orchard.ContentManagement.Handlers {
                 Updated(context, context.ContentItem.As<TPart>());
         }
 
-        
-        void IContentStorageFilter.Removing(RemoveContentContext context) {
+        void IContentStorageFilter.Destroying(DestroyContentContext context)
+        {
             if (context.ContentItem.Is<TPart>())
-                Removing(context, context.ContentItem.As<TPart>());
+                Destroying(context, context.ContentItem.As<TPart>());
         }
 
-        void IContentStorageFilter.Removed(RemoveContentContext context) {
+        void IContentStorageFilter.Destroyed(DestroyContentContext context)
+        {
             if (context.ContentItem.Is<TPart>())
-                Removed(context, context.ContentItem.As<TPart>());
+                Destroyed(context, context.ContentItem.As<TPart>());
         }
     }
 }

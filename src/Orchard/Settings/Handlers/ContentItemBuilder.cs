@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Orchard.ContentManagement.Handlers {
+namespace Orchard.Settings.Handlers {
     /// <summary>
     /// Builds a contentitem based on its the type definition (<seealso cref="ContentTypeDefinition"/>).
     /// </summary>
@@ -14,7 +14,7 @@ namespace Orchard.ContentManagement.Handlers {
 
             // TODO: could / should be done on the build method ?
             _item = new ContentItem {
-                
+                ContentType = contentType
             };
         }
 

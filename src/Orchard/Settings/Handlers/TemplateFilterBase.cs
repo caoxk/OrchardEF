@@ -1,4 +1,4 @@
-﻿namespace Orchard.ContentManagement.Handlers {
+﻿namespace Orchard.Settings.Handlers {
     public abstract class TemplateFilterBase<TPart> : IContentTemplateFilter where TPart : class, IContent {
         protected virtual void GetContentItemMetadata(GetContentItemMetadataContext context, TPart instance) { }
         protected virtual void BuildDisplayShape(BuildDisplayContext context, TPart instance) { }

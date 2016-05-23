@@ -1,5 +1,5 @@
 
-namespace Orchard.ContentManagement.Handlers {
+namespace Orchard.Settings.Handlers {
     public class ActivatingContentContext {
         public string ContentType { get; set; }
         //public ContentTypeDefinition Definition { get; set; }

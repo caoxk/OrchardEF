@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace Orchard.ContentManagement.FieldStorage.InfosetStorage {
+namespace Orchard.Settings.FieldStorage.InfosetStorage {
     public class Infoset {
         private XElement _element;
 

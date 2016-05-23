@@ -1,9 +1,7 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
-using Autofac;
-using Orchard.ContentManagement.Records;
 
-namespace Orchard.ContentManagement.FieldStorage.InfosetStorage {
+namespace Orchard.Settings.FieldStorage.InfosetStorage {
     public class InfosetPart : ContentPart {
         public InfosetPart() {
             Infoset = new Infoset();

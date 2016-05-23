@@ -1,6 +1,6 @@
 ﻿using Orchard.Localization;
 
-namespace Orchard.ContentManagement {
+namespace Orchard.Settings {
     public class GroupInfo {
         private string _position = "5";
 

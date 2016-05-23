@@ -10,7 +10,6 @@ using Orchard.Environment;
 using Orchard.Environment.Configuration;
 using Orchard.Environment.ShellBuilders.Models;
 using Orchard.FileSystems.AppData;
-using Orchard.Tests.ContentManagement;
 using System.IO;
 using Orchard.Tests.Environment;
 using Orchard.Tests.FileSystems.AppData;
@@ -19,6 +18,7 @@ using System.Data.Entity;
 using Orchard.Data.Migration;
 using Orchard.Data.Migration.Processors;
 using Orchard.Data.Migration.Processors.SqlServer;
+using Orchard.Tests.Settings;
 
 namespace Orchard.Tests.DataMigration
 {

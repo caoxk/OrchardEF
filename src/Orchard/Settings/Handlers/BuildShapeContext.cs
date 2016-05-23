@@ -3,7 +3,7 @@ using Orchard.DisplayManagement;
 using Orchard.DisplayManagement.Descriptors;
 using Orchard.Logging;
 
-namespace Orchard.ContentManagement.Handlers {
+namespace Orchard.Settings.Handlers {
     public class BuildShapeContext {
         protected BuildShapeContext(IShape shape, IContent content, string groupId, IShapeFactory shapeFactory) {
             Shape = shape;

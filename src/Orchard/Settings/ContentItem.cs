@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using Orchard.ContentManagement.Records;
+using Orchard.Settings.Records;
 
-namespace Orchard.ContentManagement {
+namespace Orchard.Settings {
     public class ContentItem : DynamicObject, IContent {
         public ContentItem() {
             _parts = new List<ContentPart>();
         }
 
         private readonly IList<ContentPart> _parts;
-
+        public string ContentType { get; set; }
         ContentItem IContent.ContentItem { get { return this; } }
 
         public dynamic Content { get { return (dynamic)this; } }

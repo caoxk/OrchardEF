@@ -500,7 +500,8 @@
     <Compile Include="Settings\ContentItemMetadata.cs" />
     <Compile Include="Settings\ContentPart.cs" />
     <Compile Include="Settings\CurrentSiteWorkContext.cs" />
-    <Compile Include="Settings\DataMigrations\FrameworkDataMigration.cs" />
+    <Compile Include="Settings\DataMigrations\SettingsDataMigration.cs" />
+    <Compile Include="Settings\DefaultContentDisplay.cs" />
     <Compile Include="Settings\DefaultContentManager.cs" />
     <Compile Include="Settings\Drivers\CombinedResult.cs" />
     <Compile Include="Settings\Drivers\ContentLocation.cs" />
@@ -526,6 +527,7 @@
     <Compile Include="Settings\Handlers\ContentHandlerBase.cs" />
     <Compile Include="Settings\Handlers\ContentItemBuilder.cs" />
     <Compile Include="Settings\Handlers\CreateContentContext.cs" />
+    <Compile Include="Settings\Handlers\DestroyContentContext.cs" />
     <Compile Include="Settings\Handlers\GetContentItemMetadataContext.cs" />
     <Compile Include="Settings\Handlers\IContentActivatingFilter.cs" />
     <Compile Include="Settings\Handlers\IContentFilter.cs" />
@@ -535,6 +537,7 @@
     <Compile Include="Settings\Handlers\InitializingContentContext.cs" />
     <Compile Include="Settings\Handlers\LoadContentContext.cs" />
     <Compile Include="Settings\Handlers\RemoveContentContext.cs" />
+    <Compile Include="Settings\Handlers\StorageFilter.cs" />
     <Compile Include="Settings\Handlers\StorageFilterBase.cs" />
     <Compile Include="Settings\Handlers\TemplateFilterBase.cs" />
     <Compile Include="Settings\Handlers\UpdateContentContext.cs" />
@@ -544,6 +547,7 @@
     <Compile Include="Settings\InfosetHelper.cs" />
     <Compile Include="Settings\MetaData\ContentPartInfo.cs" />
     <Compile Include="Settings\Records\ContentItemRecord.cs" />
+    <Compile Include="Settings\Records\ContentPartRecord.cs" />
     <Compile Include="Settings\ResourceDebugMode.cs" />
     <Compile Include="Settings\Utilities\LazyField.cs" />
     <Compile Include="Tasks\Locking\Records\DistributedLockRecord.cs" />

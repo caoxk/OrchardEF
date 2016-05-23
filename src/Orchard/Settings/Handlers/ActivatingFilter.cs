@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Orchard.ContentManagement.Handlers {
+namespace Orchard.Settings.Handlers {
     /// <summary>
     /// Filter reponsible for adding a part to a content item when content items are activated
     /// </summary>

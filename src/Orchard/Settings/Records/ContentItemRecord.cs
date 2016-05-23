@@ -1,8 +1,7 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Orchard.ContentManagement.FieldStorage.InfosetStorage;
+using Orchard.Settings.FieldStorage.InfosetStorage;
 
-namespace Orchard.ContentManagement.Records {
+namespace Orchard.Settings.Records {
     public class ContentItemRecord {
         public ContentItemRecord() {
             Infoset = new Infoset();

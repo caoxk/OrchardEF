@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Orchard.ContentManagement.Handlers;
-using Orchard.ContentManagement.MetaData;
+using Orchard.Settings.Handlers;
+using Orchard.Settings.MetaData;
 
-namespace Orchard.ContentManagement.Drivers {
+namespace Orchard.Settings.Drivers {
     public interface IContentPartDriver : IDependency {
         DriverResult BuildDisplay(BuildDisplayContext context);
         DriverResult BuildEditor(BuildEditorContext context);

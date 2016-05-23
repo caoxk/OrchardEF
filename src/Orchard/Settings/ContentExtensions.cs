@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Orchard.ContentManagement.Records;
 using Orchard.Mvc;
 
-namespace Orchard.ContentManagement {
+namespace Orchard.Settings {
     public static class ContentCreateExtensions {
 
         /* Item creation extension methods */

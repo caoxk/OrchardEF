@@ -1,6 +1,4 @@
-using Orchard.ContentManagement.Records;
-
-namespace Orchard.ContentManagement.Handlers {
+namespace Orchard.Settings.Handlers {
     public class CreateContentContext : ContentContextBase {
         public CreateContentContext(ContentItem contentItem) : base(contentItem) {
         }

@@ -1,4 +1,5 @@
-﻿@{
-    var version = new System.Reflection.AssemblyName(typeof(Orchard.ContentManagement.ContentItem).Assembly.FullName).Version.ToString();
+﻿@using Orchard.Settings
+@{
+    var version = new System.Reflection.AssemblyName(typeof(ContentItem).Assembly.FullName).Version.ToString();
 }
 <div id="orchard-version">@T("Orchard v.{0}", version)</div>

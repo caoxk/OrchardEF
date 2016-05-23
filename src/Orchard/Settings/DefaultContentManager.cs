@@ -3,20 +3,17 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Xml;
-using System.Xml.Linq;
 using Autofac;
 using Orchard.Caching;
-using Orchard.ContentManagement.Handlers;
-using Orchard.ContentManagement.Records;
 using Orchard.Data;
-using Orchard.Data.Providers;
 using Orchard.Environment.Configuration;
 using Orchard.Logging;
 using Orchard.Mvc;
+using Orchard.Settings.Handlers;
+using Orchard.Settings.Records;
 using Orchard.UI;
 
-namespace Orchard.ContentManagement {
+namespace Orchard.Settings {
     public class DefaultContentManager : IContentManager {
         private readonly IComponentContext _context;
         private readonly IRepository<ContentItemRecord> _contentItemRepository;
@@ -187,6 +184,13 @@ namespace Orchard.ContentManagement {
 
         public virtual void Create(ContentItem contentItem) {
 
+            if (contentItem.Record == null)
+            {
+                contentItem.Record = new ContentItemRecord
+                {
+                    ContentType = contentItem.ContentType
+                };
+            }
             _contentItemRepository.Create(contentItem.Record);
 
             // build a context with the initialized instance to create
@@ -254,10 +258,14 @@ namespace Orchard.ContentManagement {
         public void Clear() {
         }
 
-        //public IContentQuery<ContentItem> Query() {
-        //    var query = _context.Resolve<IContentQuery>(TypedParameter.From<IContentManager>(this));
-        //    return query.ForPart<ContentItem>();
-        //}
+        public IEnumerable<ContentItem> Query(string contentType)
+        {
+            var items = _contentItemRepository.Table
+                .Where(x => x.ContentType == contentType)
+                .ToList()
+                .Select(x => Get(x.Id));
+            return items;
+        }
     }
 
     internal class CallSiteCollection : ConcurrentDictionary<string, CallSite<Func<CallSite, object, object>>> {

@@ -1,6 +1,6 @@
-using Orchard.ContentManagement.Handlers;
+using Orchard.Settings.Handlers;
 
-namespace Orchard.ContentManagement.Drivers {
+namespace Orchard.Settings.Drivers {
     public class DriverResult {
         public virtual void Apply(BuildDisplayContext context) { }
         public virtual void Apply(BuildEditorContext context) { }

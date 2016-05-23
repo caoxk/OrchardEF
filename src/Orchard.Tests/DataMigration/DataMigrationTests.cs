@@ -17,10 +17,10 @@ using Orchard.Data.Providers;
 using Orchard.Tests.Stubs;
 using System.Data.Entity;
 using Orchard.Data.Providers.SqlProvider;
-using Orchard.Tests.ContentManagement;
 using Orchard.Data.Migration.Schema;
 using Orchard.Data.Migration.Processors;
 using Orchard.Data.Migration.Processors.SqlServer;
+using Orchard.Tests.Settings;
 
 namespace Orchard.Tests.DataMigration {
     [TestFixture]

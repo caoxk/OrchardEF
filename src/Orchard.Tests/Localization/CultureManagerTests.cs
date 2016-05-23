@@ -15,7 +15,7 @@ using Orchard.Environment;
 using Orchard.Localization.Records;
 using Orchard.Localization.Services;
 using Orchard.Security;
-using Orchard.Tests.ContentManagement;
+using Orchard.Tests.Settings;
 using Orchard.Tests.Stubs;
 using Orchard.UI.Notify;
 

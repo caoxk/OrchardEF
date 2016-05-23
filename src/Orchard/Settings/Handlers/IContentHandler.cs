@@ -1,4 +1,4 @@
-﻿namespace Orchard.ContentManagement.Handlers {
+﻿namespace Orchard.Settings.Handlers {
     public interface IContentHandler : IDependency {
         void Activating(ActivatingContentContext context);
         void Activated(ActivatedContentContext context);

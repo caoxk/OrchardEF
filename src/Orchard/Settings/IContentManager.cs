@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using System.Xml.Linq;
 using Orchard.Mvc;
 
-namespace Orchard.ContentManagement {
+namespace Orchard.Settings {
     /// <summary>
     /// Content management functionality to deal with Orchard content items and their parts
     /// </summary>
@@ -44,7 +43,7 @@ namespace Orchard.ContentManagement {
         /// <summary>
         /// Query for arbitrary content items
         /// </summary>
-        //IContentQuery<ContentItem> Query();
+        IEnumerable<ContentItem> Query(string contentType);
 
         //ContentItemMetadata GetItemMetadata(IContent contentItem);
         //IEnumerable<GroupInfo> GetEditorGroupInfos(IContent contentItem);

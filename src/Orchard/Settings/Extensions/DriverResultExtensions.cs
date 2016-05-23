@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Orchard.Settings.Drivers;
 
-namespace Orchard.ContentManagement.Drivers
+namespace Orchard.Settings.Extensions
 {
     internal static class DriverResultExtensions {
         public static IEnumerable<ContentShapeResult> GetShapeResults(this DriverResult driverResult) {

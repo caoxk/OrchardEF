@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Xml.Linq;
-using Orchard.ContentManagement.FieldStorage.InfosetStorage;
-using Orchard.ContentManagement.Records;
 using Orchard.Environment;
+using Orchard.Settings.FieldStorage.InfosetStorage;
 using Orchard.Utility;
 
-namespace Orchard.ContentManagement {
+namespace Orchard.Settings {
     public static class InfosetHelper {
 
         public static TProperty Retrieve<TPart, TProperty>(this TPart contentPart,

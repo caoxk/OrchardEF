@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Orchard.ContentManagement.Handlers;
-using Orchard.ContentManagement.MetaData;
 using Orchard.Logging;
+using Orchard.Settings.Handlers;
 
-namespace Orchard.ContentManagement.Drivers.Coordinators {
+namespace Orchard.Settings.Drivers.Coordinators {
     /// <summary>
     /// This component coordinates how parts are taking part in the rendering when some content needs to be rendered.
     /// It will dispatch BuildDisplay/BuildEditor to all <see cref="IContentPartDriver"/> implementations.

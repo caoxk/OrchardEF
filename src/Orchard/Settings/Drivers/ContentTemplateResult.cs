@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using Orchard.ContentManagement.Handlers;
+using Orchard.Settings.Handlers;
 
-namespace Orchard.ContentManagement.Drivers {
+namespace Orchard.Settings.Drivers {
     public class ContentTemplateResult : DriverResult {
         public object Model { get; set; }
         public string TemplateName { get; set; }

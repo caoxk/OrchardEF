@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Xml.Linq;
-using Orchard.ContentManagement.FieldStorage.InfosetStorage;
-using Orchard.ContentManagement.Handlers;
-using Orchard.ContentManagement.MetaData;
+using System.Linq;
 using Orchard.DisplayManagement;
 using Orchard.DisplayManagement.Shapes;
-using System.Linq;
 using Orchard.Mvc;
+using Orchard.Settings.Extensions;
+using Orchard.Settings.Handlers;
+using Orchard.Settings.MetaData;
 
-namespace Orchard.ContentManagement.Drivers {
+namespace Orchard.Settings.Drivers {
     public abstract class ContentPartDriver<TContent> : IContentPartDriver where TContent : ContentPart, new() {
         protected virtual string Prefix { get { return typeof(TContent).Name; } }
 

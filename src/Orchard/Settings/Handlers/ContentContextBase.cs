@@ -1,7 +1,7 @@
-using Orchard.ContentManagement.Records;
 using Orchard.Logging;
+using Orchard.Settings.Records;
 
-namespace Orchard.ContentManagement.Handlers {
+namespace Orchard.Settings.Handlers {
     public class ContentContextBase {
         protected ContentContextBase (ContentItem contentItem) {
             ContentItem = contentItem;

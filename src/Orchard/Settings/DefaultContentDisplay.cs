@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Web;
 using System.Web.Routing;
-using Orchard.ContentManagement.Handlers;
 using Orchard.DisplayManagement;
 using Orchard.DisplayManagement.Descriptors;
 using Orchard.FileSystems.VirtualPath;
 using Orchard.Logging;
+using Orchard.Mvc;
+using Orchard.Settings.Handlers;
 using Orchard.UI.Zones;
 
-namespace Orchard.ContentManagement {
+namespace Orchard.Settings {
     public class DefaultContentDisplay : IContentDisplay {
         private readonly Lazy<IEnumerable<IContentHandler>> _handlers;
         private readonly IShapeFactory _shapeFactory;
@@ -39,10 +40,7 @@ namespace Orchard.ContentManagement {
         public ILogger Logger { get; set; }
 
         public dynamic BuildDisplay(IContent content, string displayType, string groupId) {
-            var contentTypeDefinition = content.ContentItem.TypeDefinition;
-            string stereotype;
-            if (!contentTypeDefinition.Settings.TryGetValue("Stereotype", out stereotype))
-                stereotype = "Content";
+            string stereotype = "Content";
 
             var actualShapeType = stereotype;
             var actualDisplayType = string.IsNullOrWhiteSpace(displayType) ? "Detail" : displayType;
@@ -62,10 +60,7 @@ namespace Orchard.ContentManagement {
         }
 
         public dynamic BuildEditor(IContent content, string groupId) {
-            var contentTypeDefinition = content.ContentItem.TypeDefinition;
-            string stereotype;
-            if (!contentTypeDefinition.Settings.TryGetValue("Stereotype", out stereotype))
-                stereotype = "Content";
+            string stereotype = "Content";
 
             var actualShapeType = stereotype + "_Edit";
 
@@ -87,10 +82,7 @@ namespace Orchard.ContentManagement {
         }
 
         public dynamic UpdateEditor(IContent content, IUpdateModel updater, string groupInfoId) {
-            var contentTypeDefinition = content.ContentItem.TypeDefinition;
-            string stereotype;
-            if (!contentTypeDefinition.Settings.TryGetValue("Stereotype", out stereotype))
-                stereotype = "Content";
+            string stereotype = "Content";
 
             var actualShapeType = stereotype + "_Edit";
 
@@ -129,7 +121,6 @@ namespace Orchard.ContentManagement {
                 ShapeDescriptor descriptor;
                 if (shapeTable.Descriptors.TryGetValue(partShapeType, out descriptor)) {
                     var placementContext = new ShapePlacementContext {
-                        Content = context.ContentItem,
                         ContentType = context.ContentItem.ContentType,
                         Stereotype = stereotype,
                         DisplayType = displayType,

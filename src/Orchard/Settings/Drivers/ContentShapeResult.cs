@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using Orchard.ContentManagement.Handlers;
-using Orchard.DisplayManagement.Shapes;
 using Orchard.DisplayManagement.Descriptors;
+using Orchard.DisplayManagement.Shapes;
+using Orchard.Settings.Handlers;
 
-namespace Orchard.ContentManagement.Drivers {
+namespace Orchard.Settings.Drivers {
     public class ContentShapeResult : DriverResult {
         private string _defaultLocation;
         private string _differentiator;

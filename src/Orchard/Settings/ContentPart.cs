@@ -1,15 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Web.Mvc;
-using Autofac;
-using Orchard.ContentManagement.Records;
-using Orchard.ContentManagement.Utilities;
-using Orchard.UI;
+using Orchard.Settings.Utilities;
 
-namespace Orchard.ContentManagement {
+namespace Orchard.Settings {
     public class ContentPart : DynamicObject, IContent {
 
         public virtual ContentItem ContentItem { get; set; }

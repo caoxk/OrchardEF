@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Orchard.ContentManagement.Handlers;
+using Orchard.Settings.Handlers;
 
-namespace Orchard.ContentManagement.Drivers {
+namespace Orchard.Settings.Drivers {
     public class CombinedResult : DriverResult {
         private readonly IEnumerable<DriverResult> _results;
 
