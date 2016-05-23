@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Orchard.Data.Conventions;
+using System.Data.Entity.ModelConfiguration;
 
 namespace Orchard.Core.Settings.State.Records {
     public class ShellStateRecord {
@@ -16,7 +16,12 @@ namespace Orchard.Core.Settings.State.Records {
         ///  </summary>
         public virtual string Unused { get; set; }
 
-        [CascadeAllDeleteOrphan]
         public virtual IList<ShellFeatureStateRecord> Features { get; set; }
+    }
+
+    public class ShellStateRecordEntityConfiguration : EntityTypeConfiguration<ShellStateRecord> {
+        public ShellStateRecordEntityConfiguration() {
+            this.HasMany(x => x.Features).WithRequired().WillCascadeOnDelete();
+        }
     }
 }

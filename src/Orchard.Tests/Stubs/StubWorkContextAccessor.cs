@@ -93,28 +93,25 @@ namespace Orchard.Tests.Stubs {
 
                 public string SiteName
                 {
-                    get
-                    {
-                        throw new NotImplementedException();
-                    }
-
-                    set
-                    {
-                        throw new NotImplementedException();
-                    }
+                    get { throw new NotImplementedException(); }
+                    set { throw new NotImplementedException(); }
                 }
 
                 public string SiteSalt
                 {
-                    get
-                    {
-                        throw new NotImplementedException();
-                    }
+                    get { throw new NotImplementedException(); }
+                    set { throw new NotImplementedException(); }
+                }
 
-                    set
-                    {
-                        throw new NotImplementedException();
-                    }
+                public ContentItem ContentItem
+                {
+                    get { throw new NotImplementedException(); }
+                }
+
+                public int Id
+                {
+                    get { throw new NotImplementedException(); }
+                    set { throw new NotImplementedException(); }
                 }
             }
 

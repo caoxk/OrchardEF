@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Net;
-using Orchard.ContentManagement;
-using Orchard.ContentManagement.Drivers;
 using Orchard.Core.Settings.Models;
 using Orchard.Core.Settings.ViewModels;
 using Orchard.Localization;
@@ -11,6 +9,8 @@ using Orchard.Security;
 using Orchard.Settings;
 using Orchard.UI.Notify;
 using Orchard.Exceptions;
+using Orchard.Settings.Drivers;
+using Orchard.Mvc;
 
 namespace Orchard.Core.Settings.Drivers {
     public class SiteSettingsPartDriver : ContentPartDriver<SiteSettingsPart> {
@@ -114,23 +114,6 @@ namespace Orchard.Core.Settings.Drivers {
 
             return ContentShape("Parts_Settings_SiteSettingsPart",
                 () => shapeHelper.EditorTemplate(TemplateName: "Parts.Settings.SiteSettingsPart", Model: model, Prefix: Prefix));
-        }
-
-        protected override void Exporting(SiteSettingsPart part, ContentManagement.Handlers.ExportContentContext context) {
-            context.Element(part.PartDefinition.Name).SetAttributeValue("SupportedCultures", string.Join(";", _cultureManager.ListCultures()));
-        }
-
-        protected override void Importing(SiteSettingsPart part, ContentManagement.Handlers.ImportContentContext context) {
-            // Don't do anything if the tag is not specified.
-            if (context.Data.Element(part.PartDefinition.Name) == null) {
-                return;
-            }
-
-            context.ImportAttribute(part.PartDefinition.Name, "SupportedCultures", supportedCultures => {
-                foreach (var culture in supportedCultures.Split(';')) {
-                    _cultureManager.AddCulture(culture);
-                }
-            });
         }
     }
 }

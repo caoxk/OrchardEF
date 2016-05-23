@@ -1,6 +1,6 @@
 using System;
 using Orchard.Core.Settings.Models;
-using Orchard.ContentManagement.Handlers;
+using Orchard.Settings.Handlers;
 
 namespace Orchard.Core.Settings.Handlers {
     public class SiteSettingsPartHandler : ContentHandler {
