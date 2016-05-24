@@ -39,7 +39,10 @@ namespace Orchard.Data.Providers {
                 .CreateConnection(options.ConnectionString);
 
             DbModelBuilder builder = new DbModelBuilder();
-            foreach(var descriptor in parameters.RecordDescriptors) {
+            foreach (var recordAssembly in parameters.RecordDescriptors.Select(x => x.Type.Assembly).Distinct()){
+                builder.Configurations.AddFromAssembly(recordAssembly);
+            }
+            foreach (var descriptor in parameters.RecordDescriptors) {
                 builder.RegisterEntityType(descriptor.Type);
             }
             var blueprintDescriptors = parameters.RecordDescriptors.ToDictionary(d => d.Type);
@@ -49,9 +52,6 @@ namespace Orchard.Data.Providers {
                     x.ToTable(blueprint.TableName);
                 }
             });
-            foreach (var recordAssembly in parameters.RecordDescriptors.Select(x => x.Type.Assembly).Distinct()) {
-                builder.Configurations.AddFromAssembly(recordAssembly);
-            }
 
             var model = builder.Build(connection);
             options.Model = model.Compile();

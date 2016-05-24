@@ -32,6 +32,7 @@ using Orchard.UI.PageTitle;
 using Orchard.UI.Resources;
 using Orchard.UI.Zones;
 using IFilterProvider = Orchard.Mvc.Filters.IFilterProvider;
+using Orchard.Settings.Handlers;
 
 namespace Orchard.Setup {
     public class SetupMode : Module {
@@ -133,33 +134,30 @@ namespace Orchard.Setup {
 
         class SafeModeSiteService : ISiteService {
             public ISite GetSiteSettings() {
-                return new SafeModeSite();
+                var site = new ContentItemBuilder("Site")
+                    .Weld<SafeModeSite>()
+                    .Build();
+
+                return site.As<ISite>();
             }
         }
 
-        class SafeModeSite : ISite {
+        class SafeModeSite : ContentPart, ISite
+        {
             public string PageTitleSeparator {
                 get { return " - "; }
-                set { throw new NotImplementedException(); }
             }
 
             public string SiteName {
                 get { return "Orchard Setup"; }
-                set { throw new NotImplementedException(); }
             }
 
             public string SiteSalt {
                 get { return "42"; }
-                set { throw new NotImplementedException(); }
-            }
-
-            public string SiteUrl {
-                get { return "/"; }
             }
 
             public string SuperUser {
                 get { return ""; }
-                set { throw new NotImplementedException(); }
             }
 
             public string HomePage {
@@ -204,12 +202,10 @@ namespace Orchard.Setup {
 
             public string BaseUrl {
                 get { return ""; }
-                set { throw new NotImplementedException(); }
             }
 
             public string SiteTimeZone {
                 get { return TimeZoneInfo.Local.Id; }
-                set { throw new NotImplementedException(); }
             }        
         }
     }

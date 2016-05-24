@@ -1,3 +1,3 @@
 ﻿@using Orchard.Settings
 @model dynamic
-@if (Model.CurrentUser != null) {<div id="login">@T("User:") @Html.ItemDisplayText((IContent)Model.CurrentUser)@T(" | ")@Html.ActionLink(T("Change password").ToString(), "ChangePassword", new { area = "Orchard.Users", Controller = "Account" })@T(" | ")@Html.ActionLink(T("Logout").ToString(), "LogOff", new { Area = "Orchard.Users", Controller = "Account", ReturnUrl = Href("~/") })</div>}
+@if (Model.CurrentUser != null) {<div id="login">@T("User:") @Model.CurrentUser.UserName @T(" | ")@Html.ActionLink(T("Change password").ToString(), "ChangePassword", new { area = "Orchard.Users", Controller = "Account" })@T(" | ")@Html.ActionLink(T("Logout").ToString(), "LogOff", new { Area = "Orchard.Users", Controller = "Account", ReturnUrl = Href("~/") })</div>}

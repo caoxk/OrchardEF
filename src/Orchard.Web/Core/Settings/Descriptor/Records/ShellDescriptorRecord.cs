@@ -16,10 +16,11 @@ namespace Orchard.Core.Settings.Descriptor.Records {
         public virtual IList<ShellParameterRecord> Parameters { get; set; }
     }
 
-    public class ShellDescriptorRecordEntityConfiguration : EntityTypeConfiguration<ShellDescriptorRecord> {
-        public ShellDescriptorRecordEntityConfiguration() {
-            this.HasMany(x => x.Features).WithRequired(x=>x.ShellDescriptorRecord).WillCascadeOnDelete();
-            this.HasMany(x => x.Parameters).WithRequired(x=>x.ShellDescriptorRecord).WillCascadeOnDelete();
+    public class ShellDescriptorRecordConfiguration : EntityTypeConfiguration<ShellDescriptorRecord> {
+        public ShellDescriptorRecordConfiguration()
+        {
+            HasMany(x => x.Features).WithRequired(x=>x.ShellDescriptorRecord).WillCascadeOnDelete();
+            HasMany(x => x.Parameters).WithRequired(x=>x.ShellDescriptorRecord).WillCascadeOnDelete();
         }
     }
 }

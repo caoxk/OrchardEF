@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Web;
 using System.Xml.Linq;
+using Orchard.Core.Settings.Models;
 using Orchard.Data;
 using Orchard.Data.Migration;
 using Orchard.Environment;
@@ -201,7 +202,7 @@ namespace Orchard.Setup.Services {
 
             // Set site name and settings.
             var siteService = environment.Resolve<ISiteService>();
-            var siteSettings = siteService.GetSiteSettings();
+            var siteSettings = siteService.GetSiteSettings().As<SiteSettingsPart>();
             siteSettings.SiteSalt = Guid.NewGuid().ToString("N");
             siteSettings.SiteName = context.SiteName;
             siteSettings.SuperUser = context.AdminUsername;

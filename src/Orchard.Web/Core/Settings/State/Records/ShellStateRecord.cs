@@ -19,8 +19,9 @@ namespace Orchard.Core.Settings.State.Records {
         public virtual IList<ShellFeatureStateRecord> Features { get; set; }
     }
 
-    public class ShellStateRecordEntityConfiguration : EntityTypeConfiguration<ShellStateRecord> {
-        public ShellStateRecordEntityConfiguration() {
+    public class ShellStateRecordConfiguration : EntityTypeConfiguration<ShellStateRecord> {
+        public ShellStateRecordConfiguration()
+        {
             this.HasMany(x => x.Features).WithRequired().WillCascadeOnDelete();
         }
     }
