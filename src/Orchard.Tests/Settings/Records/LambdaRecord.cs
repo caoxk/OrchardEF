@@ -2,7 +2,7 @@ using System;
 using Orchard.DocumentManagement.Records;
 
 namespace Orchard.Tests.Settings.Records {
-    public class LambdaRecord : ContentPartRecord {
+    public class LambdaRecord : DocumentPartRecord {
         public LambdaRecord() {
             DateTimeStuff = new DateTime(1980,1,1);
         }

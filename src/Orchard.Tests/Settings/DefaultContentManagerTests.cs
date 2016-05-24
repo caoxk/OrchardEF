@@ -38,7 +38,7 @@ namespace Orchard.Tests.Settings {
             var databaseFileName = System.IO.Path.GetTempFileName();
             _sessionFactory = DataUtility.CreateSessionFactory(
                 databaseFileName,
-                typeof(ContentItemRecord),
+                typeof(DocumentItemRecord),
                 typeof(GammaRecord),
                 typeof(DeltaRecord),
                 typeof(MegaRecord));
@@ -162,7 +162,7 @@ namespace Orchard.Tests.Settings {
             var beta = _manager.New(DefaultBetaName);
             _manager.Create(beta);
 
-            var modelRecord = _container.Resolve<IRepository<ContentItemRecord>>().Get(beta.Id);
+            var modelRecord = _container.Resolve<IRepository<DocumentItemRecord>>().Get(beta.Id);
             Assert.That(modelRecord, Is.Not.Null);
             Assert.That(modelRecord.ContentType, Is.EqualTo(DefaultBetaName));
         }
@@ -184,10 +184,10 @@ namespace Orchard.Tests.Settings {
             _session.SaveChanges();
         }
 
-        private ContentItemRecord CreateModelRecord(string contentType) {
-            var contentItemRepository = _container.Resolve<IRepository<ContentItemRecord>>();
+        private DocumentItemRecord CreateModelRecord(string contentType) {
+            var contentItemRepository = _container.Resolve<IRepository<DocumentItemRecord>>();
 
-            var modelRecord = new ContentItemRecord { ContentType = contentType };
+            var modelRecord = new DocumentItemRecord { ContentType = contentType };
             contentItemRepository.Create(modelRecord);
 
             _session.SaveChanges();

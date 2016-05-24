@@ -546,8 +546,8 @@
     <Compile Include="DocumentManagement\IDocumentManager.cs" />
     <Compile Include="DocumentManagement\InfosetHelper.cs" />
     <Compile Include="DocumentManagement\MetaData\ContentPartInfo.cs" />
-    <Compile Include="DocumentManagement\Records\ContentItemRecord.cs" />
-    <Compile Include="DocumentManagement\Records\ContentPartRecord.cs" />
+    <Compile Include="DocumentManagement\Records\DocumentItemRecord.cs" />
+    <Compile Include="DocumentManagement\Records\DocumentPartRecord.cs" />
     <Compile Include="Settings\ResourceDebugMode.cs" />
     <Compile Include="DocumentManagement\Utilities\LazyField.cs" />
     <Compile Include="Tasks\Locking\Records\DistributedLockRecord.cs" />

@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Orchard.DocumentManagement.FieldStorage.InfosetStorage;
 
 namespace Orchard.DocumentManagement.Records {
-    public class ContentItemRecord {
-        public ContentItemRecord() {
+    public class DocumentItemRecord {
+        public DocumentItemRecord() {
             Infoset = new Infoset();
         }
 

@@ -16,7 +16,7 @@ using Orchard.UI;
 namespace Orchard.DocumentManagement {
     public class DefaultDocumentManager : IDocumentManager {
         private readonly IComponentContext _context;
-        private readonly IRepository<ContentItemRecord> _contentItemRepository;
+        private readonly IRepository<DocumentItemRecord> _contentItemRepository;
         private readonly ICacheManager _cacheManager;
         private readonly Lazy<IDocumentDisplay> _contentDisplay;
         private readonly Lazy<ITransactionManager> _transactionManager; 
@@ -29,7 +29,7 @@ namespace Orchard.DocumentManagement {
 
         public DefaultDocumentManager(
             IComponentContext context,
-            IRepository<ContentItemRecord> contentItemRepository,
+            IRepository<DocumentItemRecord> contentItemRepository,
             ICacheManager cacheManager,
             Lazy<IDocumentDisplay> contentDisplay,
             Lazy<ITransactionManager> transactionManager,
@@ -90,7 +90,7 @@ namespace Orchard.DocumentManagement {
         public virtual DocumentItem Get(int id) {
             DocumentItem contentItem;
 
-            ContentItemRecord itemRecord = _contentItemRepository.Get(id);
+            DocumentItemRecord itemRecord = _contentItemRepository.Get(id);
 
             // allocate instance and set record property
             contentItem = New(itemRecord.ContentType);
@@ -186,7 +186,7 @@ namespace Orchard.DocumentManagement {
 
             if (contentItem.Record == null)
             {
-                contentItem.Record = new ContentItemRecord
+                contentItem.Record = new DocumentItemRecord
                 {
                     ContentType = contentItem.ContentType
                 };

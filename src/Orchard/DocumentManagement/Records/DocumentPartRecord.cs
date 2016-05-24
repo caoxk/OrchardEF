@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Orchard.DocumentManagement.Records {
-    public abstract class ContentPartRecord {
+    public abstract class DocumentPartRecord {
         [Key,ForeignKey("ContentItemRecord")]
         public virtual int Id { get; set; }
         [Required]
-        public virtual ContentItemRecord ContentItemRecord { get; set; }
+        public virtual DocumentItemRecord ContentItemRecord { get; set; }
     }
 }

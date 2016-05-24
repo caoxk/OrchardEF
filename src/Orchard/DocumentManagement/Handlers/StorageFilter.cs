@@ -4,23 +4,23 @@ using Orchard.DocumentManagement.Records;
 
 namespace Orchard.DocumentManagement.Handlers {
     public static class StorageFilter {
-        public static StorageFilter<TRecord> For<TRecord>(IRepository<TRecord> repository) where TRecord : ContentPartRecord, new() {
+        public static StorageFilter<TRecord> For<TRecord>(IRepository<TRecord> repository) where TRecord : DocumentPartRecord, new() {
             return new StorageFilter<TRecord>(repository);
         }
     }
 
-    public class StorageFilter<TRecord> : StorageFilterBase<ContentPart<TRecord>> where TRecord : ContentPartRecord, new() {
+    public class StorageFilter<TRecord> : StorageFilterBase<ContentPart<TRecord>> where TRecord : DocumentPartRecord, new() {
         protected readonly IRepository<TRecord> _repository;
 
         public StorageFilter(IRepository<TRecord> repository) {
             _repository = repository;
         }
 
-        protected virtual TRecord GetRecordCore(ContentItemRecord versionRecord) {
+        protected virtual TRecord GetRecordCore(DocumentItemRecord versionRecord) {
             return _repository.Get(versionRecord.Id);
         }
 
-        protected virtual TRecord CreateRecordCore(ContentItemRecord versionRecord, TRecord record = null) {
+        protected virtual TRecord CreateRecordCore(DocumentItemRecord versionRecord, TRecord record = null) {
             if (record == null) {
                 record = new TRecord();
             }

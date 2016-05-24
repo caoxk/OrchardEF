@@ -17,7 +17,7 @@ namespace Orchard.Tests.Settings {
             where TPart : DocumentPart {
 
             var contentItem = part.ContentItem = new DocumentItem {
-                Record = new ContentItemRecord()
+                Record = new DocumentItemRecord()
                 //VersionRecord = new ContentItemVersionRecord {
                 //    ContentItemRecord = new ContentItemRecord()
                 //},

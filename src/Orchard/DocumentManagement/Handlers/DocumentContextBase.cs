@@ -12,7 +12,7 @@ namespace Orchard.DocumentManagement.Handlers {
 
         public int Id { get; private set; }
         public DocumentItem ContentItem { get; private set; }
-        public ContentItemRecord ContentItemRecord { get; private set; }
+        public DocumentItemRecord ContentItemRecord { get; private set; }
         public IDocumentManager ContentManager { get; private set; }
         public ILogger Logger { get; set; }
     }

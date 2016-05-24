@@ -18,7 +18,7 @@ namespace Orchard.DocumentManagement {
 
         public int Id { get { return Record == null ? 0 : Record.Id; } }
 
-        public ContentItemRecord Record { get; set; }
+        public DocumentItemRecord Record { get; set; }
 
         public IEnumerable<DocumentPart> Parts { get { return _parts; } }
 
