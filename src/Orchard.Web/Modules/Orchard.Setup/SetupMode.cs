@@ -12,6 +12,8 @@ using Orchard.DisplayManagement.Descriptors;
 using Orchard.DisplayManagement.Descriptors.ShapeAttributeStrategy;
 using Orchard.DisplayManagement.Descriptors.ShapeTemplateStrategy;
 using Orchard.DisplayManagement.Implementation;
+using Orchard.DocumentManagement;
+using Orchard.DocumentManagement.Handlers;
 using Orchard.Environment;
 using Orchard.Environment.Extensions.Models;
 using Orchard.Localization;
@@ -32,7 +34,6 @@ using Orchard.UI.PageTitle;
 using Orchard.UI.Resources;
 using Orchard.UI.Zones;
 using IFilterProvider = Orchard.Mvc.Filters.IFilterProvider;
-using Orchard.Settings.Handlers;
 
 namespace Orchard.Setup {
     public class SetupMode : Module {
@@ -134,7 +135,7 @@ namespace Orchard.Setup {
 
         class SafeModeSiteService : ISiteService {
             public ISite GetSiteSettings() {
-                var site = new ContentItemBuilder("Site")
+                var site = new DocumentItemBuilder("Site")
                     .Weld<SafeModeSite>()
                     .Build();
 
@@ -142,7 +143,7 @@ namespace Orchard.Setup {
             }
         }
 
-        class SafeModeSite : ContentPart, ISite
+        class SafeModeSite : DocumentPart, ISite
         {
             public string PageTitleSeparator {
                 get { return " - "; }

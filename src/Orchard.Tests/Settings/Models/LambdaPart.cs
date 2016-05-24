@@ -1,3 +1,4 @@
+using Orchard.DocumentManagement;
 using Orchard.Settings;
 using Orchard.Tests.Settings.Records;
 

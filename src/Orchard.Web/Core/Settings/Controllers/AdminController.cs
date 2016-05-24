@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using Orchard.Core.Settings.ViewModels;
+using Orchard.DocumentManagement;
 using Orchard.Localization;
 using Orchard.Localization.Services;
 using Orchard.Mvc;
@@ -13,11 +14,11 @@ namespace Orchard.Core.Settings.Controllers {
     public class AdminController : Controller, IUpdateModel {
         private readonly ISiteService _siteService;
         private readonly ICultureManager _cultureManager;
-        private readonly IContentManager _contentManager;
+        private readonly IDocumentManager _contentManager;
         public IOrchardServices Services { get; private set; }
 
         public AdminController(
-            IContentManager contentManager,
+            IDocumentManager contentManager,
             ISiteService siteService,
             IOrchardServices services,
             ICultureManager cultureManager) {

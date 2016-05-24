@@ -1,10 +1,11 @@
 ﻿using System;
+using Orchard.DocumentManagement;
 
 namespace Orchard.Settings {
     /// <summary>
     /// Interface provided by the "settings" model.
     /// </summary>
-    public interface ISite : IContent {
+    public interface ISite : IDocument {
         string PageTitleSeparator { get; }
         string SiteName { get; }
         string SiteSalt { get; }

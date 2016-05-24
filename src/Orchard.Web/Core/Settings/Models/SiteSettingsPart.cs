@@ -1,7 +1,8 @@
-﻿using Orchard.Settings;
+﻿using Orchard.DocumentManagement;
+using Orchard.Settings;
 
 namespace Orchard.Core.Settings.Models {
-    public sealed class SiteSettingsPart : ContentPart, ISite {
+    public sealed class SiteSettingsPart : DocumentPart, ISite {
 
         public const int DefaultPageSize = 10;
 

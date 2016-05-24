@@ -5,11 +5,12 @@ using Moq;
 using NUnit.Framework;
 using Orchard.DisplayManagement;
 using Orchard.DisplayManagement.Implementation;
+using Orchard.DocumentManagement;
+using Orchard.DocumentManagement.Drivers;
+using Orchard.DocumentManagement.Drivers.Coordinators;
+using Orchard.DocumentManagement.Handlers;
 using Orchard.Mvc;
 using Orchard.Settings;
-using Orchard.Settings.Drivers;
-using Orchard.Settings.Drivers.Coordinators;
-using Orchard.Settings.Handlers;
 
 namespace Orchard.Tests.Settings.Handlers.Coordinators {
     [TestFixture]
@@ -20,28 +21,28 @@ namespace Orchard.Tests.Settings.Handlers.Coordinators {
         public void Init() {
             var builder = new ContainerBuilder();
             //builder.RegisterModule(new ImplicitCollectionSupportModule());
-            builder.RegisterType<ContentPartDriverCoordinator>().As<IContentHandler>();
+            builder.RegisterType<DocumentPartDriverCoordinator>().As<IDocumentHandler>();
             builder.RegisterType<DefaultShapeFactory>().As<IShapeFactory>();
             _container = builder.Build();
         }
 
         [Test]
         public void DriverHandlerShouldNotThrowException() {
-            var contentHandler = _container.Resolve<IContentHandler>();
+            var contentHandler = _container.Resolve<IDocumentHandler>();
             contentHandler.BuildDisplay(null);
         }
 
         [Test]
         public void AllDriversShouldBeCalled() {
-            var driver1 = new Mock<IContentPartDriver>();
-            var driver2 = new Mock<IContentPartDriver>();
+            var driver1 = new Mock<IDocumentPartDriver>();
+            var driver2 = new Mock<IDocumentPartDriver>();
             var builder = new ContainerBuilder();
             builder.RegisterInstance(driver1.Object);
             builder.RegisterInstance(driver2.Object);
             builder.Update(_container);
-            var contentHandler = _container.Resolve<IContentHandler>();
+            var contentHandler = _container.Resolve<IDocumentHandler>();
 
-            var contentItem = new ContentItem();
+            var contentItem = new DocumentItem();
             var context = new BuildDisplayContext(null, contentItem, "", "", new Mock<IShapeFactory>().Object);
 
             driver1.Verify(x => x.BuildDisplay(context), Times.Never());
@@ -55,12 +56,12 @@ namespace Orchard.Tests.Settings.Handlers.Coordinators {
         public void TestDriverCanAddDisplay() {
             var driver = new StubPartDriver();
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(driver).As<IContentPartDriver>();
+            builder.RegisterInstance(driver).As<IDocumentPartDriver>();
             builder.Update(_container);
-            var contentHandler = _container.Resolve<IContentHandler>();
+            var contentHandler = _container.Resolve<IDocumentHandler>();
             dynamic shapeFactory = _container.Resolve<IShapeFactory>();
 
-            var contentItem = new ContentItem();
+            var contentItem = new DocumentItem();
             contentItem.Weld(new StubPart { Foo = new[] { "a", "b", "c" } });
 
             var ctx = new BuildDisplayContext(null, null, "", "", null);
@@ -71,7 +72,7 @@ namespace Orchard.Tests.Settings.Handlers.Coordinators {
             Assert.That(context.TopMeta.Count == 1);
         }
 
-        public class StubPartDriver : ContentPartDriver<StubPart> {
+        public class StubPartDriver : DocumentPartDriver<StubPart> {
             protected override string Prefix {
                 get { return "Stub"; }
             }
@@ -91,18 +92,18 @@ namespace Orchard.Tests.Settings.Handlers.Coordinators {
 
             protected override DriverResult Editor(StubPart part, dynamic shapeHelper) {
                 var viewModel = new StubViewModel { Foo = string.Join(",", part.Foo) };
-                return new ContentTemplateResult(viewModel, null, Prefix).Location("last", "10");
+                return new DocumentTemplateResult(viewModel, null, Prefix).Location("last", "10");
             }
 
             protected override DriverResult Editor(StubPart part, IUpdateModel updater, dynamic shapeHelper) {
                 var viewModel = new StubViewModel { Foo = string.Join(",", part.Foo) };
                 updater.TryUpdateModel(viewModel, Prefix, null, null);
                 part.Foo = viewModel.Foo.Split(new[] { ',' }).Select(x => x.Trim()).ToArray();
-                return new ContentTemplateResult(viewModel, null, Prefix).Location("last", "10");
+                return new DocumentTemplateResult(viewModel, null, Prefix).Location("last", "10");
             }
         }
 
-        public class StubPart : ContentPart {
+        public class StubPart : DocumentPart {
             public string[] Foo { get; set; }
         }
 

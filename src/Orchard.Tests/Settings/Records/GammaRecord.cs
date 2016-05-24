@@ -1,4 +1,4 @@
-using Orchard.Settings.Records;
+using Orchard.DocumentManagement.Records;
 
 namespace Orchard.Tests.Settings.Records {
     public class GammaRecord : ContentPartRecord {

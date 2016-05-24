@@ -2,6 +2,8 @@
 using System.Net;
 using Orchard.Core.Settings.Models;
 using Orchard.Core.Settings.ViewModels;
+using Orchard.DocumentManagement;
+using Orchard.DocumentManagement.Drivers;
 using Orchard.Localization;
 using Orchard.Localization.Services;
 using Orchard.Logging;
@@ -9,11 +11,10 @@ using Orchard.Security;
 using Orchard.Settings;
 using Orchard.UI.Notify;
 using Orchard.Exceptions;
-using Orchard.Settings.Drivers;
 using Orchard.Mvc;
 
 namespace Orchard.Core.Settings.Drivers {
-    public class SiteSettingsPartDriver : ContentPartDriver<SiteSettingsPart> {
+    public class SiteSettingsPartDriver : DocumentPartDriver<SiteSettingsPart> {
         private readonly ISiteService _siteService;
         private readonly ICultureManager _cultureManager;
         private readonly ICalendarManager _calendarProvider;

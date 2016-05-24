@@ -1,15 +1,16 @@
-﻿using Orchard.Localization;
+﻿using Orchard.DocumentManagement;
+using Orchard.Localization;
 using Orchard.Security;
 using Orchard.Settings;
 using Orchard.UI.Navigation;
 
 namespace Orchard.Core.Settings {
     public class AdminMenu : INavigationProvider {
-        private readonly IContentManager _contentManager;
+        private readonly IDocumentManager _contentManager;
         private readonly ISiteService _siteService;
 
         public AdminMenu(ISiteService siteService, IOrchardServices orchardServices, 
-            IContentManager contentManager) {
+            IDocumentManager contentManager) {
             _siteService = siteService;
             Services = orchardServices;
             _contentManager = contentManager;

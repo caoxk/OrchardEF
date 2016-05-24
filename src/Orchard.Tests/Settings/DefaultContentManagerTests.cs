@@ -8,11 +8,12 @@ using Orchard.Data;
 using Orchard.DisplayManagement;
 using Orchard.DisplayManagement.Descriptors;
 using Orchard.DisplayManagement.Implementation;
+using Orchard.DocumentManagement;
+using Orchard.DocumentManagement.Handlers;
+using Orchard.DocumentManagement.Records;
 using Orchard.Environment.Configuration;
 using Orchard.Environment.Extensions;
 using Orchard.Settings;
-using Orchard.Settings.Handlers;
-using Orchard.Settings.Records;
 using Orchard.Tests.Settings.Handlers;
 using Orchard.Tests.Settings.Models;
 using Orchard.Tests.Settings.Records;
@@ -28,7 +29,7 @@ namespace Orchard.Tests.Settings {
         private const string DefaultDeltaName = "delta";
 
         private IContainer _container;
-        private IContentManager _manager;
+        private IDocumentManager _manager;
         private ISessionFactoryHolder _sessionFactory;
         private DataContext _session;
 
@@ -47,24 +48,24 @@ namespace Orchard.Tests.Settings {
         public void Init() {
 
             var builder = new ContainerBuilder();
-            builder.RegisterType<DefaultContentManager>().As<IContentManager>();
+            builder.RegisterType<DefaultDocumentManager>().As<IDocumentManager>();
             builder.RegisterType<StubCacheManager>().As<ICacheManager>();
             builder.RegisterType<Signals>().As<ISignals>();
-            builder.RegisterInstance(new Mock<IContentDisplay>().Object);
+            builder.RegisterInstance(new Mock<IDocumentDisplay>().Object);
             builder.RegisterInstance(new ShellSettings {Name = ShellSettings.DefaultName, DataProvider = "SqlCe"});
 
-            builder.RegisterType<AlphaPartHandler>().As<IContentHandler>();
-            builder.RegisterType<BetaPartHandler>().As<IContentHandler>();
-            builder.RegisterType<GammaPartHandler>().As<IContentHandler>();
-            builder.RegisterType<DeltaPartHandler>().As<IContentHandler>();
+            builder.RegisterType<AlphaPartHandler>().As<IDocumentHandler>();
+            builder.RegisterType<BetaPartHandler>().As<IDocumentHandler>();
+            builder.RegisterType<GammaPartHandler>().As<IDocumentHandler>();
+            builder.RegisterType<DeltaPartHandler>().As<IDocumentHandler>();
             //builder.RegisterType<EpsilonPartHandler>().As<IContentHandler>();
-            builder.RegisterType<FlavoredPartHandler>().As<IContentHandler>();
-            builder.RegisterType<StyledHandler>().As<IContentHandler>();
+            builder.RegisterType<FlavoredPartHandler>().As<IDocumentHandler>();
+            builder.RegisterType<StyledHandler>().As<IDocumentHandler>();
             builder.RegisterType<DefaultShapeTableManager>().As<IShapeTableManager>();
             builder.RegisterType<ShapeTableLocator>().As<IShapeTableLocator>();
             builder.RegisterType<DefaultShapeFactory>().As<IShapeFactory>();
             builder.RegisterInstance(new Mock<IPageClassBuilder>().Object); 
-            builder.RegisterType<DefaultContentDisplay>().As<IContentDisplay>();
+            builder.RegisterType<DefaultDocumentDisplay>().As<IDocumentDisplay>();
 
             builder.RegisterType<StubExtensionManager>().As<IExtensionManager>();
 
@@ -74,7 +75,7 @@ namespace Orchard.Tests.Settings {
             builder.RegisterInstance(new TestTransactionManager(_session)).As<ITransactionManager>();
 
             _container = builder.Build();
-            _manager = _container.Resolve<IContentManager>();
+            _manager = _container.Resolve<IDocumentManager>();
         }
 
         [TearDown]

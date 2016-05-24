@@ -1,6 +1,7 @@
 using NUnit.Framework;
+using Orchard.DocumentManagement;
+using Orchard.DocumentManagement.Handlers;
 using Orchard.Settings;
-using Orchard.Settings.Handlers;
 
 namespace Orchard.Tests.Settings.Handlers {
 
@@ -10,11 +11,11 @@ namespace Orchard.Tests.Settings.Handlers {
         public void ModelDriverShouldUsePersistenceFilterToDelegateCreateAndLoad() {
             var modelDriver = new TestModelHandler();
 
-            var contentItem = new ContentItem();
+            var contentItem = new DocumentItem();
             var part = new TestModelPart();
             contentItem.Weld(part);
 
-            ((IContentHandler)modelDriver).Creating(new CreateContentContext(contentItem));
+            ((IDocumentHandler)modelDriver).Creating(new CreateDocumentContext(contentItem));
             Assert.That(part.CreatingCalled, Is.True);
         }
 
@@ -22,19 +23,19 @@ namespace Orchard.Tests.Settings.Handlers {
         public void PartShouldBeAddedBasedOnSimplePredicate() {
             var modelDriver = new TestModelHandler();
 
-            var builder = new ContentItemBuilder("testing");
-            ((IContentHandler)modelDriver).Activating(new ActivatingContentContext { Builder = builder, ContentType = "testing" });
+            var builder = new DocumentItemBuilder("testing");
+            ((IDocumentHandler)modelDriver).Activating(new ActivatingDocumentContext { Builder = builder, ContentType = "testing" });
             var model = builder.Build();
             Assert.That(model.Is<TestModelPart>(), Is.True);
             Assert.That(model.As<TestModelPart>(), Is.Not.Null);
         }
 
-        public class TestModelPart : ContentPart {
+        public class TestModelPart : DocumentPart {
             public bool CreatingCalled { get; set; }
         }
 
 
-        public class TestModelHandler : ContentHandler {
+        public class TestModelHandler : DocumentHandler {
             public TestModelHandler() {
                 Filters.Add(new ActivatingFilter<TestModelPart>(x => x == "testing"));
                 Filters.Add(new TestModelStorageFilter());
@@ -42,7 +43,7 @@ namespace Orchard.Tests.Settings.Handlers {
         }
 
         public class TestModelStorageFilter : StorageFilterBase<TestModelPart> {
-            protected override void Creating(CreateContentContext context, TestModelPart instance) {
+            protected override void Creating(CreateDocumentContext context, TestModelPart instance) {
                 instance.CreatingCalled = true;
             }
         }

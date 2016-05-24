@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Web;
 using Autofac;
+using Orchard.DocumentManagement;
 using Orchard.Security;
 using Orchard.Settings;
 
@@ -103,7 +104,7 @@ namespace Orchard.Tests.Stubs {
                     set { throw new NotImplementedException(); }
                 }
 
-                public ContentItem ContentItem
+                public DocumentItem ContentItem
                 {
                     get { throw new NotImplementedException(); }
                 }

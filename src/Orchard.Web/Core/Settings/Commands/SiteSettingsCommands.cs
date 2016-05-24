@@ -1,5 +1,6 @@
 ﻿using Orchard.Commands;
 using Orchard.Core.Settings.Models;
+using Orchard.DocumentManagement;
 using Orchard.Mvc;
 using Orchard.Mvc.Extensions;
 using Orchard.Settings;

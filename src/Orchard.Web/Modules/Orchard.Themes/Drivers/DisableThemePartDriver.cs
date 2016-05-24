@@ -3,7 +3,7 @@ using Orchard.Themes.Models;
 using Orchard.UI.Admin;
 
 namespace Orchard.Themes.Drivers {
-    //public class DisableThemePartDriver : ContentPartDriver<DisableThemePart> {
+    //public class DisableThemePartDriver : DocumentPartDriver<DisableThemePart> {
     //    private readonly HttpContextBase _httpContext;
 
     //    public DisableThemePartDriver(HttpContextBase httpContext) {

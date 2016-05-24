@@ -1,15 +1,16 @@
 ﻿using System.Linq;
 using Orchard.Caching;
 using Orchard.Core.Settings.Models;
+using Orchard.DocumentManagement;
 using Orchard.Settings;
 
 namespace Orchard.Core.Settings.Services {
     public class SiteService : ISiteService {
-        private readonly IContentManager _contentManager;
+        private readonly IDocumentManager _contentManager;
         private readonly ICacheManager _cacheManager;
 
         public SiteService(
-            IContentManager contentManager,
+            IDocumentManager contentManager,
             ICacheManager cacheManager) {
             _contentManager = contentManager;
             _cacheManager = cacheManager;

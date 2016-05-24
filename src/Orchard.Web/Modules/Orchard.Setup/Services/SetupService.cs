@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using Orchard.Core.Settings.Models;
 using Orchard.Data;
 using Orchard.Data.Migration;
+using Orchard.DocumentManagement;
 using Orchard.Environment;
 using Orchard.Environment.Configuration;
 using Orchard.Environment.Descriptor;

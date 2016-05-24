@@ -1,7 +1,8 @@
 ﻿using NUnit.Framework;
+using Orchard.DocumentManagement;
+using Orchard.DocumentManagement.FieldStorage.InfosetStorage;
 using Orchard.Environment;
 using Orchard.Settings;
-using Orchard.Settings.FieldStorage.InfosetStorage;
 
 namespace Orchard.Tests.Settings {
     public class InfosetHelperTests {
@@ -37,7 +38,7 @@ namespace Orchard.Tests.Settings {
             Assert.That(fooAttribute, Is.EqualTo(42));
         }
 
-        public class TestPart : ContentPart {
+        public class TestPart : DocumentPart {
             public int Foo {
                 get { return this.Retrieve<int>("Foo"); }
                 set { this.Store("Foo", value); }
