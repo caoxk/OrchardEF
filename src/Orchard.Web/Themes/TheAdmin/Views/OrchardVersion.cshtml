@@ -1,6 +1,6 @@
 ﻿@using Orchard.DocumentManagement
 @using Orchard.Settings
 @{
-    var version = new System.Reflection.AssemblyName(typeof(ContentItem).Assembly.FullName).Version.ToString();
+    var version = new System.Reflection.AssemblyName(typeof(DocumentItem).Assembly.FullName).Version.ToString();
 }
 <div id="orchard-version">@T("Orchard v.{0}", version)</div>

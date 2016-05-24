@@ -87,26 +87,26 @@ namespace Orchard.DocumentManagement {
 
         public static void Store<TPart, TProperty>(this TPart contentPart, 
             Expression<Func<TPart, TProperty>> targetExpression,
-            TProperty value, bool versioned = false) where TPart : DocumentPart {
+            TProperty value) where TPart : DocumentPart {
 
             var partName = contentPart.GetType().Name;
             var infosetPart = contentPart.As<InfosetPart>();
             var propertyInfo = ReflectionHelper<TPart>.GetPropertyInfo(targetExpression);
             var name = propertyInfo.Name;
 
-            Store(infosetPart, partName, name, value, versioned);
+            Store(infosetPart, partName, name, value);
         }
 
         public static void Store<TProperty>(this DocumentPart contentPart, string name, 
-            TProperty value, bool versioned = false) {
+            TProperty value) {
 
             var partName = contentPart.GetType().Name;
             var infosetPart = contentPart.As<InfosetPart>();
            
-            Store(infosetPart, partName, name, value, versioned);
+            Store(infosetPart, partName, name, value);
         }
 
-        public static void Store<TProperty>(this InfosetPart infosetPart, string partName, string name, TProperty value, bool versioned = false) {
+        public static void Store<TProperty>(this InfosetPart infosetPart, string partName, string name, TProperty value) {
             
             var infoset = (infosetPart.Infoset);
             var partElement = infoset.Element.Element(partName);
@@ -115,6 +115,7 @@ namespace Orchard.DocumentManagement {
                 infoset.Element.Add(partElement);
             }
             partElement.Attr(name, value);
+            infosetPart.ContentItem.Record.Data = infoset.Data;
         }
 
         public static void Store<TPart, TRecord, TProperty>(this TPart contentPart,

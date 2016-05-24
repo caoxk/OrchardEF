@@ -28,11 +28,6 @@ namespace Orchard.DocumentManagement {
         public virtual void Store<T>(string fieldName, T value) {
             InfosetHelper.Store(this, fieldName, value);
         }
-
-        public virtual void StoreVersioned<T>(string fieldName, T value) {
-            this.Store(fieldName, value, true);
-        }
-
     }
 
     public class ContentPart<TRecord> : DocumentPart {
