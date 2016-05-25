@@ -144,10 +144,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\BbcodeFilterTests.cs" />
-    <Compile Include="Common\Providers\CommonPartProviderTests.cs" />
-    <Compile Include="Body\BodyPartTests.cs" />
-    <Compile Include="Feeds\Controllers\FeedControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scheduling\ScheduledTaskManagerTests.cs" />
     <Compile Include="Scheduling\ScheduledTaskExecutorTests.cs" />

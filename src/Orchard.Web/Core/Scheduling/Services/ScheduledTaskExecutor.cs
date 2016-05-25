@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Orchard.ContentManagement;
 using Orchard.Core.Scheduling.Models;
 using Orchard.Data;
 using Orchard.Logging;
@@ -15,19 +14,16 @@ namespace Orchard.Core.Scheduling.Services {
         private readonly IClock _clock;
         private readonly IRepository<ScheduledTaskRecord> _repository;
         private readonly IEnumerable<IScheduledTaskHandler> _handlers;
-        private readonly IContentManager _contentManager;
         private readonly ITransactionManager _transactionManager;
 
         public ScheduledTaskExecutor(
             IClock clock,
             IRepository<ScheduledTaskRecord> repository,
             IEnumerable<IScheduledTaskHandler> handlers,
-            IContentManager contentManager,
             ITransactionManager transactionManager) {
             _clock = clock;
             _repository = repository;
             _handlers = handlers;
-            _contentManager = contentManager;
             _transactionManager = transactionManager;
             Logger = NullLogger.Instance;
         }
@@ -55,7 +51,7 @@ namespace Orchard.Core.Scheduling.Services {
                     _repository.Delete(taskRecord);
 
                     var context = new ScheduledTaskContext {
-                        Task = new Task(_contentManager, taskRecord)
+                        Task = new Task(taskRecord)
                     };
 
                     // dispatch to standard or custom handlers

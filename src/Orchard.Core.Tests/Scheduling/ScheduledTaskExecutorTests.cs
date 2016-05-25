@@ -4,9 +4,6 @@ using Autofac;
 using Moq;
 using NUnit.Framework;
 using Orchard.Caching;
-using Orchard.ContentManagement;
-using Orchard.ContentManagement.MetaData;
-using Orchard.ContentManagement.Records;
 using Orchard.Core.Scheduling.Models;
 using Orchard.Core.Scheduling.Services;
 using Orchard.Data;
@@ -16,7 +13,7 @@ using Orchard.DisplayManagement.Implementation;
 using Orchard.Environment.Extensions;
 using Orchard.Tasks;
 using Orchard.Tasks.Scheduling;
-using Orchard.Tests.Modules;
+using Orchard.Tests;
 using Orchard.Tests.Stubs;
 using Orchard.UI.PageClass;
 
@@ -35,30 +32,22 @@ namespace Orchard.Core.Tests.Scheduling {
         public override void Register(ContainerBuilder builder) {
             _handler = new StubTaskHandler();
             builder.RegisterInstance(new Mock<IOrchardServices>().Object);
-            builder.RegisterType<DefaultContentManager>().As<IContentManager>();
             builder.RegisterType<StubCacheManager>().As<ICacheManager>();
             builder.RegisterType<Signals>().As<ISignals>();
-            builder.RegisterType<DefaultContentManagerSession>().As<IContentManagerSession>();
             builder.RegisterType<DefaultShapeTableManager>().As<IShapeTableManager>();
             builder.RegisterType<ShapeTableLocator>().As<IShapeTableLocator>();
             builder.RegisterType<DefaultShapeFactory>().As<IShapeFactory>();
-            builder.RegisterInstance(new Mock<IContentDefinitionManager>().Object);
-            builder.RegisterInstance(new Mock<IContentDisplay>().Object);
 
             builder.RegisterType<ScheduledTaskExecutor>().As<IBackgroundTask>().Named("ScheduledTaskExecutor", typeof(IBackgroundTask));
             builder.RegisterInstance(_handler).As<IScheduledTaskHandler>();
 
             builder.RegisterType<StubExtensionManager>().As<IExtensionManager>();
             builder.RegisterInstance(new Mock<IPageClassBuilder>().Object); 
-            builder.RegisterType<DefaultContentDisplay>().As<IContentDisplay>();
         }
 
         protected override IEnumerable<Type> DatabaseTypes {
             get {
                 return new[] {
-                                 typeof(ContentTypeRecord), 
-                                 typeof(ContentItemRecord), 
-                                 typeof(ContentItemVersionRecord), 
                                  typeof(ScheduledTaskRecord),
                              };
             }
@@ -121,7 +110,6 @@ namespace Orchard.Core.Tests.Scheduling {
             Assert.That(_handler.TaskContext, Is.Not.Null);
 
             Assert.That(_handler.TaskContext.Task.TaskType, Is.EqualTo("Ignore"));
-            Assert.That(_handler.TaskContext.Task.ContentItem, Is.Null);
         }
     }
 }

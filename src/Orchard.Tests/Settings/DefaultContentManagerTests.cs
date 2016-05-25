@@ -176,7 +176,7 @@ namespace Orchard.Tests.Settings {
             _session.SaveChanges();
         }
 
-        [Test, ExpectedException]
+        [Test]
         public void StandardStringsShouldNotHaveAStandardSize() {
             var megaRepository = _container.Resolve<IRepository<MegaRecord>>();
             var mega = new MegaRecord() { SmallStuff = new string('x', 256) };

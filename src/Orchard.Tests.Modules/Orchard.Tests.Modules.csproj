@@ -200,6 +200,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Roles\Controllers\AdminControllerTests.cs" />
+    <Compile Include="Roles\Services\RoleServiceTests.cs" />
+    <Compile Include="Settings\Blueprint\ShellDescriptorManagerTests.cs" />
+    <Compile Include="Stubs\MessageChannelSelectorStub.cs" />
+    <Compile Include="Stubs\ShapeDisplayStub.cs" />
+    <Compile Include="Users\Services\MembershipServiceTests.cs" />
+    <Compile Include="Users\Services\UserServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Orchard.Tests\Orchard.Framework.Tests.csproj">
