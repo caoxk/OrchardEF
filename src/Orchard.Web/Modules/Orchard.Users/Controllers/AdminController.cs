@@ -18,6 +18,7 @@ using System;
 using Orchard.Data;
 using Orchard.Settings;
 using Orchard.UI.Navigation;
+using Orchard.UI.Zones;
 using Orchard.Utility.Extensions;
 
 namespace Orchard.Users.Controllers {
@@ -28,6 +29,7 @@ namespace Orchard.Users.Controllers {
         private readonly IUserEventHandler _userEventHandlers;
         private readonly ISiteService _siteService;
         private readonly IRepository<UserPartRecord> _useRepository;
+        private readonly IShapeFactory _shapeFactory;
 
         public AdminController(
             IOrchardServices services,
@@ -36,13 +38,15 @@ namespace Orchard.Users.Controllers {
             IShapeFactory shapeFactory,
             IUserEventHandler userEventHandlers,
             ISiteService siteService, 
-            IRepository<UserPartRecord> useRepository) {
+            IRepository<UserPartRecord> useRepository, 
+            IShapeFactory shapeFactory1) {
             Services = services;
             _membershipService = membershipService;
             _userService = userService;
             _userEventHandlers = userEventHandlers;
             _siteService = siteService;
             _useRepository = useRepository;
+            _shapeFactory = shapeFactory1;
 
             T = NullLocalizer.Instance;
             Shape = shapeFactory;
@@ -163,13 +167,18 @@ namespace Orchard.Users.Controllers {
             if (!Services.Authorizer.Authorize(Permissions.ManageUsers, T("Not authorized to manage users")))
                 return new HttpUnauthorizedResult();
 
-            var user = new UserPartRecord();
-            //var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Create", Model: new UserCreateViewModel(), Prefix: null);
-            //editor.Metadata.Position = "2";
-            //var model = Services.ContentManager.BuildEditor(user);
-            //model.Content.Add(editor);
+            var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Create", Model: new UserCreateViewModel(), Prefix: null);
+            editor.Metadata.Position = "2";
+            var actualShapeType = "Content_Edit";
+            var model = CreateItemShape(actualShapeType);
+            model.Content.Add(editor);
 
-            return View(user);
+            return View(model);
+        }
+
+        private dynamic CreateItemShape(string actualShapeType)
+        {
+            return _shapeFactory.Create(actualShapeType, Arguments.Empty(), () => new ZoneHolding(() => _shapeFactory.Create("ContentZone", Arguments.Empty())));
         }
 
         [HttpPost, ActionName("Create")]
@@ -226,12 +235,13 @@ namespace Orchard.Users.Controllers {
             if (user == null)
                 return HttpNotFound();
 
-            //var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Edit", Model: new UserEditViewModel {User = user}, Prefix: null);
-            //editor.Metadata.Position = "2";
-            //var model = Services.ContentManager.BuildEditor(user);
-            //model.Content.Add(editor);
+            var editor = Shape.EditorTemplate(TemplateName: "Parts/User.Edit", Model: new UserEditViewModel { User = user }, Prefix: null);
+            editor.Metadata.Position = "2";
+            var actualShapeType = "Content_Edit";
+            var model = CreateItemShape(actualShapeType);
+            model.Content.Add(editor);
 
-            return View(user);
+            return View(model);
         }
 
         [HttpPost, ActionName("Edit")]

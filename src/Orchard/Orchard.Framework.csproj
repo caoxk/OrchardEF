@@ -291,6 +291,7 @@
     <Compile Include="Data\Providers\SqlCeProvider\SqlServerCompactDataServicesProvider.cs" />
     <Compile Include="Data\Providers\SqlProvider\SqlServerConfiguration.cs" />
     <Compile Include="Data\Providers\SqlProvider\SqlServerDataServicesProvider.cs" />
+    <Compile Include="DocumentManagement\Handlers\TemplateFilterForPart.cs" />
     <Compile Include="Environment\Configuration\ExtensionLocations.cs" />
     <Compile Include="DisplayManagement\IPositioned.cs" />
     <Compile Include="DisplayManagement\PositionWrapper.cs" />

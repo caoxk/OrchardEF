@@ -14,6 +14,7 @@ using System.Text;
 using Orchard.Messaging.Services;
 using Orchard.Environment.Configuration;
 using Orchard.Data;
+using Orchard.DocumentManagement;
 
 namespace Orchard.Users.Services {
     public class UserService : IUserService {
@@ -127,49 +128,49 @@ namespace Orchard.Users.Services {
             string nonce = CreateNonce(user, DelayToValidate);
             string url = createUrl(nonce);
 
-            //if (user != null) {
-            //    var site = _siteService.GetSiteSettings();
+            if (user != null) {
+                var site = _siteService.GetSiteSettings();
 
-            //    var template = _shapeFactory.Create("Template_User_Validated", Arguments.From(new {
-            //        RegisteredWebsite = site.As<RegistrationSettingsPart>().ValidateEmailRegisteredWebsite,
-            //        ContactEmail = site.As<RegistrationSettingsPart>().ValidateEmailContactEMail,
-            //        ChallengeUrl = url
-            //    }));
-            //    template.Metadata.Wrappers.Add("Template_User_Wrapper");
+                var template = _shapeFactory.Create("Template_User_Validated", Arguments.From(new {
+                    RegisteredWebsite = site.As<RegistrationSettingsPart>().ValidateEmailRegisteredWebsite,
+                    ContactEmail = site.As<RegistrationSettingsPart>().ValidateEmailContactEMail,
+                    ChallengeUrl = url
+                }));
+                template.Metadata.Wrappers.Add("Template_User_Wrapper");
                 
-            //    var parameters = new Dictionary<string, object> {
-            //                {"Subject", T("Verification E-Mail").Text},
-            //                {"Body", _shapeDisplay.Display(template)},
-            //                {"Recipients", user.Email}
-            //            };
+                var parameters = new Dictionary<string, object> {
+                            {"Subject", T("Verification E-Mail").Text},
+                            {"Body", _shapeDisplay.Display(template)},
+                            {"Recipients", user.Email}
+                        };
 
-            //    _messageService.Send("Email", parameters);
-            //}
+                _messageService.Send("Email", parameters);
+            }
         }
 
         public bool SendLostPasswordEmail(string usernameOrEmail, Func<string, string> createUrl) {
-            //var lowerName = usernameOrEmail.ToLowerInvariant();
-            //var user = _contentManager.Query<UserPart, UserPartRecord>().Where(u => u.NormalizedUserName == lowerName || u.Email == lowerName).List().FirstOrDefault();
+            var lowerName = usernameOrEmail.ToLowerInvariant();
+            var user = _userRepository.Table.FirstOrDefault(u => u.NormalizedUserName == lowerName || u.Email == lowerName);
 
-            //if (user != null) {
-            //    string nonce = CreateNonce(user, DelayToResetPassword);
-            //    string url = createUrl(nonce);
+            if (user != null) {
+                string nonce = CreateNonce(user, DelayToResetPassword);
+                string url = createUrl(nonce);
 
-            //    var template = _shapeFactory.Create("Template_User_LostPassword", Arguments.From(new {
-            //        User = user,
-            //        LostPasswordUrl = url
-            //    }));
-            //    template.Metadata.Wrappers.Add("Template_User_Wrapper");
+                var template = _shapeFactory.Create("Template_User_LostPassword", Arguments.From(new {
+                    User = user,
+                    LostPasswordUrl = url
+                }));
+                template.Metadata.Wrappers.Add("Template_User_Wrapper");
 
-            //    var parameters = new Dictionary<string, object> {
-            //                {"Subject", T("Lost password").Text},
-            //                {"Body", _shapeDisplay.Display(template)},
-            //                {"Recipients", user.Email }
-            //            };
+                var parameters = new Dictionary<string, object> {
+                            {"Subject", T("Lost password").Text},
+                            {"Body", _shapeDisplay.Display(template)},
+                            {"Recipients", user.Email }
+                        };
 
-            //    _messageService.Send("Email", parameters);
-            //    return true;
-            //}
+                _messageService.Send("Email", parameters);
+                return true;
+            }
 
             return false;
         }

@@ -2,8 +2,9 @@
 @using Orchard.Messaging.Services;
 
 @{
-    var messageManager = WorkContext.Resolve<IMessageManager>();
-    var emailEnabled = messageManager.GetAvailableChannelServices().Contains("email");
+    var messageChannelManager = WorkContext.Resolve<IMessageChannelManager>();
+    var messageChannel = messageChannelManager.GetMessageChannel("Email", null);
+    var emailEnabled = messageChannel != null;
 }
 
 <fieldset>

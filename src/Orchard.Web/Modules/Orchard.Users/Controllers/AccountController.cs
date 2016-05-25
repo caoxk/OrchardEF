@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using Orchard.Localization;
 using System.Web.Mvc;
 using System.Web.Security;
+using Orchard.DocumentManagement;
 using Orchard.Logging;
 using Orchard.Mvc;
 using Orchard.Mvc.Extensions;
@@ -111,11 +112,10 @@ namespace Orchard.Users.Controllers {
         [AlwaysAccessible]
         public ActionResult Register() {
             // ensure users can register
-            return HttpNotFound();
-            //var registrationSettings = _orchardServices.WorkContext.CurrentSite.As<RegistrationSettingsPart>();
-            //if ( !registrationSettings.UsersCanRegister ) {
-            //    return HttpNotFound();
-            //}
+            var registrationSettings = _orchardServices.WorkContext.CurrentSite.As<RegistrationSettingsPart>();
+            if ( !registrationSettings.UsersCanRegister ) {
+                return HttpNotFound();
+            }
 
             ViewData["PasswordLength"] = MinPasswordLength;
 
@@ -128,45 +128,44 @@ namespace Orchard.Users.Controllers {
         [ValidateInput(false)]
         public ActionResult Register(string userName, string email, string password, string confirmPassword, string returnUrl = null) {
             // ensure users can register
-            return HttpNotFound();
-            //var registrationSettings = _orchardServices.WorkContext.CurrentSite.As<RegistrationSettingsPart>();
-            //if ( !registrationSettings.UsersCanRegister ) {
-            //    return HttpNotFound();
-            //}
+            var registrationSettings = _orchardServices.WorkContext.CurrentSite.As<RegistrationSettingsPart>();
+            if ( !registrationSettings.UsersCanRegister ) {
+                return HttpNotFound();
+            }
 
             ViewData["PasswordLength"] = MinPasswordLength;
 
-            //if (ValidateRegistration(userName, email, password, confirmPassword)) {
-            //    // Attempt to register the user
-            //    // No need to report this to IUserEventHandler because _membershipService does that for us
-            //    var user = _membershipService.CreateUser(new CreateUserParams(userName, password, email, null, null, false));
+            if (ValidateRegistration(userName, email, password, confirmPassword)) {
+                // Attempt to register the user
+                // No need to report this to IUserEventHandler because _membershipService does that for us
+                var user = _membershipService.CreateUser(new CreateUserParams(userName, password, email, null, null, false));
 
-            //    if (user != null) {
-            //        if ( user.As<UserPart>().EmailStatus == UserStatus.Pending ) {
-            //            var siteUrl = _orchardServices.WorkContext.CurrentSite.BaseUrl;
-            //            if(String.IsNullOrWhiteSpace(siteUrl)) {
-            //                siteUrl = HttpContext.Request.ToRootUrlString();
-            //            }
+                if (user != null) {
+                    if (((UserPartRecord)user).EmailStatus == UserStatus.Pending ) {
+                        var siteUrl = _orchardServices.WorkContext.CurrentSite.BaseUrl;
+                        if(String.IsNullOrWhiteSpace(siteUrl)) {
+                            siteUrl = HttpContext.Request.ToRootUrlString();
+                        }
 
-            //            _userService.SendChallengeEmail(user.As<UserPart>(), nonce => Url.MakeAbsolute(Url.Action("ChallengeEmail", "Account", new {Area = "Orchard.Users", nonce = nonce}), siteUrl));
+                        _userService.SendChallengeEmail((UserPartRecord)user, nonce => Url.MakeAbsolute(Url.Action("ChallengeEmail", "Account", new {Area = "Orchard.Users", nonce = nonce}), siteUrl));
 
-            //            _userEventHandler.SentChallengeEmail(user);
-            //            return RedirectToAction("ChallengeEmailSent", new { ReturnUrl = returnUrl });
-            //        }
+                        _userEventHandler.SentChallengeEmail(user);
+                        return RedirectToAction("ChallengeEmailSent", new { ReturnUrl = returnUrl });
+                    }
 
-            //        if (user.As<UserPart>().RegistrationStatus == UserStatus.Pending) {
-            //            return RedirectToAction("RegistrationPending", new { ReturnUrl = returnUrl });
-            //        }
+                    if (((UserPartRecord)user).RegistrationStatus == UserStatus.Pending) {
+                        return RedirectToAction("RegistrationPending", new { ReturnUrl = returnUrl });
+                    }
 
-            //        _userEventHandler.LoggingIn(userName, password);
-            //        _authenticationService.SignIn(user, false /* createPersistentCookie */);
-            //        _userEventHandler.LoggedIn(user);
+                    _userEventHandler.LoggingIn(userName, password);
+                    _authenticationService.SignIn(user, false /* createPersistentCookie */);
+                    _userEventHandler.LoggedIn(user);
 
-            //        return this.RedirectLocal(returnUrl);
-            //    }
+                    return this.RedirectLocal(returnUrl);
+                }
                 
-            //    ModelState.AddModelError("_FORM", T(ErrorCodeToString(/*createStatus*/MembershipCreateStatus.ProviderError)));
-            //}
+                ModelState.AddModelError("_FORM", T(ErrorCodeToString(/*createStatus*/MembershipCreateStatus.ProviderError)));
+            }
 
             // If we got this far, something failed, redisplay form
             var shape = _orchardServices.New.Register();
@@ -176,11 +175,10 @@ namespace Orchard.Users.Controllers {
         [AlwaysAccessible]
         public ActionResult RequestLostPassword() {
             // ensure users can request lost password
-            return HttpNotFound();
-            //var registrationSettings = _orchardServices.WorkContext.CurrentSite.As<RegistrationSettingsPart>();
-            //if ( !registrationSettings.EnableLostPassword ) {
-            //    return HttpNotFound();
-            //}
+            var registrationSettings = _orchardServices.WorkContext.CurrentSite.As<RegistrationSettingsPart>();
+            if ( !registrationSettings.EnableLostPassword ) {
+                return HttpNotFound();
+            }
 
             return View();
         }
@@ -189,11 +187,10 @@ namespace Orchard.Users.Controllers {
         [AlwaysAccessible]
         public ActionResult RequestLostPassword(string username) {
             // ensure users can request lost password
-            return HttpNotFound();
-            //var registrationSettings = _orchardServices.WorkContext.CurrentSite.As<RegistrationSettingsPart>();
-            //if ( !registrationSettings.EnableLostPassword ) {
-            //    return HttpNotFound();
-            //}
+            var registrationSettings = _orchardServices.WorkContext.CurrentSite.As<RegistrationSettingsPart>();
+            if ( !registrationSettings.EnableLostPassword ) {
+                return HttpNotFound();
+            }
 
             if(String.IsNullOrWhiteSpace(username)){
                 ModelState.AddModelError("username", T("You must specify a username or e-mail."));

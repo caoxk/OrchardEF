@@ -49,7 +49,7 @@ namespace Orchard.Tests.Settings {
             public virtual int Foo { get; set; }
         }
 
-        public class TestPartWithRecord : ContentPart<TestPartWithRecordRecord> {
+        public class TestPartWithRecord : DocumentPart<TestPartWithRecordRecord> {
             public int Foo {
                 get { return Retrieve(r => r.Foo); }
                 set { Store(r => r.Foo, value); }

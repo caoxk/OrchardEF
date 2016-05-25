@@ -50,7 +50,7 @@ namespace Orchard.DocumentManagement.Drivers {
                 return;
             }
 
-            // Add a ContentPart property to the final shape.
+            // Add a DocumentPart property to the final shape.
             if (ContentPart != null && newShape.ContentPart == null) {
                 newShape.ContentPart = ContentPart;
             }

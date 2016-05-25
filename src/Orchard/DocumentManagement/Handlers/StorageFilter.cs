@@ -9,7 +9,7 @@ namespace Orchard.DocumentManagement.Handlers {
         }
     }
 
-    public class StorageFilter<TRecord> : StorageFilterBase<ContentPart<TRecord>> where TRecord : DocumentPartRecord, new() {
+    public class StorageFilter<TRecord> : StorageFilterBase<DocumentPart<TRecord>> where TRecord : DocumentPartRecord, new() {
         protected readonly IRepository<TRecord> _repository;
 
         public StorageFilter(IRepository<TRecord> repository) {
@@ -29,25 +29,25 @@ namespace Orchard.DocumentManagement.Handlers {
             return record;
         }
 
-        protected override void Activated(ActivatedDocumentContext context, ContentPart<TRecord> instance) {
+        protected override void Activated(ActivatedDocumentContext context, DocumentPart<TRecord> instance) {
             if (instance.Record != null) {
                 throw new InvalidOperationException(string.Format(
                     "Having more than one storage filter for a given part ({0}) is invalid.",
-                    typeof(ContentPart<TRecord>).FullName));
+                    typeof(DocumentPart<TRecord>).FullName));
             }
             instance.Record = new TRecord();
         }
 
-        protected override void Creating(CreateDocumentContext context, ContentPart<TRecord> instance) {
+        protected override void Creating(CreateDocumentContext context, DocumentPart<TRecord> instance) {
             CreateRecordCore(context.ContentItemRecord, instance.Record);
         }
 
-        protected override void Loading(LoadDocumentContext context, ContentPart<TRecord> instance) {
+        protected override void Loading(LoadDocumentContext context, DocumentPart<TRecord> instance) {
             var versionRecord = context.ContentItemRecord;
             instance._record.Loader(() => GetRecordCore(versionRecord) ?? CreateRecordCore(versionRecord));
         }
 
-        protected override void Destroying(DestroyDocumentContext context, ContentPart<TRecord> instance) {
+        protected override void Destroying(DestroyDocumentContext context, DocumentPart<TRecord> instance) {
             _repository.Delete(instance.Record);
         }
     }

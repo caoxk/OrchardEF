@@ -6,7 +6,7 @@ using Orchard.Settings;
 namespace Orchard.Tests.Settings {
     public class ContentHelpers {
         public static DocumentItem PreparePart<TPart, TRecord>(TPart part, string contentType, int id = -1)
-            where TPart : ContentPart<TRecord>
+            where TPart : DocumentPart<TRecord>
             where TRecord : new() {
 
             part.Record = new TRecord();

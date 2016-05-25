@@ -44,7 +44,7 @@ namespace Orchard.DocumentManagement {
 
         public static TProperty Retrieve<TPart, TRecord, TProperty>(this TPart contentPart,
             Expression<Func<TRecord, TProperty>> targetExpression)
-            where TPart : ContentPart<TRecord> {
+            where TPart : DocumentPart<TRecord> {
 
             var getter = ReflectionHelper<TRecord>.GetGetter(targetExpression);
             return contentPart.Retrieve(targetExpression, getter);
@@ -53,7 +53,7 @@ namespace Orchard.DocumentManagement {
         public static TProperty Retrieve<TPart, TRecord, TProperty>(this TPart contentPart,
             Expression<Func<TRecord, TProperty>> targetExpression,
             Delegate defaultExpression)
-            where TPart : ContentPart<TRecord> {
+            where TPart : DocumentPart<TRecord> {
 
             var propertyInfo = ReflectionHelper<TRecord>.GetPropertyInfo(targetExpression);
             var name = propertyInfo.Name;
@@ -121,7 +121,7 @@ namespace Orchard.DocumentManagement {
         public static void Store<TPart, TRecord, TProperty>(this TPart contentPart,
             Expression<Func<TRecord, TProperty>> targetExpression,
             TProperty value)
-            where TPart : ContentPart<TRecord> {
+            where TPart : DocumentPart<TRecord> {
 
             var propertyInfo = ReflectionHelper<TRecord>.GetPropertyInfo(targetExpression);
             var name = propertyInfo.Name;

@@ -30,7 +30,7 @@ namespace Orchard.DocumentManagement {
         }
     }
 
-    public class ContentPart<TRecord> : DocumentPart {
+    public class DocumentPart<TRecord> : DocumentPart {
 
         protected TProperty Retrieve<TProperty>(Expression<Func<TRecord, TProperty>> targetExpression) {
             return InfosetHelper.Retrieve(this, targetExpression);
@@ -49,7 +49,7 @@ namespace Orchard.DocumentManagement {
             return InfosetHelper.Retrieve(this, targetExpression, (Func<TRecord, TProperty>)(x => defaultValue));
         }
 
-        protected ContentPart<TRecord> Store<TProperty>(
+        protected DocumentPart<TRecord> Store<TProperty>(
             Expression<Func<TRecord, TProperty>> targetExpression,
             TProperty value) {
 
